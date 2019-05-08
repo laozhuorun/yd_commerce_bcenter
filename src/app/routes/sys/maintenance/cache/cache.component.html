@@ -1,0 +1,18 @@
+<nz-table *ngIf="logs" #nzTable [nzData]="caches">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>内容</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  <ng-template ngFor let-data let-index="index" [ngForOf]="nzTable.data">
+    <tr>
+      <td>{{index + 1}}</td>
+      <td>{{data.name}}</td>
+      <td><a (click)="del(data.name)">清除</a></td>
+    </tr>
+  </ng-template>
+  </tbody>
+</nz-table>

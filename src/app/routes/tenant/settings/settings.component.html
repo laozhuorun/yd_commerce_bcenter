@@ -1,0 +1,263 @@
+<page-grid>
+  <div *ngIf="settings" class="main">
+    <div class="menu">
+      <ul nz-menu [nzMode]="mode">
+        <li *ngIf="settings?.userManagement" nz-menu-item [nzSelected]="group === 'userManagement'" (click)="to('userManagement')">用户</li>
+        <li *ngIf="settings?.security" nz-menu-item [nzSelected]="group === 'security'" (click)="to('security')">安全</li>
+        <li *ngIf="settings?.billing" nz-menu-item [nzSelected]="group === 'billing'" (click)="to('billing')">账单</li>
+      </ul>
+    </div>
+    <div class="content">
+      <!--<nz-spin [nzSpinning]="formLoading">-->
+      <form nz-form nzLayout="vertical" #f="ngForm" (submit)="save()" se-container="1">
+        <div *ngIf="settings?.general" class="form-group" [ngClass]="{'hide':group !== 'general'}" style="display: none">
+          <div class="title">基本信息</div>
+          <se hidden label="时区" error="请输入您的时区!">
+            <input nz-input [(ngModel)]="settings.general.timezone" name="general.timezone">
+          </se>
+          <se label="昵称" error="请输入您的昵称!">
+            <input nz-input [(ngModel)]="settings.general.timezoneForComparison"
+                   name="general.timezoneForComparison">
+          </se>
+        </div>
+        <div *ngIf="settings?.userManagement" class="form-group" [ngClass]="{'hide':group !== 'userManagement'}">
+          <div class="title">用户管理</div>
+
+          <nz-list nzItemLayout="horizontal">
+            <nz-list-item [nzActions]="[allowSelfRegistrationOp]">
+              <ng-template #allowSelfRegistrationOp>
+                <nz-switch [(ngModel)]="settings.userManagement.allowSelfRegistration"
+                           name="userManagement.allowSelfRegistration" nzCheckedChildren="开"
+                           nzUnCheckedChildren="关"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="允许租户注册" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item [nzActions]="[isNewRegisteredUserActiveByDefaultOp]">
+              <ng-template #isNewRegisteredUserActiveByDefaultOp>
+                <nz-switch [(ngModel)]="settings.userManagement.isNewRegisteredUserActiveByDefault"
+                           name="userManagement.isNewRegisteredUserActiveByDefault" nzCheckedChildren="开"
+                           nzUnCheckedChildren="关"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="新注册用户默认激活" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item [nzActions]="[isEmailConfirmationRequiredForLoginOp]">
+              <ng-template #isEmailConfirmationRequiredForLoginOp>
+                <nz-switch [(ngModel)]="settings.userManagement.isEmailConfirmationRequiredForLogin"
+                           name="userManagement.isEmailConfirmationRequiredForLogin" nzCheckedChildren="开"
+                           nzUnCheckedChildren="关"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="登录前须邮箱确认" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item [nzActions]="[useCaptchaOnRegistrationOp]">
+              <ng-template #useCaptchaOnRegistrationOp>
+                <nz-switch [(ngModel)]="settings.userManagement.useCaptchaOnRegistration"
+                           name="userManagement.useCaptchaOnRegistration" nzCheckedChildren="开"
+                           nzUnCheckedChildren="关"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="开启(图形)验证码" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+          </nz-list>
+
+          <!--<se label="必须验证邮箱地址后才能登录" error="">
+            <input nz-input formControlName="isEmailConfirmationRequiredForLogin">
+          </se>-->
+        </div>
+        <div *ngIf="settings?.security" class="form-group" [ngClass]="{'hide':group !== 'security'}">
+          <div class="title">安全设置</div>
+
+          <nz-list nzItemLayout="horizontal">
+            <nz-list-item [nzActions]="[useDefaultPasswordComplexitySettingsOp]">
+              <ng-template #useDefaultPasswordComplexitySettingsOp>
+                <nz-switch [(ngModel)]="settings.security.useDefaultPasswordComplexitySettings"
+                           name="security.useDefaultPasswordComplexitySettings" nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="使用默认设置" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <!-- PasswordComplexitySetting start -->
+            <nz-divider nzText="密码复杂性" nzOrientation="left"></nz-divider>
+            <nz-list-item [nzActions]="[passwordComplexityRequireDigitOp]">
+              <ng-template #passwordComplexityRequireDigitOp>
+                <nz-switch [(ngModel)]="settings.security.passwordComplexity.requireDigit"
+                           name="security.passwordComplexity.requireDigit" nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="必须包含数字" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item [nzActions]="[passwordComplexityRequireLowercaseOp]">
+              <ng-template #passwordComplexityRequireLowercaseOp>
+                <nz-switch [(ngModel)]="settings.security.passwordComplexity.requireLowercase"
+                           name="security.passwordComplexity.requireLowercase" nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="必须包含小写字母" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item [nzActions]="[passwordComplexityRequireUppercaseOp]">
+              <ng-template #passwordComplexityRequireUppercaseOp>
+                <nz-switch [(ngModel)]="settings.security.passwordComplexity.requireUppercase"
+                           name="security.passwordComplexity.requireUppercase" nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="必须包含大写" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item [nzActions]="[passwordComplexityRequireNonAlphanumericOp]">
+              <ng-template #passwordComplexityRequireNonAlphanumericOp>
+                <nz-switch [(ngModel)]="settings.security.passwordComplexity.requireNonAlphanumeric"
+                           name="security.passwordComplexity.requireNonAlphanumeric" nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="必须包含非字母数字(符号)" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item>
+              <nz-list-item-meta nzTitle="最小长度限制" [nzDescription]="passwordComplexityRequiredLength"></nz-list-item-meta>
+              <ng-template #passwordComplexityRequiredLength>
+                <se label="" error="">
+                  <input nz-input type="number" [max]="20" [min]="8" [(ngModel)]="settings.security.passwordComplexity.requiredLength"
+                         name="security.passwordComplexity.requiredLength">
+                </se>
+              </ng-template>
+            </nz-list-item>
+
+            <!-- defaultPasswordComplexity start -->
+            <nz-divider nzText="默认密码复杂性" nzOrientation="left"></nz-divider>
+            <nz-list-item [nzActions]="[defaultPasswordComplexityRequireDigitOp]">
+              <ng-template #defaultPasswordComplexityRequireDigitOp>
+                <nz-switch [(ngModel)]="settings.security.defaultPasswordComplexity.requireDigit"
+                           name="security.defaultPasswordComplexity.requireDigit" nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="必须包含数字" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item [nzActions]="[defaultPasswordComplexityRequireLowercaseOp]">
+              <ng-template #defaultPasswordComplexityRequireLowercaseOp>
+                <nz-switch [(ngModel)]="settings.security.defaultPasswordComplexity.requireLowercase"
+                           name="security.defaultPasswordComplexity.requireLowercase" nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="必须包含小写字母" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item [nzActions]="[defaultPasswordComplexityRequireUppercaseOp]">
+              <ng-template #defaultPasswordComplexityRequireUppercaseOp>
+                <nz-switch [(ngModel)]="settings.security.defaultPasswordComplexity.requireUppercase"
+                           name="security.defaultPasswordComplexity.requireUppercase" nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="必须包含大写" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item [nzActions]="[defaultPasswordComplexityRequireNonAlphanumericOp]">
+              <ng-template #defaultPasswordComplexityRequireNonAlphanumericOp>
+                <nz-switch [(ngModel)]="settings.security.defaultPasswordComplexity.requireNonAlphanumeric"
+                           name="security.defaultPasswordComplexity.requireNonAlphanumeric" nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="必须包含非字母数字(符号)" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item>
+              <nz-list-item-meta nzTitle="最小长度限制" [nzDescription]="defaultPasswordComplexityRequiredLength"></nz-list-item-meta>
+              <ng-template #defaultPasswordComplexityRequiredLength>
+                <se label="" error="">
+                  <input nz-input type="number" [max]="20" [min]="8" [(ngModel)]="settings.security.defaultPasswordComplexity.requiredLength" name="security.defaultPasswordComplexity.requiredLength">
+                </se>
+              </ng-template>
+            </nz-list-item>
+
+            <!-- userLockOut start -->
+            <nz-divider nzText="用户锁定" nzOrientation="left"></nz-divider>
+            <nz-list-item [nzActions]="[userLockOutIsEnabledOp]">
+              <ng-template #userLockOutIsEnabledOp>
+                <nz-switch [(ngModel)]="settings.security.userLockOut.isEnabled" name="security.userLockOut.isEnabled"
+                           nzCheckedChildren="是"
+                           nzUnCheckedChildren="否"></nz-switch>
+              </ng-template>
+              <nz-list-item-meta nzTitle="启用" nzDescription="..."></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item>
+              <ng-template #userLockOutMaxFailedAccessAttemptsBeforeLockoutOp>
+                <se label="" error="">
+                  <input nz-input type="number" [max]="30" [min]="1" [(ngModel)]="settings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout"
+                         name="security.userLockOut.maxFailedAccessAttemptsBeforeLockout">
+                </se>
+              </ng-template>
+              <nz-list-item-meta nzTitle="最大访问失败(密码错误)次数" [nzDescription]="userLockOutMaxFailedAccessAttemptsBeforeLockoutOp"></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item>
+              <ng-template #userLockOutDefaultAccountLockoutSecondsOp>
+                <se label="" error="">
+                  <input nz-input type="number" [max]="3000" [min]="30" [(ngModel)]="settings.security.userLockOut.defaultAccountLockoutSeconds" name="security.userLockOut.defaultAccountLockoutSeconds">
+                </se>
+              </ng-template>
+              <nz-list-item-meta nzTitle="默认锁定时间（单位：秒）" [nzDescription]="userLockOutDefaultAccountLockoutSecondsOp"></nz-list-item-meta>
+            </nz-list-item>
+          </nz-list>
+        </div>
+
+        <div *ngIf="settings?.billing" class="form-group" [ngClass]="{'hide':group !== 'billing'}">
+          <div class="title">账单设置</div>
+          <nz-list>
+            <nz-list-item>
+              <ng-template #userLockOutIsEnabledOp>
+                <input nz-input [(ngModel)]="settings.billing.legalName" name="billing.legalName">
+              </ng-template>
+              <nz-list-item-meta type="text" nzTitle="注册名称" [nzDescription]="userLockOutIsEnabledOp"></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item>
+              <ng-template #userLockOutMaxFailedAccessAttemptsBeforeLockoutOp>
+                <input nz-input type="text" [(ngModel)]="settings.billing.address" name="billing.address">
+              </ng-template>
+              <nz-list-item-meta nzTitle="地址" [nzDescription]="userLockOutMaxFailedAccessAttemptsBeforeLockoutOp"></nz-list-item-meta>
+            </nz-list-item>
+            <nz-list-item>
+              <ng-template #userLockOutDefaultAccountLockoutSecondsOp>
+                <input nz-input type="text" [(ngModel)]="settings.billing.taxVatNo" name="billing.taxVatNo">
+              </ng-template>
+              <nz-list-item-meta nzTitle="税号" [nzDescription]="userLockOutDefaultAccountLockoutSecondsOp"></nz-list-item-meta>
+            </nz-list-item>
+          </nz-list>
+
+        </div>
+        <se style="margin-top: 24px">
+          <button type="button" nz-button nzType="primary" (click)="save()" [disabled]="f.invalid">
+            更新<span *ngIf="group === 'userManagement'">用户</span><span *ngIf="group === 'email'">邮件</span><span
+            *ngIf="group === 'tenantManagement'">租户</span><span *ngIf="group === 'security'">安全</span><span
+            *ngIf="group === 'billing'">账单</span>设置
+          </button>
+        </se>
+      </form>
+      <!--</nz-spin>-->
+
+      <!--<nz-list nzItemLayout="horizontal">
+        <nz-list-item [nzActions]="[githubOp]">
+          <ng-template #githubOp>
+            <a (click)="msg.success('Edit')">修改</a>
+          </ng-template>
+          <nz-list-item-meta nzTitle="绑定Github" [nzAvatar]="githubAvatar" nzDescription="当前未绑定Github账号">
+            <ng-template #githubAvatar>
+              <i nz-icon type="github" class="icon-sm"></i>
+            </ng-template>
+          </nz-list-item-meta>
+        </nz-list-item>
+        <nz-list-item [nzActions]="[taobaoOp]">
+          <ng-template #taobaoOp>
+            <a (click)="msg.success('Edit')">修改</a>
+          </ng-template>
+          <nz-list-item-meta nzTitle="绑定Taobao" [nzAvatar]="taobaoAvatar" nzDescription="当前未绑定Taobao账号">
+            <ng-template #taobaoAvatar>
+              <i nz-icon type="taobao" class="icon-sm"></i>
+            </ng-template>
+          </nz-list-item-meta>
+        </nz-list-item>
+        <nz-list-item [nzActions]="[alipayOp]">
+          <ng-template #alipayOp>
+            <a (click)="msg.success('Edit')">修改</a>
+          </ng-template>
+          <nz-list-item-meta nzTitle="绑定Alipay" [nzAvatar]="alipayAvatar" nzDescription="当前未绑定Alipay账号">
+            <ng-template #alipayAvatar>
+              <i nz-icon type="alipay-circle" class="icon-sm"></i>
+            </ng-template>
+          </nz-list-item-meta>
+        </nz-list-item>
+      </nz-list>-->
+
+    </div>
+  </div>
+</page-grid>

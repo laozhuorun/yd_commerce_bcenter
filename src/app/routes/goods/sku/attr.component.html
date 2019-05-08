@@ -1,0 +1,33 @@
+<div se-container>
+    <se style="position: relative" label="规格名" error="必填项">
+        <input placeholder="请选择/输入规格名称" [ngModel]="attribute.name" nz-input (blur)="onBlur($event.target)"
+               [nzAutocomplete]="autoAttr">
+        <nz-autocomplete nzBackfill #autoAttr (selectionChange)="onChange($event)">
+            <nz-auto-option *ngFor="let option of attributes" [nzLabel]="option.name" [nzValue]="option.id">
+                {{option.name}}
+            </nz-auto-option>
+        </nz-autocomplete>
+        <i class="add-attr" (click)="del()" nz-icon type="plus"></i>
+    </se>
+    <label style="float: left" nz-checkbox *ngIf="index === 0" [(ngModel)]="showPicture">添加规格图片</label>
+    <se *ngIf="attribute.id" style="width: 100%" label="规格值" required error="必填项">
+        <div nz-row nzGutter="16">
+            <div *ngFor="let item of attribute.values;let i = index" nz-col class="gutter-row" nzSpan="6">
+                <div class="gutter-box">
+                    <app-goods-sku-attr-value
+                            [(value)]="item"
+                            [attributeId]="attribute.id"
+                            [selectedValues]="attribute.values"
+                            [attributeValues]="attributeValues"
+                            [showPicture]="showPicture"
+                            (valueChange)="valueChange($event,i)">
+                    </app-goods-sku-attr-value>
+                </div>
+            </div>
+            <div nz-col class="gutter-row" nzSpan="6">
+                <button type="button" nz-button nzType="dashed" style="width:100%" (click)="addValue()"><i nz-icon type="plus"></i> 添加规格值</button>
+            </div>
+        </div>
+    </se>
+
+</div>

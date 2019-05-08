@@ -1,0 +1,14 @@
+<nz-upload *ngIf="nzCustomRequest" class="avatar-uploader"
+           nzAction="https://up-z0.qiniup.com"
+           nzName="avatar"
+           nzListType="picture-card"
+           [nzShowUploadList]="false"
+           [nzBeforeUpload]="beforeUpload"
+           [nzCustomRequest]="nzCustomRequest"
+           (nzChange)="handleChange($event)">
+  <ng-container *ngIf="!avatarUrl">
+    <i nz-icon type="plus"></i>
+    <div class="ant-upload-text">Upload</div>
+  </ng-container>
+  <img *ngIf="avatarUrl" [src]="avatarUrl" class="avatar">
+</nz-upload>

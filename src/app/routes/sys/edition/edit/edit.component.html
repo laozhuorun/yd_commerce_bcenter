@@ -1,0 +1,90 @@
+<page-header-wrapper [title]="id ? '编辑版本' : '创建新版本'">
+    <form *ngIf="edition" nz-form #f="ngForm" (submit)="submit(f)" class="sf__no-error">
+        <nz-card nzTitle="版本基本信息">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>名称</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input [(ngModel)]="edition.displayName" name="displayName" nz-input style="width: 60%; margin-right:8px;"
+                           placeholder="请输入名称" required>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>是否启用</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-switch [(ngModel)]="edition.isEnable"
+                               name="isEnable" nzCheckedChildren="是"
+                               nzUnCheckedChildren="否"></nz-switch>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <nz-card nzTitle="其它">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">价格/月</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-input-number nz-input [(ngModel)]="edition.monthlyPrice" name="monthlyPrice" style="width: 60%; margin-right:8px;"></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">价格/季</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-input-number nz-input [(ngModel)]="edition.seasonPrice" name="seasonPrice" style="width: 60%; margin-right:8px;"></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">价格/年</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-input-number nz-input [(ngModel)]="edition.annualPrice" name="annualPrice" style="width: 60%; margin-right:8px;"></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">试用期/天</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-input-number nz-input [(ngModel)]="edition.trialDayCount" name="trialDayCount" style="width: 60%; margin-right:8px;"></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">过期通知/提前天</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-input-number nz-input [(ngModel)]="edition.waitingDayAfterExpire" name="waitingDayAfterExpire" style="width: 60%; margin-right:8px;"></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">过期后降级为</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-select [(ngModel)]="edition.expiringEditionId" name="expiringEditionId" nzShowSearch nzAllowClear
+                               [nzPlaceHolder]="'请选择'"
+                               style="width: 60%; margin-right:8px;" required>
+                        <nz-option *ngFor="let item of editions" [nzLabel]="item.text"
+                                   [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+
+        <nz-card nzTitle="特性">
+            <nz-form-item *ngFor="let feature of features;let i = index">
+                <nz-form-label [nzXs]="24" [nzSm]="4">{{feature.displayName}}{{feature.value}}</nz-form-label>
+                <nz-form-control *ngIf="feature.inputType.name === 'SINGLE_LINE_STRING'" [nzXs]="24" [nzSm]="20">
+                    <input [(ngModel)]="feature.value" [name]="feature.name" nz-input
+                           style="width: 60%; margin-right:8px;"
+                           placeholder="请输入租户名称">
+                </nz-form-control>
+                <nz-form-control *ngIf="feature.inputType.name === 'CHECKBOX'" [nzXs]="24" [nzSm]="20">
+                    <app-feature [item]="feature" [(value)]="feature.value"></app-feature>
+                </nz-form-control>
+                <nz-form-control *ngIf="feature.inputType.name === 'COMBOBOX'" [nzXs]="24" [nzSm]="20">
+                    <nz-select [(ngModel)]="feature.value" [name]="feature.name" nzShowSearch nzAllowClear
+                               [nzPlaceHolder]="'请选择'"
+                               style="width: 60%; margin-right:8px;" required>
+                        <nz-option *ngFor="let item of feature.inputType.itemSource.items" [nzLabel]="item.displayText"
+                                   [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <footer-toolbar>
+            <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">添加</button>
+            <button type="button" nz-button (click)="cancel()">返回</button>
+        </footer-toolbar>
+    </form>
+</page-header-wrapper>

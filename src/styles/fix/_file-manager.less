@@ -1,0 +1,139 @@
+@file-item-name-color: #4e5155;
+@file-item-selected-border-color: @primary-color;
+@file-item-selected-bg: @blue-1;
+
+app-file-manager file-manager {
+  background: #fff;
+  display: block;
+  padding: 24px;
+}
+
+.file {
+  &-manager {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    &__header {
+      display: flex;
+      align-items: center;
+      padding: 0 32px 4px 12px;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+      font-weight: 700;
+      margin-top: 16px;
+      &-name {
+        flex: 1;
+      }
+      &-pixel {
+        width: 150px;
+      }
+      &-time {
+        width: 130px;
+      }
+    }
+    &__small {
+      .file-item {
+        display: flex;
+        align-items: center;
+        text-align: left;
+        margin: 0 0 2px;
+        padding: 4px 32px 4px 0;
+        width: 100%;
+        &__icon,
+        &__img {
+          display: block;
+          margin: 0 8px;
+          width: 32px;
+          height: 32px;
+          text-align: center;
+          font-size: 20px;
+          line-height: 32px;
+        }
+        &__name {
+          flex: 1;
+        }
+        &__pixel {
+          position: inherit;
+          width: 150px;
+          > span {
+            background: none;
+          }
+        }
+        &__time {
+          display: block;
+          width: 130px;
+        }
+      }
+    }
+  }
+  &-item {
+    position: relative;
+    margin: 0 8px 8px 0;
+    padding: 16px 0 24px;
+    width: 9rem;
+    text-align: center;
+    z-index: 1;
+    flex: 0 0 auto;
+    flex-shrink: 0;
+    border: 1px solid transparent;
+    cursor: pointer;
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.05);
+      .file-item__actions {
+        display: block;
+      }
+    }
+    &__selected {
+      border-color: @file-item-selected-border-color !important;
+      background-color: @file-item-selected-bg !important;
+      .file-item__actions {
+        display: block;
+      }
+    }
+    &__icon {
+      display: block;
+      font-size: 40px;
+      margin: 16px 0px;
+    }
+    &__img {
+      background-color: transparent;
+      background-position: center center;
+      background-size: cover;
+      display: block;
+      margin: 0 auto 0.75rem;
+      width: 4rem;
+      height: 4rem;
+      font-size: 2.5rem;
+      line-height: 4rem;
+    }
+    &__name {
+      color: @file-item-name-color;
+      height: 28px;
+      line-height: 28px;
+      padding: 0 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    &__pixel {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: 0;
+      > span {
+        background: rgba(0, 0, 0, 0.01);
+        width: 100%;
+        display: block;
+        padding: 2px 0;
+      }
+    }
+    &__time {
+      display: none;
+    }
+    &__actions {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+  }
+}

@@ -1,0 +1,27 @@
+@import '~@delon/theme/styles/default';
+
+:host ::ng-deep {
+  .pro-passport__bg {
+    padding: 48px;
+    align-items: center;
+    display: flex;
+    @media (max-width: @screen-md-max) {
+      display: none !important;
+    }
+    .text {
+      position: relative;
+      padding: 0 64px;
+      color: #fff;
+      h1 {
+        font-size: 56px;
+        font-weight: 900;
+        margin-bottom: 24px;
+        color: #fff;
+      }
+      p {
+        font-size: 22px;
+        line-height: 32px;
+      }
+    }
+  }
+}

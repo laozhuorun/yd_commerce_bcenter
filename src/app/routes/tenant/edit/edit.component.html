@@ -1,0 +1,133 @@
+<page-header-wrapper [title]="id === '0' ? '创建新租户' : '编辑租户'">
+    <form *ngIf="tenant" nz-form #f="ngForm" (submit)="submit(f)" class="sf__no-error">
+        <nz-card nzTitle="租户基本信息">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>名称</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input [(ngModel)]="tenant.name" name="name" nz-input style="width: 60%; margin-right:8px;"
+                           placeholder="请输入名称" required>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>租户名称</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input [(ngModel)]="tenant.tenancyName" name="tenancyName" nz-input
+                           style="width: 60%; margin-right:8px;"
+                           placeholder="请输入租户名称" required>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="!id">
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>管理员邮箱</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input [(ngModel)]="tenant.adminEmailAddress" name="adminEmailAddress" nz-input
+                           style="width: 60%; margin-right:8px;"
+                           placeholder="请输入租户名称" required>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="!id">
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>管理员手机</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input [(ngModel)]="tenant.phoneNumber" name="phoneNumber" nz-input
+                           style="width: 60%; margin-right:8px;"
+                           placeholder="请输入租户名称" required>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="!id">
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>管理员密码</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input [(ngModel)]="tenant.adminPassword" name="adminPassword" nz-input
+                           style="width: 60%; margin-right:8px;"
+                           placeholder="请输入租户名称" required>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="!id">
+                <nz-form-label [nzXs]="24" [nzSm]="4">首次登录修改密码</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-switch [(ngModel)]="tenant.sendActivationEmail"
+                               name="sendActivationEmail" nzCheckedChildren="是"
+                               nzUnCheckedChildren="否"></nz-switch>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="!id">
+                <nz-form-label [nzXs]="24" [nzSm]="4">发送激活邮件</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-switch [(ngModel)]="tenant.shouldChangePasswordOnNextLogin"
+                               name="shouldChangePasswordOnNextLogin" nzCheckedChildren="是"
+                               nzUnCheckedChildren="否"></nz-switch>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <nz-card nzTitle="其它">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>版本Id</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-select [(ngModel)]="tenant.editionId" name="editionId" nzShowSearch nzAllowClear
+                               [nzPlaceHolder]="'请选择'"
+                               style="width: 60%; margin-right:8px;" required>
+                        <nz-option *ngFor="let item of editions" [nzLabel]="item.text"
+                                   [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">数据库连接字符串</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input [(ngModel)]="tenant.connectionString" name="connectionString" nz-input
+                           style="width: 60%; margin-right:8px;"
+                           placeholder="请输入租户名称">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">激活</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-switch [(ngModel)]="tenant.isActive"
+                               name="isActive" nzCheckedChildren="是"
+                               nzUnCheckedChildren="否"></nz-switch>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">是否试用中</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-switch [(ngModel)]="tenant.isInTrialPeriod"
+                               name="isInTrialPeriod" nzCheckedChildren="是"
+                               nzUnCheckedChildren="否"></nz-switch>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">订阅结束时间</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-date-picker [(ngModel)]="subscriptionEndDateUtc" name="subscriptionEndDateUtc"></nz-date-picker>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+
+        <nz-card nzTitle="特性" *ngIf="id">
+            <nz-form-item *ngFor="let feature of features;let i = index">
+                <nz-form-label [nzXs]="24" [nzSm]="4">{{feature.displayName}}{{feature.value}}</nz-form-label>
+                <nz-form-control *ngIf="feature.inputType.name === 'SINGLE_LINE_STRING'" [nzXs]="24" [nzSm]="20">
+                    <input [(ngModel)]="feature.value" [name]="feature.name" nz-input
+                           style="width: 60%; margin-right:8px;"
+                           placeholder="请输入租户名称">
+                </nz-form-control>
+                <nz-form-control *ngIf="feature.inputType.name === 'CHECKBOX'" [nzXs]="24" [nzSm]="20">
+                    <app-feature [item]="feature" [(value)]="feature.value"></app-feature>
+                    <!--<nz-switch [(ngModel)]="feature.value"
+                               [name]="feature.name" nzCheckedChildren="是"
+                               nzUnCheckedChildren="否"></nz-switch>-->
+                </nz-form-control>
+                <nz-form-control *ngIf="feature.inputType.name === 'COMBOBOX'" [nzXs]="24" [nzSm]="20">
+                    <nz-select [(ngModel)]="feature.value" [name]="feature.name" nzShowSearch nzAllowClear
+                               [nzPlaceHolder]="'请选择'"
+                               style="width: 60%; margin-right:8px;" required>
+                        <nz-option *ngFor="let item of feature.inputType.itemSource.items" [nzLabel]="item.displayText"
+                                   [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <footer-toolbar>
+            <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">添加</button>
+            <button type="button" nz-button (click)="cancel()">返回</button>
+        </footer-toolbar>
+    </form>
+</page-header-wrapper>

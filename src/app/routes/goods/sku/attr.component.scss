@@ -1,0 +1,17 @@
+.add-attr {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border-radius: 100%;
+  display: none;
+}
+
+:host {
+  &:hover {
+    .add-attr {
+      display: block;
+    }
+  }
+}

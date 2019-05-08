@@ -1,0 +1,19 @@
+<page-header-wrapper>
+  <nz-card>
+    <nz-tabset [nzTabBarExtraContent]="extraTemplate" [(nzSelectedIndex)]="selectedIndex">
+      <nz-tab nzTitle="日志">
+        <app-sys-maintenance-log [logs]="logs"></app-sys-maintenance-log>
+      </nz-tab>
+      <nz-tab nzTitle="缓存">
+        <app-sys-maintenance-cache></app-sys-maintenance-cache>
+      </nz-tab>
+    </nz-tabset>
+    <ng-template #extraTemplate>
+      <nz-button-group *ngIf="selectedIndex === 0">
+        <button (click)="download()" [nzLoading]="loading.download" nz-button nzType="primary"><i nz-icon type="download"></i> 下载</button>
+        <button (click)="reload()" [nzLoading]="loading.reload" nz-button nzType="primary"><i nz-icon type="reload" theme="outline"></i> 刷新</button>
+      </nz-button-group>
+      <button *ngIf="selectedIndex === 1" (click)="del()" [nzLoading]="loading.del" nz-button nzType="primary"><i nz-icon type="delete" theme="outline"></i> 清除所有缓存</button>
+    </ng-template>
+  </nz-card>
+</page-header-wrapper>

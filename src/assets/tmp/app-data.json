@@ -1,0 +1,160 @@
+{
+  "app": {
+    "name": "You Du",
+    "description": "有度电商管理后台"
+  },
+  "user": {
+    "name": "Admin",
+    "avatar": "./assets/tmp/img/avatar.jpg",
+    "email": "cipchk@qq.com"
+  },
+  "menu": [
+    {
+      "_text": "主导航",
+      "i18n": "menu.main",
+      "group": true,
+      "hideInBreadcrumb": true,
+      "children": [
+        {
+          "_text": "工作台",
+          "i18n": "BusiCenter.Dashboard",
+          "icon": "anticon anticon-dashboard",
+          "link": "/dashboard/analysis"
+        },
+        {
+          "_text": "商品管理",
+          "i18n": "BusiCenter.Catelog",
+          "icon": "anticon anticon-gift",
+          "children": [
+            {
+              "_text": "查找商品",
+              "link": "/goods/list",
+              "i18n": "BusiCenter.Catelog.Product"
+            },
+            {
+              "_text": "分类管理",
+              "link": "/goods/category/list",
+              "i18n": "BusiCenter.Catelog.Category"
+            },
+            {
+              "_text": "属性管理",
+              "link": "/goods/attribute/list",
+              "i18n": "BusiCenter.Catelog.ProductAttribute"
+            }
+          ]
+        },
+        {
+          "_text": "租户管理",
+          "i18n": "Admin.UserManage.Tenants",
+          "icon": "anticon anticon-radar-chart",
+          "children": [
+            {
+              "_text": "查找租户",
+              "link": "/tenant/list",
+              "i18n": "Admin.UserManage.Tenants"
+            },
+            {
+              "_text": "特性管理",
+              "link": "/tenant/feature",
+              "i18n": "Admin.UserManage.Tenants.ChangeFeatures"
+            }
+          ]
+        },
+        {
+          "_text": "销售管理",
+          "i18n": "BusiCenter.SalesManage",
+          "icon": "anticon anticon-shopping",
+          "children": [
+            {
+              "_text": "订单管理",
+              "link": "/order/list",
+              "i18n": "BusiCenter.SalesManage.Order"
+            },
+            {
+              "_text": "发货管理",
+              "link": "/shipping/list",
+              "i18n": "BusiCenter.SalesManage.Shipment"
+            }
+          ]
+        },
+        {
+          "_text": "物流管理",
+          "i18n": "BusiCenter.StoreConfiguration.TenantLogistics",
+          "icon": "anticon anticon-radar-chart",
+          "children": [
+            {
+              "_text": "发货单查询",
+              "link": "/shipment/list",
+              "i18n": "BusiCenter.StoreConfiguration.TenantLogistics"
+            },
+            {
+              "_text": "创建发货记录",
+              "link": "/shipment/edit/0",
+              "i18n": "BusiCenter.StoreConfiguration.TenantLogistics.Create"
+            },
+            {
+              "_text": "物流供应商",
+              "link": "/shipment/support/list",
+              "i18n": "BusiCenter.StoreConfiguration.Logistics"
+            }
+          ]
+        },
+        {
+          "_text": "广告管理",
+          "i18n": "BusiCenter.AdvertManage",
+          "icon": "anticon anticon-line-chart",
+          "children": [
+            {
+              "_text": "广告账户",
+              "link": "/advert/list",
+              "i18n": "BusiCenter.AdvertManage.Account"
+            },
+            {
+              "_text": "广告统计",
+              "link": "/advert/statistics",
+              "i18n": "BusiCenter.AdvertManage.DailyStatistic"
+            }
+          ]
+        },
+        {
+          "_text": "店铺管理",
+          "i18n": "BusiCenter.StoreConfiguration.Store",
+          "icon": "anticon anticon-shop",
+          "link": "/store/list"
+        },
+        {
+          "_text": "系统",
+          "i18n": "Admin.Configuration",
+          "icon": "anticon anticon-setting",
+          "children": [
+            {
+              "_text": "角色",
+              "link": "/sys/role",
+              "i18n": "Admin.UserManage.Roles"
+            },
+            {
+              "_text": "设置",
+              "link": "/tenant/settings",
+              "i18n": "Admin.Configuration.Tenant.Settings"
+            },
+            {
+              "_text": "设置",
+              "link": "/sys/settings",
+              "i18n": "Admin.Configuration.Host.Settings"
+            },
+            {
+              "_text": "版本管理",
+              "link": "/sys/edition/list",
+              "i18n": "Admin.System.Editions"
+            },
+            {
+              "_text": "维护",
+              "link": "/sys/maintenance",
+              "i18n": "Admin.System.Host.Maintenance"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

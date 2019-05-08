@@ -1,0 +1,137 @@
+@import '~@delon/theme/styles/default';
+
+@fc-event-colors:
+  primary     @blue-6,
+  success     @green-6,
+  danger      @red-6,
+  warning     @yellow-6,
+  purple    @purple-6,
+  magenta   @magenta-6,
+;
+
+// 美化 fullcalendar
+.fc-antd {
+  .ant-btn {
+    padding: @btn-padding-base;
+    height: @btn-height-base;
+  }
+  .fc-today-button {
+    margin-left: 8px;
+  }
+
+  th,
+  td,
+  thead,
+  tbody,
+  .fc-divider,
+  .fc-row,
+  .fc-content,
+  .fc-popover,
+  .fc-list-view,
+  .fc-list-heading td {
+    border-color: @border-color-split;
+  }
+
+  th {
+    &.fc-day-header {
+      padding: 8px;
+      color: @table-header-color;
+    }
+  }
+
+  td {
+    &.fc-today {
+      background: rgba(232, 232, 232, 0.2);
+    }
+    &.fc-day-top {
+      padding: 4px 8px;
+    }
+    a {
+      color: inherit;
+      &,
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .fc-day-grid {
+    td:not(.fc-axis) {
+      padding: 4px;
+    }
+  }
+
+  // events
+  .fc-event-container {
+    padding: 2px 6px;
+  }
+  .fc-event {
+    background: #fff;
+    border: 1px solid @border-color-split;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.055);
+    .fc-content {
+      padding: 4px 4px 4px 20px;
+      &:before {
+        display: block;
+        content: ' ';
+        position: absolute;
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        margin-top: -5px;
+        top: 50%;
+        left: 4px;
+      }
+    }
+    .fc-title {
+      display: block;
+      color: @text-color;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    &.fc-not-start.fc-end .fc-content {
+      padding-left: 4px;
+      &:before {
+        display: none;
+      }
+    }
+    &.fc-start {
+      .fc-content:before {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      .for-each(@fc-event-colors, {
+        &.fc-event-@{adKey} .fc-content:before {
+          background: @adValue;
+        }
+        &.fc-event-fill-@{adKey} {
+          background: @adValue;
+          .fc-title {
+            color: #fff;
+          }
+        }
+      });
+    }
+  }
+  .fc-list-item {
+    .for-each(@fc-event-colors, {
+      &.fc-event-@{adKey} .fc-event-dot {
+        background: @adValue;
+      }
+    });
+  }
+
+  // popover
+  .fc-popover {
+    .fc-header {
+      background: rgba(232, 232, 232, 0.2);
+      padding: 8px 16px;
+    }
+    .fc-event {
+      &-container {
+        padding: 8px 8px 0 8px;
+      }
+      margin-bottom: 8px;
+    }
+  }
+}

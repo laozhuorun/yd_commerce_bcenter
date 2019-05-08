@@ -1,0 +1,212 @@
+<page-header-wrapper [title]="id === '0' ? '创建新订单' : '编辑订单'">
+    <form *ngIf="products" nz-form [formGroup]="orderForm" (ngSubmit)="submit()" class="sf__no-error">
+        <nz-card nzTitle="商品信息">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired nzFor="productId">选择店铺</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-select formControlName="storeId" nzShowSearch nzAllowClear nzPlaceHolder="请选择店铺"
+                               style="width: 60%; margin-right:8px;" required>
+                        <nz-option *ngFor="let item of stores" [nzLabel]="item.text" [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                    <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngFor="let item of orderForm.get('items').value;let i = index">
+                <nz-form-label [nzXs]="24" [nzSm]="4" *ngIf="i==0">下单商品</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20" [nzOffset]="i==0?0:4">
+                    <input (click)="showProductSelect(i)" [value]="getSelectedProduct(orderForm.get('items').value[i])"
+                           nz-input style="width: 60%; margin-right:8px;" placeholder="请选择商品">
+                    <i nz-icon type="minus-circle-o" class="dynamic-delete-button"
+                       (click)="removeProduct($event,i)"></i>
+                    <!--<nz-form-explain>
+                        Please input passenger's name or delete this field.
+                    </nz-form-explain>-->
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-control [nzXs]="{span:24,offset:0}" [nzSm]="{span:20,offset:4}">
+                    <button nz-button nzType="dashed" style="width:60%" (click)="addProduct($event)"><i nz-icon
+                                                                                                        type="plus"></i>
+                        添加商品
+                    </button>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <nz-card nzTitle="价格明细">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired nzFor="totalAmount">订单小计</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-input-number formControlName="totalAmount" nz-input style="width: 60%; margin-right:8px;"
+                                     placeholder="请输入订单小计"></nz-input-number>
+                    <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired nzFor="discountAmount">订单折扣</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-input-number formControlName="discountAmount" nz-input style="width: 60%; margin-right:8px;"
+                                     placeholder="请输入订单小计"></nz-input-number>
+                    <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <nz-card *ngIf="enums?.OrderSource" nzTitle="订单信息">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired nzFor="productId">订单来源</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-select formControlName="orderSource" nzShowSearch nzAllowClear nzPlaceHolder="请选择订单来源"
+                               style="width: 60%; margin-right:8px;" required>
+                        <nz-option *ngFor="let item of enums?.OrderSource" [nzLabel]="item.text"
+                                   [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                    <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired nzFor="productId">订单状态</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-select formControlName="orderStatus" nzShowSearch nzAllowClear nzPlaceHolder="请选择订单状态"
+                               style="width: 60%; margin-right:8px;" required>
+                        <nz-option *ngFor="let item of enums.OrderStatus" [nzLabel]="item.text"
+                                   [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                    <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <nz-card *ngIf="enums?.OrderSource" nzTitle="支付信息">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired nzFor="productId">支付方式</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-select formControlName="orderType" nzShowSearch nzAllowClear nzPlaceHolder="请选择支付方式"
+                               style="width: 60%; margin-right:8px;" required>
+                        <nz-option *ngFor="let item of enums?.OrderType" [nzLabel]="item.text"
+                                   [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                    <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired nzFor="productId">支付状态</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-select formControlName="paymentStatus" nzShowSearch nzAllowClear nzPlaceHolder="请选择支付状态"
+                               style="width: 60%; margin-right:8px;" required>
+                        <nz-option *ngFor="let item of enums.PaymentStatus" [nzLabel]="item.text"
+                                   [nzValue]="item.value"></nz-option>
+                    </nz-select>
+                    <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <nz-card nzTitle="物流信息">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">收件人</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input formControlName="shippingName" nz-input style="width: 60%; margin-right:8px;"
+                           placeholder="请输入收件人名称">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">手机号</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input type="number" formControlName="shippingPhoneNumber" nz-input
+                           style="width: 60%; margin-right:8px;" placeholder="请输入联系电话">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">配送地址</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <nz-cascader
+                            [ngModelOptions]="{standalone: true}"
+                            [(ngModel)]="address"
+                            [nzLabelProperty]="'text'"
+                            [nzValueProperty]="'value'"
+                            [nzLoadData]="loadData"
+                            (ngModelChange)="onChanges($event)">
+                    </nz-cascader>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">详细地址</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <input formControlName="shippingAddress" nz-input style="width: 60%; margin-right:8px;"
+                           placeholder="请输入详细地址">
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <nz-card nzTitle="备注">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">用户备注</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <textarea rows="4" formControlName="customerComment" nz-input style="width: 60%; margin-right:8px;"
+                              placeholder="请输入收件人名称"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24" [nzSm]="4">管理员备注</nz-form-label>
+                <nz-form-control [nzXs]="24" [nzSm]="20">
+                    <textarea rows="4" formControlName="adminComment" nz-input style="width: 60%; margin-right:8px;"
+                              placeholder="请输入收件人名称"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-card>
+        <footer-toolbar>
+            <button type="submit" nz-button nzType="primary" [disabled]="orderForm.invalid">添加</button>
+            <button type="button" nz-button (click)="cancel()">返回</button>
+        </footer-toolbar>
+    </form>
+</page-header-wrapper>
+<nz-modal [(nzVisible)]="productSelectShow" nzTitle="The first Modal" (nzOnCancel)="handleCancel()"
+          (nzOnOk)="handleOk()">
+    <form [formGroup]="orderItemForm" class="sf__no-error">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6" nzRequired nzFor="productId">选择商品</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+                <nz-select formControlName="productId" nzShowSearch nzAllowClear nzPlaceHolder="选择商品" required>
+                    <nz-option *ngFor="let item of products" [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+                </nz-select>
+                <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6" nzRequired nzFor="quantity">数量</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+                <nz-input-number formControlName="quantity" [nzMin]="1" [nzMax]="10" [nzStep]="1"
+                                 id="quantity"></nz-input-number>
+                <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item *ngFor="let attribute of attributes;let i = index">
+            <nz-form-label [nzSpan]="6" nzRequired *ngIf="i === 0">选择商品规格</nz-form-label>
+            <nz-form-control [nzSpan]="12" [nzOffset]="i==0?0:6">
+                <nz-select [ngModelOptions]="{standalone: true}" [compareWith]="compareFn" [(ngModel)]="_attributes[i].values[0]"
+                           (ngModelChange)="attributeChanges()" nzShowSearch nzAllowClear
+                           nzPlaceHolder="选择商品规格" required>
+                    <nz-option *ngFor="let value of attribute.values"
+                               [nzLabel]="value.name"
+                               [nzValue]="value"></nz-option>
+                </nz-select>
+                <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+            </nz-form-control>
+        </nz-form-item>
+        <!--<nz-form-item>
+            <nz-form-label [nzSpan]="5" nzRequired nzFor="productId">选择商品规格</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+                <nz-select formControlName="productId" id="productId" nzShowSearch nzAllowClear nzPlaceHolder="选择商品规格" required>
+                    <nz-option *ngFor="let item of products" [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+                </nz-select>
+                &lt;!&ndash;<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>&ndash;&gt;
+            </nz-form-control>
+        </nz-form-item>-->
+        <!--<div se-container>
+            <se label="选择商品" error="必填项">
+                <nz-select [(ngModel)]="orderItem.productId" name="productId" nzShowSearch nzAllowClear nzPlaceHolder="选择商品" required>
+                    <nz-option *ngFor="let item of products" [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+                </nz-select>
+            </se>
+            <se label="数量" error="必填项">
+                <nz-input-number [(ngModel)]="orderItem.quantity" [nzMin]="1" [nzMax]="10" [nzStep]="1" name="quantity"></nz-input-number>
+            </se>
+        </div>-->
+    </form>
+</nz-modal>

@@ -1,0 +1,33 @@
+<p>请根据要使用的快递导出模板<br>记得回传运单信息！</p>
+<form [formGroup]="shipmentForm">
+    <nz-form-item>
+        <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired nzFor="productId">快递</nz-form-label>
+        <nz-form-control [nzXs]="24" [nzSm]="20">
+            <nz-select formControlName="logisticsId" nzPlaceHolder="Tag Mode" style="width: 80%; margin-right:8px;" required>
+                <nz-option *ngFor="let logistic of logistics" [nzLabel]="logistic.text"
+                           [nzValue]="logistic.value"></nz-option>
+            </nz-select>
+            <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>快递单号</nz-form-label>
+        <nz-form-control [nzXs]="24" [nzSm]="20">
+            <input formControlName="logisticsNumber" nz-input style="width: 80%; margin-right:8px;"
+                   placeholder="请输入快递单号">
+            <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>备注</nz-form-label>
+        <nz-form-control [nzXs]="24" [nzSm]="20">
+            <input formControlName="adminComment" nz-input style="width: 80%; margin-right:8px;"
+                   placeholder="请输入管理员备注">
+            <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
+        </nz-form-control>
+    </nz-form-item>
+</form>
+<div class="drawer-footer">
+    <button nz-button (click)="close()">取消</button>
+    <button nz-button nzType="primary" (click)="ship()">确定发货</button>
+</div>
