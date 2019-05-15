@@ -1,39 +1,39 @@
 {
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../out-tsc/app",
-    "baseUrl": "./",
-    "module": "es2015",
-    "types": [
-      "node"
-    ],
-    "paths": {
-      "@abp/*": [ "../node_modules/abp-ng2-module/dist/src/*" ],
-      "@shared": [
-        "app/shared/index"
-      ],
-      "@shared/*": [
-        "app/shared/*"
-      ],
-      "@core": [
-        "app/core/index"
-      ],
-      "@core/*": [
-        "app/core/*"
-      ],
-      "@env/*": [
-        "environments/*"
-      ],
-      "@brand": [
-        "app/layout/pro/index"
-      ],
-      "@brand/*": [
-        "app/layout/pro/*"
-      ]
-    }
-  },
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
-  ]
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../out-tsc/app",
+        "baseUrl": "./",
+        "module": "es2015",
+        "types": [
+            "node"
+        ],
+        "paths": {
+            "@abp/*": ["../node_modules/abp-ng2-module/dist/src/*"],
+            "@shared": [
+                "app/shared/index"
+            ],
+            "@shared/*": [
+                "app/shared/*"
+            ],
+            "@core": [
+                "app/core/index"
+            ],
+            "@core/*": [
+                "app/core/*"
+            ],
+            "@env/*": [
+                "environments/*"
+            ],
+            "@brand": [
+                "app/layout/pro/index"
+            ],
+            "@brand/*": [
+                "app/layout/pro/*"
+            ]
+        }
+    },
+    "exclude": [
+        "test.ts",
+        "**/*.spec.ts"
+    ]
 }

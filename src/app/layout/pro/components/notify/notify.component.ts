@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import * as distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import { NzMessageService } from 'ng-zorro-antd';
 import { NoticeItem, NoticeIconList } from '@delon/abc';
-import { NotificationServiceProxy } from '@shared/service/service-proxies';
+import { NotificationServiceProxy } from '@shared/service-proxies/service-proxies';
 
 /**
  * 菜单通知

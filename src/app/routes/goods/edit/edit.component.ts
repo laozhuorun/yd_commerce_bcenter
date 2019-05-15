@@ -19,7 +19,7 @@ import {
   ProductAttributeValueDto,
   ProductPictureDto,
   ProductServiceProxy,
-} from '@shared/service/service-proxies';
+} from '@shared/service-proxies/service-proxies';
 import { deepCopy } from '@delon/util';
 
 @Component({

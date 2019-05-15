@@ -1,9 +1,4 @@
-import {
-  Component,
-  ChangeDetectorRef,
-  OnInit,
-  ElementRef,
-} from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd';
@@ -14,7 +9,7 @@ import { TenantService } from '../tenant.service';
 @Component({
   selector: 'app-tenant-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.less']
+  styleUrls: ['./settings.component.less'],
 })
 export class TenantSettingsComponent implements OnInit {
   mode = 'inline';
@@ -32,11 +27,10 @@ export class TenantSettingsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private el: ElementRef,
     private tenantSvc: TenantService,
-    private msgSvc: NzMessageService) {
-  }
+    private msgSvc: NzMessageService,
+  ) {}
 
   ngOnInit() {
-
     this.tenantSvc.getSettings().subscribe(res => {
       this.formLoading = false;
       if (!res.success) {
@@ -46,9 +40,7 @@ export class TenantSettingsComponent implements OnInit {
     });
   }
 
-  private setActive() {
-
-  }
+  private setActive() {}
 
   to(group) {
     this.group = group;

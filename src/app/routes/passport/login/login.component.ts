@@ -6,9 +6,8 @@ import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { SocialService, SocialOpenType, ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 import { ReuseTabService } from '@delon/abc';
 import { environment } from '@env/environment';
-import { StartupService } from '@core';
 
-import { CodeSendInput } from '@shared/service/service-proxies';
+import { CodeSendInput } from '@shared/service-proxies/service-proxies';
 import { SmsService } from '@core/service/sms.service';
 import { FormComponentBase } from '@shared/app-component-base';
 import { LoginService } from '@shared/service/login.service';
@@ -23,7 +22,6 @@ export class UserLoginComponent extends FormComponentBase implements OnDestroy {
   form: FormGroup;
   error = '';
   type = 0;
-  loading = false;
 
   constructor(
     injector: Injector,
@@ -34,10 +32,6 @@ export class UserLoginComponent extends FormComponentBase implements OnDestroy {
     private socialService: SocialService,
     @Optional()
     @Inject(ReuseTabService)
-    private reuseTabService: ReuseTabService,
-    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-    private startupSrv: StartupService,
-    public http: _HttpClient,
     public msg: NzMessageService,
     public loginService: LoginService,
     private smsSvc: SmsService,

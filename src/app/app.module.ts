@@ -66,6 +66,7 @@ const FORM_MODULES = [JsonSchemaModule];
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DefaultInterceptor } from '@core';
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
+
 const INTERCEPTOR_PROVIDES = [
   { provide: HTTP_INTERCEPTORS, useClass: JWTInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true },
@@ -75,8 +76,8 @@ const INTERCEPTOR_PROVIDES = [
 
 // #region Startup Service
 import { StartupService } from '@core';
-import { ServiceProxyModule } from '@shared/service/service-proxy.module';
-export function StartupServiceFactory(injector: Injector, startupService: StartupService): Function {
+import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
+export function StartupServiceFactory(startupService: StartupService): Function {
   return () => startupService.load();
 }
 const APPINIT_PROVIDES = [
@@ -84,7 +85,7 @@ const APPINIT_PROVIDES = [
   {
     provide: APP_INITIALIZER,
     useFactory: StartupServiceFactory,
-    deps: [Injector, StartupService],
+    deps: [StartupService],
     multi: true,
   },
 ];
@@ -96,7 +97,6 @@ import { SharedModule } from './shared/shared.module';
 import { AppComponent } from './app.component';
 import { RoutesModule } from './routes/routes.module';
 import { LayoutModule } from './layout/layout.module';
-
 import { AbpModule } from '@abp/abp.module';
 
 @NgModule({

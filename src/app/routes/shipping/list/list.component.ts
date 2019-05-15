@@ -1,27 +1,25 @@
-import {
-  Component
-} from '@angular/core';
+import { Component } from '@angular/core';
 
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   CommonLookupServiceProxy,
   OrderServiceProxy,
   StateServiceProxy,
   ShipmentServiceProxy,
-  FileServiceProxy
+  FileServiceProxy,
 } from '@shared/service-proxies/service-proxies';
-import {DrawerHelper} from '@delon/theme';
+import { DrawerHelper } from '@delon/theme';
 
-import {NzMessageService, NzModalService} from 'ng-zorro-antd';
+import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 
-import {FileService} from '@core/service/file.service';
+import { FileService } from '@core/service/file.service';
 
 let that;
 
 @Component({
   selector: 'app-shipping-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  styleUrls: ['./list.component.scss'],
 })
 export class ShippingListComponent {
   data;
@@ -36,7 +34,7 @@ export class ShippingListComponent {
     OrderStatus: [],
     OrderType: [],
     PaymentStatus: [],
-    ShippingStatus: []
+    ShippingStatus: [],
   };
 
   constructor(
@@ -46,7 +44,8 @@ export class ShippingListComponent {
     private stateSvc: StateServiceProxy,
     private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy,
-    private fileSvc: FileService) {
+    private fileSvc: FileService,
+  ) {
     that = this;
   }
 
@@ -77,7 +76,7 @@ export class ShippingListComponent {
       customerComment: new FormControl('', []),
       sorting: new FormControl('', []),
       maxResultCount: new FormControl(10, []),
-      skipCount: new FormControl(0, [])
+      skipCount: new FormControl(0, []),
     });
     this.getData();
     this.getEnums(['OrderSource', 'OrderStatus', 'OrderType', 'PaymentStatus', 'ShippingStatus']);
@@ -92,7 +91,7 @@ export class ShippingListComponent {
             text: item.text,
             value: item.value,
             type: 'default',
-            checked: false
+            checked: false,
           });
         });
       });
@@ -105,44 +104,49 @@ export class ShippingListComponent {
   }
 
   checkAll(value: boolean): void {
-    this.data.items.forEach(item => this.mapOfCheckedId[item.id] = value);
+    this.data.items.forEach(item => (this.mapOfCheckedId[item.id] = value));
     this.refreshStatus();
   }
 
   refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.data.items.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
+    this.isAllDisplayDataChecked = this.data.items
+      .filter(item => !item.disabled)
+      .every(item => this.mapOfCheckedId[item.id]);
     this.numberOfChecked = this.data.items.filter(item => this.mapOfCheckedId[item.id]).length;
   }
 
   getData() {
     this.loading = true;
-    this.orderSvc.getOrders(
-      this.searchForm.get('logisticsNumber').value,
-      this.searchForm.get('receiveOn_FormDate').value,
-      this.searchForm.get('receiveOn_ToDate').value,
-      this.searchForm.get('orderStatus').value,
-      this.searchForm.get('paymentStatus').value,
-      this.searchForm.get('shippingStatus').value,
-      this.searchForm.get('storeIds').value,
-      this.searchForm.get('productIds').value,
-      this.searchForm.get('orderNumber').value,
-      this.searchForm.get('createOn_FormDate').value,
-      this.searchForm.get('createOn_ToDate').value,
-      this.searchForm.get('shippingName').value,
-      this.searchForm.get('phoneNumber').value,
-      this.searchForm.get('provinceId').value,
-      this.searchForm.get('cityId').value,
-      this.searchForm.get('districtId').value,
-      this.searchForm.get('orderTypes').value,
-      this.searchForm.get('orderSource').value,
-      this.searchForm.get('adminComment').value,
-      this.searchForm.get('customerComment').value,
-      this.searchForm.get('sorting').value,
-      this.searchForm.get('maxResultCount').value,
-      this.searchForm.get('skipCount').value).subscribe(res => {
-      this.loading = false;
-      this.data = res;
-    });
+    this.orderSvc
+      .getOrders(
+        this.searchForm.get('logisticsNumber').value,
+        this.searchForm.get('receiveOn_FormDate').value,
+        this.searchForm.get('receiveOn_ToDate').value,
+        this.searchForm.get('orderStatus').value,
+        this.searchForm.get('paymentStatus').value,
+        this.searchForm.get('shippingStatus').value,
+        this.searchForm.get('storeIds').value,
+        this.searchForm.get('productIds').value,
+        this.searchForm.get('orderNumber').value,
+        this.searchForm.get('createOn_FormDate').value,
+        this.searchForm.get('createOn_ToDate').value,
+        this.searchForm.get('shippingName').value,
+        this.searchForm.get('phoneNumber').value,
+        this.searchForm.get('provinceId').value,
+        this.searchForm.get('cityId').value,
+        this.searchForm.get('districtId').value,
+        this.searchForm.get('orderTypes').value,
+        this.searchForm.get('orderSource').value,
+        this.searchForm.get('adminComment').value,
+        this.searchForm.get('customerComment').value,
+        this.searchForm.get('sorting').value,
+        this.searchForm.get('maxResultCount').value,
+        this.searchForm.get('skipCount').value,
+      )
+      .subscribe(res => {
+        this.loading = false;
+        this.data = res;
+      });
   }
 
   createOn(e) {
@@ -167,8 +171,9 @@ export class ShippingListComponent {
   }
 
   loadData(node: any, index: number) {
-    return new Promise((resolve) => {
-      if (index < 0) { // if index less than 0 it is root node
+    return new Promise(resolve => {
+      if (index < 0) {
+        // if index less than 0 it is root node
         that.stateSvc.getProvinceSelectList().subscribe(res => {
           node.children = res;
           resolve();
@@ -195,27 +200,30 @@ export class ShippingListComponent {
   export(isAll) {
     this.loading = true;
     if (isAll) {
-      this.orderSvc.getWaitShippingToExcel(
-        this.searchForm.get('sorting').value,
-        this.searchForm.get('maxResultCount').value,
-        this.searchForm.get('skipCount').value,
-        this.searchForm.get('storeIds').value,
-        this.searchForm.get('productIds').value,
-        this.searchForm.get('orderNumber').value,
-        this.searchForm.get('createOn_FormDate').value,
-        this.searchForm.get('createOn_ToDate').value,
-        this.searchForm.get('shippingName').value,
-        this.searchForm.get('phoneNumber').value,
-        this.searchForm.get('provinceId').value,
-        this.searchForm.get('cityId').value,
-        this.searchForm.get('districtId').value,
-        this.searchForm.get('orderTypes').value,
-        this.searchForm.get('orderSource').value,
-        this.searchForm.get('adminComment').value,
-        this.searchForm.get('customerComment').value).subscribe(res => {
-        this.loading = false;
-        this.fileSvc.downloadTempFile(res.fileName, res.fileType, res.fileToken);
-      });
+      this.orderSvc
+        .getWaitShippingToExcel(
+          this.searchForm.get('sorting').value,
+          this.searchForm.get('maxResultCount').value,
+          this.searchForm.get('skipCount').value,
+          this.searchForm.get('storeIds').value,
+          this.searchForm.get('productIds').value,
+          this.searchForm.get('orderNumber').value,
+          this.searchForm.get('createOn_FormDate').value,
+          this.searchForm.get('createOn_ToDate').value,
+          this.searchForm.get('shippingName').value,
+          this.searchForm.get('phoneNumber').value,
+          this.searchForm.get('provinceId').value,
+          this.searchForm.get('cityId').value,
+          this.searchForm.get('districtId').value,
+          this.searchForm.get('orderTypes').value,
+          this.searchForm.get('orderSource').value,
+          this.searchForm.get('adminComment').value,
+          this.searchForm.get('customerComment').value,
+        )
+        .subscribe(res => {
+          this.loading = false;
+          this.fileSvc.downloadTempFile(res.fileName, res.fileType, res.fileToken);
+        });
     } else {
       const ids = [];
       for (const id in this.mapOfCheckedId) {
@@ -228,7 +236,7 @@ export class ShippingListComponent {
           this.loading = false;
           this.fileSvc.downloadTempFile(res.fileName, res.fileType, res.fileToken);
         });
-      }else {
+      } else {
         this.loading = false;
       }
     }
@@ -246,11 +254,9 @@ export class ShippingListComponent {
     return str;
   }
 
-  remove() {
-  }
+  remove() {}
 
-  clearCheck() {
-  }
+  clearCheck() {}
 
   search() {
     this.getData();

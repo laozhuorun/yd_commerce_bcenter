@@ -1,14 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {FormGroup, FormControl, Validators} from '@angular/forms';
-import {HttpClient, HttpRequest, HttpResponse} from '@angular/common/http';
-import {filter} from 'rxjs/operators';
-import {NzMessageService, NzDrawerRef} from 'ng-zorro-antd';
-import {LogisticsServiceProxy, ShipmentServiceProxy} from '@shared/service-proxies/service-proxies';
-import {UploadFile} from 'ng-zorro-antd';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { HttpClient, HttpRequest, HttpResponse } from '@angular/common/http';
+import { filter } from 'rxjs/operators';
+import { NzMessageService, NzDrawerRef } from 'ng-zorro-antd';
+import { LogisticsServiceProxy, ShipmentServiceProxy } from '@shared/service-proxies/service-proxies';
+import { UploadFile } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-shipment-list-import',
-  templateUrl: './import.component.html'
+  templateUrl: './import.component.html',
 })
 export class ShipmentListImportComponent implements OnInit {
   logistics;
@@ -22,14 +22,14 @@ export class ShipmentListImportComponent implements OnInit {
     private msg: NzMessageService,
     private drawer: NzDrawerRef,
     private logisticsSvc: LogisticsServiceProxy,
-    private shipmentSvc: ShipmentServiceProxy) {
+    private shipmentSvc: ShipmentServiceProxy,
+  ) {
     logisticsSvc.getTenantLogisticsSelectList().subscribe(res => {
       this.logistics = res;
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   beforeUpload = (file: UploadFile): boolean => {
     this.fileList = this.fileList.concat(file);
@@ -67,7 +67,7 @@ export class ShipmentListImportComponent implements OnInit {
         () => {
           this.uploading = false;
           this.msg.error('导入失败.');
-        }
+        },
       );
   }
 

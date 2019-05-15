@@ -1,14 +1,12 @@
-import {
-  Component
-} from '@angular/core';
+import { Component } from '@angular/core';
 
-import {NzMessageService, NzModalService} from 'ng-zorro-antd';
-import {EditionServiceProxy} from '@shared/service-proxies/service-proxies';
+import { NzMessageService, NzModalService } from 'ng-zorro-antd';
+import { EditionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-sys-edition-list',
   templateUrl: './list.component.html',
-  styleUrls: []
+  styleUrls: [],
 })
 export class SysEditionListComponent {
   data;
@@ -22,21 +20,25 @@ export class SysEditionListComponent {
   constructor(
     public msg: NzMessageService,
     private modalSrv: NzModalService,
-    private editionSvc: EditionServiceProxy) {
-  }
+    private editionSvc: EditionServiceProxy,
+  ) {}
 
   ngOnInit() {
     this.getData();
   }
 
   checkAll(value: boolean): void {
-    this.data.items.forEach(item => this.mapOfCheckedId[item.id] = value);
+    this.data.items.forEach(item => (this.mapOfCheckedId[item.id] = value));
     this.refreshStatus();
   }
 
   refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.data.items.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
-    this.isIndeterminate = this.data.items.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+    this.isAllDisplayDataChecked = this.data.items
+      .filter(item => !item.disabled)
+      .every(item => this.mapOfCheckedId[item.id]);
+    this.isIndeterminate =
+      this.data.items.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) &&
+      !this.isAllDisplayDataChecked;
     this.numberOfChecked = this.data.items.filter(item => this.mapOfCheckedId[item.id]).length;
   }
 

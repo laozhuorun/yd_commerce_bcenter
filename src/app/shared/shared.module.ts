@@ -16,6 +16,7 @@ import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { CountdownModule } from 'ngx-countdown';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgxImageGalleryModule } from 'ngx-image-gallery';
+import { AbpModule } from '@abp/abp.module';
 
 // pipes
 
@@ -43,8 +44,10 @@ import { AvatarComponent } from '@shared/components/avatar/avatar.component';
 import { AvatarsComponent } from '@shared/components/avatars/avatars.component';
 import { FeatureComponent } from '@shared/components/feature/feature.component';
 import { AppSessionService } from './service/app-session.service';
-import { AbpModule } from '@abp/abp.module';
 import { LoginService } from './service/login.service';
+import { CookiesService } from './service/cookies.service';
+import { ScriptLoaderService } from './service/script-loader.service';
+import { LocaleMappingService } from './service/locale-mapping.service';
 
 const COMPONENTS_ENTRY = [
   LangsComponent,
@@ -103,6 +106,14 @@ const PIPES = [UploadFilePipe];
     ...DIRECTIVES,
     ...PIPES,
   ],
-  providers: [LoginService, AppSessionService, UploadFilePipe, CNCurrencyPipe],
+  providers: [
+    LoginService,
+    AppSessionService,
+    CookiesService,
+    ScriptLoaderService,
+    LocaleMappingService,
+    UploadFilePipe,
+    CNCurrencyPipe,
+  ],
 })
 export class SharedModule {}

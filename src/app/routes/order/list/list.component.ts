@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { CommonLookupServiceProxy, OrderServiceProxy, StateServiceProxy } from '@shared/service/service-proxies';
+import {
+  CommonLookupServiceProxy,
+  OrderServiceProxy,
+  StateServiceProxy,
+} from '@shared/service-proxies/service-proxies';
 import { _HttpClient, DrawerHelper } from '@delon/theme';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { OrderListViewComponent } from './view.component';

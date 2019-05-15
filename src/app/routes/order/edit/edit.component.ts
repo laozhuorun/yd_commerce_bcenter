@@ -10,7 +10,7 @@ import {
   StateServiceProxy,
   StoreServiceProxy,
   CommonLookupServiceProxy,
-} from '@shared/service/service-proxies';
+} from '@shared/service-proxies/service-proxies';
 
 import { getIndex } from '@shared/utils/utils';
 import { CNCurrencyPipe } from '@delon/theme';

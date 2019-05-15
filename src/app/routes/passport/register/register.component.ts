@@ -14,11 +14,12 @@ import {
   SMSServiceProxy,
   CodeSendInput,
   RegisterTenantOutput,
-} from '@shared/service/service-proxies';
+} from '@shared/service-proxies/service-proxies';
 
 import { ReuseTabService } from '@delon/abc';
 import { FormComponentBase } from '@shared/app-component-base';
 import { finalize, catchError } from 'rxjs/operators';
+import { LoginService } from '@shared/service/login.service';
 
 @Component({
   selector: 'passport-register',
@@ -62,6 +63,7 @@ export class UserRegisterComponent extends FormComponentBase implements OnDestro
     @Inject(ReuseTabService)
     private reuseTabSvc: ReuseTabService,
     @Inject(DA_SERVICE_TOKEN) private tokenSvc: TokenService,
+    private loginService: LoginService,
   ) {
     super(injector);
 
@@ -209,18 +211,11 @@ export class UserRegisterComponent extends FormComponentBase implements OnDestro
         }
 
         if (res.isActive) {
-          this.authSvc
-            .login({
-              loginCertificate: this.mobile.value,
-              password: this.password.value,
-            })
-            .subscribe(res => {
-              console.log(res);
-              this.tokenSvc.set({
-                token: res.result.accessToken,
-              });
-              this.router.navigateByUrl('/');
-            });
+          this.loginService.authenticateModel.loginCertificate = this.name.value;
+          this.loginService.authenticateModel.password = this.password.value;
+          this.loginService.authenticate(() => {
+            this.loading = false;
+          });
         } else {
           this.router.navigate(['/passport/login']);
         }

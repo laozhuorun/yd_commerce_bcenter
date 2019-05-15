@@ -22,10 +22,7 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
-            "assets": [
-              "src/assets",
-              "src/favicon.ico"
-            ],
+            "assets": ["src/assets", "src/favicon.ico"],
             "styles": [
               "node_modules/perfect-scrollbar/css/perfect-scrollbar.css",
               "node_modules/quill/dist/quill.snow.css",
@@ -43,9 +40,9 @@
               "node_modules/qrious/dist/qrious.min.js",
               "node_modules/masonry-layout/dist/masonry.pkgd.js",
               "node_modules/quill/dist/quill.min.js",
-              "node_modules/perfect-scrollbar/dist/perfect-scrollbar.js"
-              "node_modules/abp-web-resources/Abp/Framework/scripts/abp.js",
-              "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.jquery.js"
+              "node_modules/perfect-scrollbar/dist/perfect-scrollbar.js",
+
+              "src/assets/abp-web-resources/abp.js"
             ]
           },
           "configurations": {
@@ -119,24 +116,18 @@
               "node_modules/qrious/dist/qrious.min.js",
               "node_modules/masonry-layout/dist/masonry.pkgd.js",
               "node_modules/quill/dist/quill.min.js",
-              "node_modules/perfect-scrollbar/dist/perfect-scrollbar.js"
+              "node_modules/perfect-scrollbar/dist/perfect-scrollbar.js",
+              "src/assets/abp-web-resources/abp.js"
             ],
             "styles": [],
-            "assets": [
-              "src/assets"
-            ]
+            "assets": ["src/assets"]
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -162,9 +153,7 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }

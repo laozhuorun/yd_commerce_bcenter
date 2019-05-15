@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 
-import { OrderServiceProxy, ProductServiceProxy, AdvertAccountServiceProxy } from '@shared/service/service-proxies';
+import {
+  OrderServiceProxy,
+  ProductServiceProxy,
+  AdvertAccountServiceProxy,
+} from '@shared/service-proxies/service-proxies';
 import { _HttpClient, DrawerHelper } from '@delon/theme';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 

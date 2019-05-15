@@ -2,10 +2,9 @@ import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { CategoryListDto, CategoryServiceProxy } from '@shared/service/service-proxies';
+import { CategoryListDto, CategoryServiceProxy } from '@shared/service-proxies/service-proxies';
 import { STChange, STColumn, STComponent, STData } from '@delon/abc';
 import { _HttpClient } from '@delon/theme';
-import { AppService } from '../../../../app.service';
 
 @Component({
   selector: 'app-goods-category-list',
@@ -95,7 +94,6 @@ export class GoodsCategoryListComponent implements OnInit {
     private router: Router,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
-    private appSvc: AppService,
     private categorySvc: CategoryServiceProxy,
   ) {}
 

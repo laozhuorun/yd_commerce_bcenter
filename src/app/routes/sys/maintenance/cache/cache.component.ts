@@ -1,16 +1,20 @@
-import {Component} from '@angular/core';
-import {WebLogServiceProxy, CachingServiceProxy, EntityDtoOfString} from '@shared/service-proxies/service-proxies';
-import {NzMessageService} from 'ng-zorro-antd';
+import { Component } from '@angular/core';
+import { WebLogServiceProxy, CachingServiceProxy, EntityDtoOfString } from '@shared/service-proxies/service-proxies';
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-sys-maintenance-cache',
-  templateUrl: './cache.component.html'
+  templateUrl: './cache.component.html',
 })
 export class SysMaintenanceCacheComponent {
   logs;
   caches;
 
-  constructor(private msg: NzMessageService, private logSvc: WebLogServiceProxy, private cachingSvc: CachingServiceProxy) {
+  constructor(
+    private msg: NzMessageService,
+    private logSvc: WebLogServiceProxy,
+    private cachingSvc: CachingServiceProxy,
+  ) {
     logSvc.getLatestWebLogs().subscribe(res => {
       this.logs = res.latestWebLogLines;
     });
@@ -21,7 +25,7 @@ export class SysMaintenanceCacheComponent {
   }
 
   del(id) {
-    this.cachingSvc.clearCache(new EntityDtoOfString({id: id})).subscribe(res => {
+    this.cachingSvc.clearCache(new EntityDtoOfString({ id: id })).subscribe(res => {
       this.msg.success('删除成功');
     });
   }

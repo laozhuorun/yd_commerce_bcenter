@@ -1,18 +1,18 @@
-import {Component} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   EditionServiceProxy,
   NameValueDto,
   TenantServiceProxy,
-  CreateOrUpdateEditionDto
+  CreateOrUpdateEditionDto,
 } from '@shared/service-proxies/service-proxies';
-import {LocationStrategy} from '@angular/common';
+import { LocationStrategy } from '@angular/common';
 import * as moment from 'moment';
-import {getIndex} from '@shared/utils/utils';
+import { getIndex } from '@shared/utils/utils';
 
 @Component({
   selector: 'app-sys-edition-edit',
-  templateUrl: './edit.component.html'
+  templateUrl: './edit.component.html',
 })
 export class SysEditionEditComponent {
   id = this.route.snapshot.params['id'] !== '0' ? this.route.snapshot.params['id'] : undefined;
@@ -23,11 +23,12 @@ export class SysEditionEditComponent {
 
   subscriptionEndDateUtc;
 
-  constructor(private route: ActivatedRoute,
-              private location: LocationStrategy,
-              private tenantSvc: TenantServiceProxy,
-              private editionSvc: EditionServiceProxy) {
-  }
+  constructor(
+    private route: ActivatedRoute,
+    private location: LocationStrategy,
+    private tenantSvc: TenantServiceProxy,
+    private editionSvc: EditionServiceProxy,
+  ) {}
 
   ngOnInit() {
     const features = [];
@@ -48,14 +49,16 @@ export class SysEditionEditComponent {
   submit(f) {
     const features = [];
     this.features.forEach(feature => {
-      features.push(new NameValueDto({
-        name: feature.name,
-        value: feature.value
-      }));
+      features.push(
+        new NameValueDto({
+          name: feature.name,
+          value: feature.value,
+        }),
+      );
     });
     const body = new CreateOrUpdateEditionDto({
       edition: this.edition,
-      featureValues: features
+      featureValues: features,
     });
     this.editionSvc.createOrUpdateEdition(body).subscribe(res => {
       console.log(res);

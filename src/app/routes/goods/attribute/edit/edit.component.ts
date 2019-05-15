@@ -8,7 +8,7 @@ import {
   ProductServiceProxy,
   CreateOrUpdateAdvertAccountInput,
   ProductAttributeServiceProxy,
-} from '@shared/service/service-proxies';
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-goods-attribute-edit',

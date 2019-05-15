@@ -1,11 +1,11 @@
-import {Component} from '@angular/core';
-import {NzMessageService} from 'ng-zorro-antd';
-import {CachingServiceProxy, WebLogServiceProxy} from '@shared/service-proxies/service-proxies';
-import {FileService} from '@core/service/file.service';
+import { Component } from '@angular/core';
+import { NzMessageService } from 'ng-zorro-antd';
+import { CachingServiceProxy, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
+import { FileService } from '@core/service/file.service';
 
 @Component({
   selector: 'app-sys-maintenance',
-  templateUrl: './maintenance.component.html'
+  templateUrl: './maintenance.component.html',
 })
 export class SysMaintenanceComponent {
   selectedIndex = 0;
@@ -13,10 +13,15 @@ export class SysMaintenanceComponent {
   loading = {
     reload: false,
     download: false,
-    del: false
+    del: false,
   };
 
-  constructor(private msg: NzMessageService, private fileSvc: FileService, private cachingSvc: CachingServiceProxy, private webLogSvc: WebLogServiceProxy) {
+  constructor(
+    private msg: NzMessageService,
+    private fileSvc: FileService,
+    private cachingSvc: CachingServiceProxy,
+    private webLogSvc: WebLogServiceProxy,
+  ) {
     this.get();
   }
 

@@ -59,7 +59,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../src/app/shared/service/service-proxies.ts"
+      "output": "../src/app/shared/service-proxies/service-proxies.ts"
     },
     "swaggerToCSharpClient": {
       "clientBaseClass": null,

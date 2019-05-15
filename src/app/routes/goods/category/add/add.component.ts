@@ -2,7 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NzMessageService } from 'ng-zorro-antd';
-import { CreateOrUpdateCategoryInput, CategoryServiceProxy, CategoryListDto } from '@shared/service/service-proxies';
+import {
+  CreateOrUpdateCategoryInput,
+  CategoryServiceProxy,
+  CategoryListDto,
+} from '@shared/service-proxies/service-proxies';
 import { LocationStrategy } from '@angular/common';
 import { StoreService } from '../../../store/store.service';
 

@@ -1,22 +1,16 @@
-import {
-  Component
-} from '@angular/core';
-import {OrderServiceProxy} from '@shared/service-proxies/service-proxies';
-import {
-  ShipmentServiceProxy,
-  CommonLookupServiceProxy
-} from '@shared/service-proxies/service-proxies';
-import {_HttpClient, DrawerHelper} from '@delon/theme';
-import {NzMessageService, NzModalService, UploadXHRArgs} from 'ng-zorro-antd';
-import {HttpEvent, HttpEventType, HttpRequest, HttpResponse} from '@angular/common/http';
+import { Component } from '@angular/core';
+import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ShipmentServiceProxy, CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
+import { _HttpClient, DrawerHelper } from '@delon/theme';
+import { NzMessageService, NzModalService, UploadXHRArgs } from 'ng-zorro-antd';
+import { HttpEvent, HttpEventType, HttpRequest, HttpResponse } from '@angular/common/http';
 
-import {AppService} from '../../../app.service';
-import {ShipmentListImportComponent} from './import.component';
+import { ShipmentListImportComponent } from './import.component';
 
 @Component({
   selector: 'app-shipment-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  styleUrls: ['./list.component.scss'],
 })
 export class ShipmentListComponent {
   data: any[] = [];
@@ -34,8 +28,8 @@ export class ShipmentListComponent {
     private drawer: DrawerHelper,
     private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy,
-    private shipmentSvc: ShipmentServiceProxy) {
-  }
+    private shipmentSvc: ShipmentServiceProxy,
+  ) {}
 
   ngOnInit() {
     this.getData();
@@ -47,13 +41,15 @@ export class ShipmentListComponent {
   }
 
   checkAll(value: boolean): void {
-    this.data.forEach(item => this.mapOfCheckedId[item.id] = value);
+    this.data.forEach(item => (this.mapOfCheckedId[item.id] = value));
     this.refreshStatus();
   }
 
   refreshStatus(): void {
     this.isAllDisplayDataChecked = this.data.filter(item => !item.disabled).every(item => this.mapOfCheckedId[item.id]);
-    this.isIndeterminate = this.data.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+    this.isIndeterminate =
+      this.data.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) &&
+      !this.isAllDisplayDataChecked;
     this.numberOfChecked = this.data.filter(item => this.mapOfCheckedId[item.id]).length;
     console.log(this.mapOfCheckedId);
   }
@@ -67,23 +63,27 @@ export class ShipmentListComponent {
     receivedTo: undefined,
     sorting: undefined,
     maxResultCount: 20,
-    skipCount: 0
+    skipCount: 0,
   };
 
   getData() {
     this.loading = true;
-    this.shipmentSvc.getShipments(this.q.status,
-      this.q.trackingNumber,
-      this.q.deliveryFrom,
-      this.q.deliveryTo,
-      this.q.receivedFrom,
-      this.q.receivedTo,
-      this.q.sorting,
-      this.q.maxResultCount,
-      this.q.skipCount).subscribe(res => {
-      this.data = res.items;
-      console.log(res);
-    });
+    this.shipmentSvc
+      .getShipments(
+        this.q.status,
+        this.q.trackingNumber,
+        this.q.deliveryFrom,
+        this.q.deliveryTo,
+        this.q.receivedFrom,
+        this.q.receivedTo,
+        this.q.sorting,
+        this.q.maxResultCount,
+        this.q.skipCount,
+      )
+      .subscribe(res => {
+        this.data = res.items;
+        console.log(res);
+      });
   }
 
   arrayToString(arr) {
@@ -107,8 +107,6 @@ export class ShipmentListComponent {
   }
 
   showImport() {
-    this.drawer
-      .create(`导入运单`, ShipmentListImportComponent, {}, {size: 666})
-      .subscribe();
+    this.drawer.create(`导入运单`, ShipmentListImportComponent, {}, { size: 666 }).subscribe();
   }
 }

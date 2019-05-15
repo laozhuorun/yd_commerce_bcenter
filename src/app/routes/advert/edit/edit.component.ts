@@ -8,7 +8,7 @@ import {
   AdvertAccountServiceProxy,
   ProductServiceProxy,
   CreateOrUpdateAdvertAccountInput,
-} from '@shared/service/service-proxies';
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-advert-edit',

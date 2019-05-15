@@ -12,7 +12,12 @@ import { _HttpClient } from '@delon/theme';
 import { UploadFile, NzMessageService } from 'ng-zorro-antd';
 import { ArrayService, copy } from '@delon/util';
 
-import {UpdatePictureInput, PictureGroupListDto, PictureListDto, PictureServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+  UpdatePictureInput,
+  PictureGroupListDto,
+  PictureListDto,
+  PictureServiceProxy,
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'file-manager',
@@ -49,8 +54,8 @@ export class FileManagerComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private arrSrv: ArrayService,
     private msg: NzMessageService,
-    private picSvc: PictureServiceProxy) {
-  }
+    private picSvc: PictureServiceProxy,
+  ) {}
 
   ngOnInit() {
     this.load(1);

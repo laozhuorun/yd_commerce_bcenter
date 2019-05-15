@@ -1,19 +1,17 @@
-import {Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
-import {HttpClient, HttpEvent, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { HttpClient, HttpEvent, HttpRequest, HttpResponse, HttpEventType } from '@angular/common/http';
 
-import {Observable, Observer} from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 
-import {NzMessageService} from 'ng-zorro-antd';
-import {UploadFile, UploadXHRArgs} from 'ng-zorro-antd';
-
-import {AppService} from '../../../app.service';
+import { NzMessageService } from 'ng-zorro-antd';
+import { UploadFile, UploadXHRArgs } from 'ng-zorro-antd';
+import { PictureServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-avatar',
   templateUrl: './avatar.component.html',
   styleUrls: ['./avatar.component.scss'],
 })
-
 export class AvatarComponent implements OnInit {
   loading = false;
   avatarUrl: string;
@@ -22,10 +20,7 @@ export class AvatarComponent implements OnInit {
 
   @Output() avatarObj: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private http: HttpClient,
-              private appSvc: AppService,
-              private msg: NzMessageService) {
-  }
+  constructor(private http: HttpClient, private pictureService: PictureServiceProxy, private msg: NzMessageService) {}
 
   beforeUpload = (file: File) => {
     return new Observable((observer: Observer<boolean>) => {
@@ -78,35 +73,43 @@ export class AvatarComponent implements OnInit {
 
   ngOnInit() {
     console.log(this.fileList);
-    this.appSvc.getUploadToken().subscribe(res => {
+    this.pictureService.getPictureUploadToken().subscribe(res => {
       this.nzCustomRequest = (item: UploadXHRArgs) => {
         // 构建一个 FormData 对象，用于存储文件或其他参数
         const formData = new FormData();
         // tslint:disable-next-line:no-any
         formData.append('file', item.file as any);
-        formData.append('key', Math.random().toString(36).substr(2, 15));
+        formData.append(
+          'key',
+          Math.random()
+            .toString(36)
+            .substr(2, 15),
+        );
         formData.append('x:groupid', '1');
-        formData.append('token', res.result.token);
+        formData.append('token', res.token);
         const req = new HttpRequest('POST', 'http://up-z0.qiniup.com/', formData, {
           reportProgress: true,
         });
         // 始终返回一个 `Subscription` 对象，nz-upload 会在适当时机自动取消订阅
-        return this.http.request(req).subscribe((event: HttpEvent<{}>) => {
-          if (event.type === HttpEventType.UploadProgress) {
-            if (event.total > 0) {
-              // tslint:disable-next-line:no-any
-              (event as any).percent = event.loaded / event.total * 100;
+        return this.http.request(req).subscribe(
+          (event: HttpEvent<{}>) => {
+            if (event.type === HttpEventType.UploadProgress) {
+              if (event.total > 0) {
+                // tslint:disable-next-line:no-any
+                (event as any).percent = (event.loaded / event.total) * 100;
+              }
+              // 处理上传进度条，必须指定 `percent` 属性来表示进度
+              item.onProgress(event, item.file);
+            } else if (event instanceof HttpResponse) {
+              // 处理成功
+              item.onSuccess(event.body, item.file, event);
             }
-            // 处理上传进度条，必须指定 `percent` 属性来表示进度
-            item.onProgress(event, item.file);
-          } else if (event instanceof HttpResponse) {
-            // 处理成功
-            item.onSuccess(event.body, item.file, event);
-          }
-        }, (err) => {
-          // 处理失败
-          item.onError(err, item.file);
-        });
+          },
+          err => {
+            // 处理失败
+            item.onError(err, item.file);
+          },
+        );
       };
     });
   }

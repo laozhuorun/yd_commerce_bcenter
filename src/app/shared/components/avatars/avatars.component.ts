@@ -6,8 +6,7 @@ import { Observable, Observer } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd';
 import { UploadFile, UploadXHRArgs } from 'ng-zorro-antd';
 
-import { AppService } from '../../../app.service';
-import { ProductPictureDto } from '@shared/service/service-proxies';
+import { ProductPictureDto, PictureServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-avatars',
@@ -20,7 +19,7 @@ export class AvatarsComponent implements OnInit {
   @Input() fileList = [];
   @Output() files: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private http: HttpClient, private appSvc: AppService, private msg: NzMessageService) {}
+  constructor(private http: HttpClient, private pictureService: PictureServiceProxy, private msg: NzMessageService) {}
 
   beforeUpload = (file: File) => {
     return new Observable((observer: Observer<boolean>) => {
@@ -72,7 +71,7 @@ export class AvatarsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appSvc.getUploadToken().subscribe(res => {
+    this.pictureService.getPictureUploadToken().subscribe(result => {
       this.nzCustomRequest = (item: UploadXHRArgs) => {
         // 构建一个 FormData 对象，用于存储文件或其他参数
         const formData = new FormData();
@@ -85,7 +84,7 @@ export class AvatarsComponent implements OnInit {
             .substr(2, 15),
         );
         formData.append('x:groupid', '1');
-        formData.append('token', res.result.token);
+        formData.append('token', result.token);
         const req = new HttpRequest('POST', 'http://up-z0.qiniup.com/', formData, {
           reportProgress: true,
         });

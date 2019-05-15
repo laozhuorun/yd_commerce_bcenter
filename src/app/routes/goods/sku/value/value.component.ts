@@ -4,7 +4,7 @@ import {
   CreateOrUpdateAttributeValueInput,
   ProductAttributeValueDto,
   ProductAttributeServiceProxy,
-} from '@shared/service/service-proxies';
+} from '@shared/service-proxies/service-proxies';
 
 const isAttrsExist = (name, attrs) => {
   if (attrs.length < 1) {

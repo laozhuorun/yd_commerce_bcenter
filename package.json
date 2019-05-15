@@ -73,7 +73,9 @@
     "@types/moment": "^2.13.0",
     "@types/moment-timezone": "^0.2.34",
     "abp-ng2-module": "^3.2.4",
-    "abp-web-resources": "^3.8.4"
+    "abp-web-resources": "^3.8.4",
+    "ua-device": "^0.1.10",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",
@@ -83,6 +85,7 @@
     "@types/node": "~8.9.4",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
+    "@types/lodash": "^4.14.123",
     "codelyzer": "~4.5.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
@@ -121,7 +124,8 @@
     "@delon/testing": "^7.3.2",
     "ng-alain": "^7.3.2",
     "ng-alain-codelyzer": "^0.0.1",
-    "@types/js-base64": "^2.3.1"
+    "@types/js-base64": "^2.3.1",
+    "nswag": "^11.13.1"
   },
   "husky": {
     "hooks": {

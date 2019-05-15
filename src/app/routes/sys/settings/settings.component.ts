@@ -1,29 +1,22 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  AfterViewInit,
-  ElementRef
-} from '@angular/core';
-import {Router} from '@angular/router';
-import {fromEvent, Subscription} from 'rxjs';
-import {debounceTime} from 'rxjs/operators';
+import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { fromEvent, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
-import {SettingsService} from './settings.service';
-import {SmsService} from '@core/service/sms.service';
-import {NzMessageService} from 'ng-zorro-antd';
+import { SettingsService } from './settings.service';
+import { SmsService } from '@core/service/sms.service';
+import { NzMessageService } from 'ng-zorro-antd';
 import {
   SMSTemplateListDto,
   HostSettingsEditDto,
-  HostSettingsServiceProxy
+  HostSettingsServiceProxy,
 } from '@shared/service-proxies/service-proxies';
-import {forEach} from '@angular/router/src/utils/collection';
-
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-sys-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.less']
+  styleUrls: ['./settings.component.less'],
 })
 export class SysSettingsComponent implements OnInit, AfterViewInit, OnDestroy {
   private resize$: Subscription;
@@ -43,8 +36,8 @@ export class SysSettingsComponent implements OnInit, AfterViewInit, OnDestroy {
     private el: ElementRef,
     private smsSvc: SmsService,
     private settingsSvc: SettingsService,
-    private msgSvc: NzMessageService) {
-  }
+    private msgSvc: NzMessageService,
+  ) {}
 
   ngOnInit() {
     this.smsSvc.get().subscribe(res => {
@@ -57,9 +50,7 @@ export class SysSettingsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private setActive() {
-
-  }
+  private setActive() {}
 
   to(group) {
     this.group = group;
@@ -68,7 +59,7 @@ export class SysSettingsComponent implements OnInit, AfterViewInit, OnDestroy {
   private resize() {
     const el = this.el.nativeElement as HTMLElement;
     let mode = 'inline';
-    const {offsetWidth} = el;
+    const { offsetWidth } = el;
     if (offsetWidth < 641 && offsetWidth > 400) {
       mode = 'horizontal';
     }

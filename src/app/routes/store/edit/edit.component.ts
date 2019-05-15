@@ -1,15 +1,8 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocationStrategy } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd';
-import {
-  CreateOrUpdateStoreInput,
-  StoreServiceProxy,
-} from '@shared/service-proxies/service-proxies';
+import { CreateOrUpdateStoreInput, StoreServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-store-edit',
@@ -35,8 +28,8 @@ export class StoreEditComponent implements OnInit, OnDestroy {
     private router: Router,
     private location: LocationStrategy,
     private msgSvc: NzMessageService,
-    private storeSvc: StoreServiceProxy) {
-  }
+    private storeSvc: StoreServiceProxy,
+  ) {}
 
   ngOnInit() {
     this.store.id = this.route.snapshot.params['id'];
@@ -66,6 +59,5 @@ export class StoreEditComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 
-  ngOnDestroy(): void {
-  }
+  ngOnDestroy(): void {}
 }

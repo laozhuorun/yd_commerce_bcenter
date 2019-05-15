@@ -1,10 +1,7 @@
-import {
-  Component,
-  OnInit
-} from '@angular/core';
-import {FormGroup, FormControl, Validators} from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
-import {ActivatedRoute} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import {
   OrderServiceProxy,
@@ -12,18 +9,18 @@ import {
   ProductListDto,
   StateServiceProxy,
   StoreServiceProxy,
-  CommonLookupServiceProxy
+  CommonLookupServiceProxy,
 } from '@shared/service-proxies/service-proxies';
 
-import {getIndex} from '@shared/utils/utils';
-import {CNCurrencyPipe} from '@delon/theme';
+import { getIndex } from '@shared/utils/utils';
+import { CNCurrencyPipe } from '@delon/theme';
 
 let that;
 
 @Component({
   selector: 'app-shipment-edit',
   templateUrl: './edit.component.html',
-  styleUrls: ['./edit.component.scss']
+  styleUrls: ['./edit.component.scss'],
 })
 export class ShipmentEditComponent implements OnInit {
   id = this.route.snapshot.params['id'];
@@ -44,13 +41,15 @@ export class ShipmentEditComponent implements OnInit {
 
   enums = {};
 
-  constructor(private route: ActivatedRoute,
-              private productSvc: ProductServiceProxy,
-              private orderSvc: OrderServiceProxy,
-              private stateSvc: StateServiceProxy,
-              private storeSvc: StoreServiceProxy,
-              private enumsSvc: CommonLookupServiceProxy,
-              private currency: CNCurrencyPipe) {
+  constructor(
+    private route: ActivatedRoute,
+    private productSvc: ProductServiceProxy,
+    private orderSvc: OrderServiceProxy,
+    private stateSvc: StateServiceProxy,
+    private storeSvc: StoreServiceProxy,
+    private enumsSvc: CommonLookupServiceProxy,
+    private currency: CNCurrencyPipe,
+  ) {
     that = this;
   }
 
@@ -63,21 +62,26 @@ export class ShipmentEditComponent implements OnInit {
       adminComment: new FormControl(0, []),
       totalWeight: new FormControl(2, []),
       totalVolume: new FormControl(10, []),
-      items: new FormControl([{
-        productName: null,
-        attributeInfo: null,
-        orderItemId: 1,
-        quantity: null,
-        id: 0
-      }], [Validators.required]),
-      id: new FormControl(0, [])
+      items: new FormControl(
+        [
+          {
+            productName: null,
+            attributeInfo: null,
+            orderItemId: 1,
+            quantity: null,
+            id: 0,
+          },
+        ],
+        [Validators.required],
+      ),
+      id: new FormControl(0, []),
     });
     this.orderItemForm = new FormGroup({
       productName: new FormControl(null, []),
       attributeInfo: new FormControl(null, []),
       orderItemId: new FormControl(1, []),
       quantity: new FormControl(null, []),
-      id: new FormControl(0, [])
+      id: new FormControl(0, []),
     });
     this.orderItemForm.get('productId').valueChanges.subscribe(productId => {
       if (productId) {
@@ -89,7 +93,7 @@ export class ShipmentEditComponent implements OnInit {
               const item = {
                 id: attribute.id,
                 name: attribute.name,
-                values: [attribute.values[0]]
+                values: [attribute.values[0]],
               };
               this._attributes.push(item);
             });
@@ -131,7 +135,6 @@ export class ShipmentEditComponent implements OnInit {
     });
   }
 
-
   addProduct(e) {
     if (e) {
       e.preventDefault();
@@ -145,7 +148,7 @@ export class ShipmentEditComponent implements OnInit {
       price: null,
       discountAmount: null,
       attributes: null,
-      id: 0
+      id: 0,
     });
     this.orderForm.get('items').setValue(items);
   }
@@ -163,18 +166,32 @@ export class ShipmentEditComponent implements OnInit {
     let label = '';
     if (attributes) {
       attributes.forEach((attribute, index) => {
-        label = label + attribute.name + ':' + attribute.values[0].name + (attributes.length - 1 !== index ? label = label + ', ' : '');
+        label =
+          label +
+          attribute.name +
+          ':' +
+          attribute.values[0].name +
+          (attributes.length - 1 !== index ? (label = label + ', ') : '');
       });
     }
     return label;
   }
 
-  compareFn = (o1: any, o2: any) => o1 && o2 ? o1.id === o2.id : o1 === o2;
+  compareFn = (o1: any, o2: any) => (o1 && o2 ? o1.id === o2.id : o1 === o2);
 
   getSelectedProduct(item) {
     if (item && item.attributes && item.attributes.length > 0) {
       const index = getIndex(this.products, 'id', item.productId);
-      return '(' + this.products[index].name + ',' + this.getLabel(item.attributes) + ') x' + item.quantity + ' | ' + this.currency.transform(item.price);
+      return (
+        '(' +
+        this.products[index].name +
+        ',' +
+        this.getLabel(item.attributes) +
+        ') x' +
+        item.quantity +
+        ' | ' +
+        this.currency.transform(item.price)
+      );
     } else {
       return '';
     }
@@ -214,8 +231,9 @@ export class ShipmentEditComponent implements OnInit {
 
   /** load data async execute by `nzLoadData` method */
   loadData(node: any, index: number) {
-    return new Promise((resolve) => {
-      if (index < 0) { // if index less than 0 it is root node
+    return new Promise(resolve => {
+      if (index < 0) {
+        // if index less than 0 it is root node
         that.stateSvc.getProvinceSelectList().subscribe(res => {
           node.children = res;
           resolve();
@@ -246,6 +264,5 @@ export class ShipmentEditComponent implements OnInit {
     });
   }
 
-  cancel() {
-  }
+  cancel() {}
 }

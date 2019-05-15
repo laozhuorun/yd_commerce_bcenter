@@ -5,7 +5,7 @@ import {
   ProductAttributeServiceProxy,
   ProductAttributeDto,
   ProductAttributeValueDto,
-} from '@shared/service/service-proxies';
+} from '@shared/service-proxies/service-proxies';
 
 const isAttrsExist = (name, attrs) => {
   let res = false;

@@ -9,15 +9,15 @@ import {
   SupplementAuthResultModel,
   TokenAuthServiceProxy,
   WebLogServiceProxy,
-} from '@shared/service/service-proxies';
+} from '@shared/service-proxies/service-proxies';
 import { Injectable, Inject } from '@angular/core';
 import { Params, Router } from '@angular/router';
 
 import { AppConsts } from '@shared/AppConsts';
-import { LocalizationService } from 'abp-ng2-module/src/localization/localization.service';
+import { LocalizationService } from '@abp/localization/localization.service';
 import { LogService } from '@abp/log/log.service';
 import { MessageService } from '@abp/message/message.service';
-import { NotifyService } from 'abp-ng2-module/src/notify/notify.service';
+import { NotifyService } from '@abp/notify/notify.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { finalize } from 'rxjs/operators';
 import { ScriptLoaderService } from './script-loader.service';

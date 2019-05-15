@@ -8,6 +8,7 @@ export * from './components/masonry/masonry.directive';
 export * from './components/mouse-focus/mouse-focus.directive';
 export * from './components/status-label/status-label.component';
 export * from './components/scrollbar/scrollbar.directive';
+export * from './service/app-session.service';
 
 // Utils
 export * from './utils/yuan';

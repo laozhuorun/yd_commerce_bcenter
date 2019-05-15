@@ -12,6 +12,8 @@ import { ICONS_AUTO } from '../../../style-icons-auto';
 import { ICONS } from '../../../style-icons';
 import { AppPreBootstrap } from './AppPreBootstrap';
 import { AppSessionService } from '@shared/service/app-session.service';
+import { AppConsts } from '@shared/AppConsts';
+import { PlatformLocation } from '@angular/common';
 
 /**
  * 用于应用启动时
@@ -21,6 +23,7 @@ import { AppSessionService } from '@shared/service/app-session.service';
 export class StartupService {
   constructor(
     iconSrv: NzIconService,
+    private platformLocation: PlatformLocation,
     private sessionService: AppSessionService,
     private menuService: MenuService,
     private translate: TranslateService,
@@ -34,10 +37,12 @@ export class StartupService {
   }
 
   load(): Promise<any> {
-    // only works with promises
     // https://github.com/angular/angular/issues/15088
     return new Promise(resolve => {
-      AppPreBootstrap.run(() => {
+      AppConsts.appBaseHref = getBaseHref(this.platformLocation);
+      let appBaseUrl = getDocumentOrigin() + AppConsts.appBaseHref;
+
+      AppPreBootstrap.run(appBaseUrl, () => {
         abp.event.trigger('abp.dynamicScriptsInitialized');
         this.sessionService.init().then(result => {}, err => {});
 
@@ -80,4 +85,26 @@ export class StartupService {
       });
     });
   }
+}
+
+export function getBaseHref(platformLocation: PlatformLocation): string {
+  let baseUrl = platformLocation.getBaseHrefFromDOM();
+  if (baseUrl) {
+    return baseUrl;
+  }
+
+  return '/';
+}
+
+function getDocumentOrigin() {
+  if (!document.location.origin) {
+    return (
+      document.location.protocol +
+      '//' +
+      document.location.hostname +
+      (document.location.port ? ':' + document.location.port : '')
+    );
+  }
+
+  return document.location.origin;
 }

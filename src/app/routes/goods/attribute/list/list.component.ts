@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductAttributeServiceProxy } from '@shared/service/service-proxies';
+import { ProductAttributeServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-goods-attribute-list',

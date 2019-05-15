@@ -12,8 +12,8 @@ import { ArrayService } from '@delon/util';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
-import {RoleServiceProxy, CreateOrUpdateRoleInput, RoleEditDto} from '@shared/service-proxies/service-proxies';
-import {PermissionServiceProxy} from '@shared/service-proxies/service-proxies';
+import { RoleServiceProxy, CreateOrUpdateRoleInput, RoleEditDto } from '@shared/service-proxies/service-proxies';
+import { PermissionServiceProxy } from '@shared/service-proxies/service-proxies';
 @Component({
   selector: 'app-sys-role',
   templateUrl: './role.component.html',
@@ -33,8 +33,8 @@ export class SysRoleComponent implements OnInit {
     private arrSrv: ArrayService,
     private msg: NzMessageService,
     private roleSvc: RoleServiceProxy,
-    private permissionSvc: PermissionServiceProxy) {
-  }
+    private permissionSvc: PermissionServiceProxy,
+  ) {}
 
   ngOnInit() {
     this.getPermission();
@@ -42,34 +42,47 @@ export class SysRoleComponent implements OnInit {
   }
 
   private getPermission() {
-    this.permissionSvc.getAllPermissions().pipe(map((permission) => {
-      permission.items.forEach(item => {
-        item['parentId'] = item.level;
-        item['expanded'] = false;
+    this.permissionSvc
+      .getAllPermissions()
+      .pipe(
+        map(permission => {
+          permission.items.forEach(item => {
+            item['parentId'] = item.level;
+            item['expanded'] = false;
+          });
+          return permission.items;
+        }),
+      )
+      .subscribe(res => {
+        this.permission = this.arrSrv.arrToTreeNode(res, {
+          titleMapName: 'displayName',
+          idMapName: 'name',
+          parentIdMapName: 'parentName',
+          cb: (item, parent, deep) => {
+            item.expanded = deep <= 1;
+          },
+        });
+        console.log(this.permission);
       });
-      return permission.items;
-    })).subscribe(res => {
-      this.permission = this.arrSrv.arrToTreeNode(res, {
-        titleMapName: 'displayName',
-        idMapName: 'name',
-        parentIdMapName: 'parentName',
-        cb: (item, parent, deep) => {
-          item.expanded = deep <= 1;
-        }
-      });
-      console.log(this.permission);
-    });
   }
 
   private getData() {
-    this.roleSvc.getRoles('', '', '', 1000, 0).pipe(map((role) => {
-      return role.items;
-    })).subscribe(res => (this.data = this.arrSrv.arrToTreeNode(res, {
-      titleMapName: 'displayName',
-      cb: (item, parent, deep) => {
-        item.expanded = deep <= 1;
-      }
-    })));
+    this.roleSvc
+      .getRoles('', '', '', 1000, 0)
+      .pipe(
+        map(role => {
+          return role.items;
+        }),
+      )
+      .subscribe(
+        res =>
+          (this.data = this.arrSrv.arrToTreeNode(res, {
+            titleMapName: 'displayName',
+            cb: (item, parent, deep) => {
+              item.expanded = deep <= 1;
+            },
+          })),
+      );
   }
 
   changeData(list: any[]) {
@@ -79,7 +92,7 @@ export class SysRoleComponent implements OnInit {
       parentIdMapName: 'parentName',
       cb: (item, parent, deep) => {
         item.expanded = deep <= 1;
-      }
+      },
     });
   }
 
@@ -89,7 +102,7 @@ export class SysRoleComponent implements OnInit {
       id: undefined,
       name: '',
       parentName: '',
-      permission: []
+      permission: [],
     };
   }
 
@@ -99,14 +112,14 @@ export class SysRoleComponent implements OnInit {
 
   save() {
     const item = this.item;
-    item.permission = this.arrSrv.getKeysByTreeNode(this.permission, {includeHalfChecked: false});
+    item.permission = this.arrSrv.getKeysByTreeNode(this.permission, { includeHalfChecked: false });
     const body = new CreateOrUpdateRoleInput({
       role: new RoleEditDto({
         id: item.id,
         displayName: item.displayName,
-        isDefault: true
+        isDefault: true,
       }),
-      grantedPermissionNames: item.permission
+      grantedPermissionNames: item.permission,
     });
     this.roleSvc.createOrUpdateRole(body).subscribe(res => {
       console.log(res);
@@ -151,11 +164,11 @@ export class SysRoleComponent implements OnInit {
     return this.http
       .post('/role/move', {
         from,
-        to
+        to,
       })
       .pipe(
         tap(() => (this.item = null)),
-        map(() => true)
+        map(() => true),
       );
   };
 
