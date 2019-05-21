@@ -48,6 +48,7 @@ import { LoginService } from './service/login.service';
 import { CookiesService } from './service/cookies.service';
 import { ScriptLoaderService } from './service/script-loader.service';
 import { LocaleMappingService } from './service/locale-mapping.service';
+import { NzNotification } from './components/notification/nzNotification';
 
 const COMPONENTS_ENTRY = [
   LangsComponent,

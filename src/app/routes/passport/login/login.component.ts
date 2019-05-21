@@ -30,8 +30,6 @@ export class UserLoginComponent extends FormComponentBase implements OnDestroy {
     private router: Router,
     private settingsService: SettingsService,
     private socialService: SocialService,
-    @Optional()
-    @Inject(ReuseTabService)
     public msg: NzMessageService,
     public loginService: LoginService,
     private smsSvc: SmsService,

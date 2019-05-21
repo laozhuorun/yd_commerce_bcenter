@@ -1,59 +1,41 @@
 var abp = abp || {};
-(function () {
+(function() {
 
     /* DEFAULTS *************************************************/
 
     var defaultOptions = {
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        padding: 0,
-        toast: true,
-        animation: false
+        nzDuration: 1000
     };
 
-    /* NOTIFICATION *********************************************/
-
-    var showNotification = function (type, message, title, options) {
-        var icon = options.imageClass ? '<i class="m-1 m--font-light ' + options.imageClass + '"></i>' : '';
-
-        if (title) {
-            options.title = icon + '<span class="m--font-light">' + title + '</span>';
+    abp.notify.success = function(message, title, options) {
+        if (title === '' || title === undefined) {
+            window.NzMessage.success(message, defaultOptions);
+        } else {
+            window.NzMessage.success(title + ':' + message, defaultOptions);
         }
-
-        options.html = (title ? '' : icon) + '<span class="m--font-light">' + message + '</span>';
-        var combinedOptions = Object.assign(defaultOptions, options);
-
-        Swal.fire(combinedOptions);
     };
 
-    abp.notify.success = function (message, title, options) {
-        showNotification('success', message, title,
-            Object.assign({
-                background: '#34bfa3',
-                imageClass: 'fa fa-check-circle'
-            }, options));
+    abp.notify.info = function(message, title, options) {
+        if (title === '' || title === undefined) {
+            window.NzMessage.info(message, defaultOptions);
+        } else {
+            window.NzMessage.info(title + ':' + message, defaultOptions);
+        }
     };
 
-    abp.notify.info = function (message, title, options) {
-        showNotification('info', message, title, Object.assign({
-            background: '#36a3f7',
-            imageClass: 'fa fa-info-circle'
-        }, options));
+    abp.notify.warn = function(message, title, options) {
+        if (title === '' || title === undefined) {
+            window.NzMessage.warning(message, defaultOptions);
+        } else {
+            window.NzMessage.warning(title + ':' + message, defaultOptions);
+        }
     };
 
-    abp.notify.warn = function (message, title, options) {
-        showNotification('warning', message, title, Object.assign({
-            background: '#ffb822',
-            imageClass: 'fa fa-exclamation-triangle'
-        }, options));
+    abp.notify.error = function(message, title, options) {
+        if (title === '' || title === undefined) {
+            window.NzMessage.error(message, defaultOptions);
+        } else {
+            window.NzMessage.error(title + ':' + message, defaultOptions);
+        }
     };
-
-    abp.notify.error = function (message, title, options) {
-        showNotification('error', message, title, Object.assign({
-            background: '#f4516c',
-            imageClass: 'fa fa-exclamation-circle'
-        }, options));
-    };
-
 })();

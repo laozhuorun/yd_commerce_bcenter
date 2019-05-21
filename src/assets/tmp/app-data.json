@@ -20,11 +20,21 @@
           "i18n": "BusiCenter.Dashboard",
           "icon": "anticon anticon-dashboard",
           "link": "/dashboard/analysis"
-        },
+        }
+      ]
+    },
+    {
+      "_text": "电商模块",
+      "i18n": "BusiCenter.Catelog",
+      "icon": "anticon anticon-inbox",
+      "group": true,
+      "hideInBreadcrumb": true,
+      "children": [
         {
           "_text": "商品管理",
           "i18n": "BusiCenter.Catelog",
-          "icon": "anticon anticon-gift",
+          "icon": "anticon anticon-inbox",
+          "hideInBreadcrumb": false,
           "children": [
             {
               "_text": "查找商品",
@@ -44,26 +54,11 @@
           ]
         },
         {
-          "_text": "租户管理",
-          "i18n": "Admin.UserManage.Tenants",
-          "icon": "anticon anticon-radar-chart",
-          "children": [
-            {
-              "_text": "查找租户",
-              "link": "/tenant/list",
-              "i18n": "Admin.UserManage.Tenants"
-            },
-            {
-              "_text": "特性管理",
-              "link": "/tenant/feature",
-              "i18n": "Admin.UserManage.Tenants.ChangeFeatures"
-            }
-          ]
-        },
-        {
           "_text": "销售管理",
           "i18n": "BusiCenter.SalesManage",
           "icon": "anticon anticon-shopping",
+          "group": true,
+          "hideInBreadcrumb": true,
           "children": [
             {
               "_text": "订单管理",
@@ -80,7 +75,9 @@
         {
           "_text": "物流管理",
           "i18n": "BusiCenter.StoreConfiguration.TenantLogistics",
-          "icon": "anticon anticon-radar-chart",
+          "icon": "anticon anticon-car",
+          "group": true,
+          "hideInBreadcrumb": true,
           "children": [
             {
               "_text": "发货单查询",
@@ -102,7 +99,9 @@
         {
           "_text": "广告管理",
           "i18n": "BusiCenter.AdvertManage",
-          "icon": "anticon anticon-line-chart",
+          "icon": "anticon anticon-area-chart",
+          "group": true,
+          "hideInBreadcrumb": true,
           "children": [
             {
               "_text": "广告账户",
@@ -121,17 +120,52 @@
           "i18n": "BusiCenter.StoreConfiguration.Store",
           "icon": "anticon anticon-shop",
           "link": "/store/list"
-        },
+        }
+      ]
+    },
+    {
+      "_text": "用户管理",
+      "i18n": "Admin.UserManage",
+      "group": true,
+      "hideInBreadcrumb": true,
+      "children": [
         {
-          "_text": "系统",
-          "i18n": "Admin.Configuration",
-          "icon": "anticon anticon-setting",
+          "_text": "商户管理",
+          "i18n": "Admin.UserManage.Tenants",
+          "icon": "anticon anticon-team",
           "children": [
+            {
+              "_text": "查找商户",
+              "link": "/tenant/list",
+              "i18n": "Admin.UserManage.Tenants"
+            },
             {
               "_text": "角色",
               "link": "/sys/role",
               "i18n": "Admin.UserManage.Roles"
             },
+            {
+              "_text": "特性管理",
+              "link": "/tenant/feature",
+              "i18n": "Admin.UserManage.Tenants.ChangeFeatures"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_text": "系统与设置",
+      "i18n": "Admin.Configuration",
+      "group": true,
+      "hideInBreadcrumb": true,
+      "children": [
+        {
+          "_text": "系统",
+          "i18n": "Admin.Configuration",
+          "icon": "anticon anticon-setting",
+          "group": true,
+          "hideInBreadcrumb": true,
+          "children": [
             {
               "_text": "设置",
               "link": "/tenant/settings",

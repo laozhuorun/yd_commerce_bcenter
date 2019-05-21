@@ -10,7 +10,7 @@ import {
   TokenAuthServiceProxy,
   WebLogServiceProxy,
 } from '@shared/service-proxies/service-proxies';
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject, Optional } from '@angular/core';
 import { Params, Router } from '@angular/router';
 
 import { AppConsts } from '@shared/AppConsts';
@@ -79,9 +79,11 @@ export class LoginService {
     private _cookiesService: CookiesService,
     private _appSessionService: AppSessionService,
     private _notify: NotifyService,
+    @Optional()
+    @Inject(ReuseTabService)
     private _reuseTabService: ReuseTabService,
-    private _startupService: StartupService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+    private _startupService: StartupService,
   ) {
     this.clear();
   }

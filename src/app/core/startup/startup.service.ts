@@ -14,6 +14,8 @@ import { AppPreBootstrap } from './AppPreBootstrap';
 import { AppSessionService } from '@shared/service/app-session.service';
 import { AppConsts } from '@shared/AppConsts';
 import { PlatformLocation } from '@angular/common';
+import { NzNotification } from '@shared/components/notification/nzNotification';
+import { NzMessage } from '@shared/components/notification/nzMessage';
 
 /**
  * 用于应用启动时
@@ -32,6 +34,8 @@ export class StartupService {
     private aclService: ACLService,
     private titleService: TitleService,
     private httpClient: HttpClient,
+    private nzNotification: NzNotification,
+    private nzMessage: NzMessage,
   ) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
   }
@@ -40,7 +44,7 @@ export class StartupService {
     // https://github.com/angular/angular/issues/15088
     return new Promise(resolve => {
       AppConsts.appBaseHref = getBaseHref(this.platformLocation);
-      let appBaseUrl = getDocumentOrigin() + AppConsts.appBaseHref;
+      const appBaseUrl = getDocumentOrigin() + AppConsts.appBaseHref;
 
       AppPreBootstrap.run(appBaseUrl, () => {
         abp.event.trigger('abp.dynamicScriptsInitialized');
@@ -84,6 +88,11 @@ export class StartupService {
           );
       });
     });
+  }
+
+  // #endregion
+  getRemoteServiceBaseUrl(): string {
+    return AppConsts.remoteServiceBaseUrl;
   }
 }
 

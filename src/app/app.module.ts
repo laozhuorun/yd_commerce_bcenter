@@ -10,6 +10,15 @@ import { NZ_I18N, zh_CN as zorroLang } from 'ng-zorro-antd';
 import { DELON_LOCALE, zh_CN as delonLang } from '@delon/theme';
 import { JWTInterceptor } from '@delon/auth';
 
+import { DelonModule } from './delon.module';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
+import { AppComponent } from './app.component';
+import { RoutesModule } from './routes/routes.module';
+import { LayoutModule } from './layout/layout.module';
+import { AbpModule } from '@abp/abp.module';
+import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
+
 const LANG = {
   abbr: 'zh',
   ng: ngLang,
@@ -77,9 +86,15 @@ const INTERCEPTOR_PROVIDES = [
 // #region Startup Service
 import { StartupService } from '@core';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
+import { AppConsts } from '@shared/AppConsts';
 export function StartupServiceFactory(startupService: StartupService): Function {
   return () => startupService.load();
 }
+
+export function getRemoteServiceBaseUrl(): string {
+  return AppConsts.remoteServiceBaseUrl;
+}
+
 const APPINIT_PROVIDES = [
   StartupService,
   {
@@ -88,16 +103,8 @@ const APPINIT_PROVIDES = [
     deps: [StartupService],
     multi: true,
   },
+  { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
 ];
-// #endregion
-
-import { DelonModule } from './delon.module';
-import { CoreModule } from './core/core.module';
-import { SharedModule } from './shared/shared.module';
-import { AppComponent } from './app.component';
-import { RoutesModule } from './routes/routes.module';
-import { LayoutModule } from './layout/layout.module';
-import { AbpModule } from '@abp/abp.module';
 
 @NgModule({
   declarations: [AppComponent],

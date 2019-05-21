@@ -12,9 +12,7 @@ export class AppPreBootstrap {
   constructor(@Inject(DA_SERVICE_TOKEN) private tokenSvc: ITokenService) {}
 
   static run(appRootUrl: string, callback: () => void): void {
-    AppPreBootstrap.getApplicationConfig(appRootUrl, () => {
-      AppPreBootstrap.getUserConfiguration(callback);
-    });
+    AppPreBootstrap.getUserConfiguration(callback);
   }
 
   static bootstrap<TM>(
@@ -102,7 +100,7 @@ export class AppPreBootstrap {
 
     return XmlHttpRequestHelper.ajax(
       'GET',
-      AppConsts.remoteServiceBaseUrl + '/UserConfiguration/GetAll?sourceName=BusinessCenter',
+      AppConsts.remoteServiceBaseUrl + '/api/UserConfiguration/GetAll?sourceName=BusinessCenter',
       requestHeaders,
       null,
       response => {

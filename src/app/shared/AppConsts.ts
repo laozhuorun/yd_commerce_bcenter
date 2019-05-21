@@ -1,11 +1,11 @@
 export class AppConsts {
   static readonly tenancyNamePlaceHolderInUrl = '{TENANCY_NAME}';
 
-  static remoteServiceBaseUrl: string;
-  static remoteServiceBaseUrlFormat: string;
-  static appBaseUrl: string;
-  static appBaseHref: string; // returns angular's base-href parameter value if used during the publish
-  static appBaseUrlFormat: string;
+  static remoteServiceBaseUrl = 'http://test.api.vapps.com.cn';
+  static remoteServiceBaseUrlFormat = 'http://test.api.vapps.com.cn';
+  static appBaseUrl = 'http://localhost:4200';
+  static appBaseHref = 'http://localhost:4200'; // returns angular's base-href parameter value if used during the publish
+  static appBaseUrlFormat = 'http://localhost:4200';
   static recaptchaSiteKey: string;
   static subscriptionExpireNootifyDayCount: number;
 

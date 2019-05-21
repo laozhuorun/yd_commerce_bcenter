@@ -8,6 +8,13 @@ import {
   LinkOutline,
   FolderOutline,
   FileZipOutline,
+  InboxOutline,
+  ShoppingOutline,
+  CarOutline,
+  AreaChartOutline,
+  ShopOutline,
+  UserOutline,
+  TeamOutline,
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS = [
@@ -18,4 +25,11 @@ export const ICONS = [
   LinkOutline,
   FolderOutline,
   FileZipOutline,
+  InboxOutline,
+  ShoppingOutline,
+  CarOutline,
+  AreaChartOutline,
+  ShopOutline,
+  UserOutline,
+  TeamOutline,
 ];
