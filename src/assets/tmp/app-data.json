@@ -1,11 +1,12 @@
 {
   "app": {
-    "name": "You Du",
-    "description": "有度电商管理后台"
+    "name": "有度电商管理后台",
+    "description": "有度电商管理后台",
+    "year": "2019"
   },
   "user": {
     "name": "Admin",
-    "avatar": "./assets/tmp/img/avatar.jpg",
+    "avatar": "https://gw.alipayobjects.com/zos/rmsportal/lctvVCLfRpYCkYxAsiVQ.png",
     "email": "cipchk@qq.com"
   },
   "menu": [
@@ -131,11 +132,11 @@
       "children": [
         {
           "_text": "商户管理",
-          "i18n": "Admin.UserManage.Tenants",
+          "i18n": "Admin.UserManage",
           "icon": "anticon anticon-team",
           "children": [
             {
-              "_text": "查找商户",
+              "_text": "商户",
               "link": "/tenant/list",
               "i18n": "Admin.UserManage.Tenants"
             },

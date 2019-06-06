@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { AppConsts } from '@shared/AppConsts';
+import { AppConsts } from '@shared/consts/app-consts';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Type, CompilerOptions, NgModuleRef, Inject } from '@angular/core';
 import * as _ from 'lodash';
@@ -75,14 +75,14 @@ export class AppPreBootstrap {
     });
   }
 
-  private static getCurrentClockProvider(currentProviderName: string): abp.timing.IClockProvider {
-    if (currentProviderName === 'unspecifiedClockProvider') {
-      return abp.timing.unspecifiedClockProvider;
-    }
+  private static getCurrentClockProvider(): abp.timing.IClockProvider {
+    // if (currentProviderName === 'unspecifiedClockProvider') {
+    //   return abp.timing.unspecifiedClockProvider;
+    // }
 
-    if (currentProviderName === 'utcClockProvider') {
-      return abp.timing.utcClockProvider;
-    }
+    // if (currentProviderName === 'utcClockProvider') {
+    //   return abp.timing.utcClockProvider;
+    // }
 
     return abp.timing.localClockProvider;
   }
@@ -108,8 +108,9 @@ export class AppPreBootstrap {
 
         _.merge(abp, result);
 
-        abp.event.trigger('abp.dynamicScriptsInitialized');
+        abp.clock.provider = this.getCurrentClockProvider();
 
+        abp.event.trigger('abp.dynamicScriptsInitialized');
         AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
         AppConsts.subscriptionExpireNootifyDayCount = parseInt(
           abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'),

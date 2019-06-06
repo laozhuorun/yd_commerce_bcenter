@@ -1,4 +1,4 @@
-﻿import { AppConsts } from '@shared/AppConsts';
+﻿import { AppConsts } from '@shared/consts/app-consts';
 import { Injectable } from '@angular/core';
 import { CookiesService } from '@shared/service/cookies.service';
 

@@ -6,7 +6,7 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 @Component({
   selector: 'layout-pro-user',
   templateUrl: 'user.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayoutProWidgetUserComponent implements OnInit {
   constructor(
@@ -18,10 +18,10 @@ export class LayoutProWidgetUserComponent implements OnInit {
   ngOnInit(): void {
     // mock
     const token = this.tokenService.get() || {
-      token: 'nothing',
+      token: '',
       name: 'Admin',
-      avatar: './assets/logo-color.svg',
-      email: 'cipchk@qq.com',
+      avatar: 'https://gw.alipayobjects.com/zos/rmsportal/lctvVCLfRpYCkYxAsiVQ.png',
+      email: '',
     };
     this.tokenService.set(token);
   }

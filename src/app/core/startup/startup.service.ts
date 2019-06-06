@@ -12,7 +12,7 @@ import { ICONS_AUTO } from '../../../style-icons-auto';
 import { ICONS } from '../../../style-icons';
 import { AppPreBootstrap } from './AppPreBootstrap';
 import { AppSessionService } from '@shared/service/app-session.service';
-import { AppConsts } from '@shared/AppConsts';
+import { AppConsts } from '@shared/consts/app-consts';
 import { PlatformLocation } from '@angular/common';
 import { NzNotification } from '@shared/components/notification/nzNotification';
 import { NzMessage } from '@shared/components/notification/nzMessage';
@@ -72,7 +72,7 @@ export class StartupService {
               // 应用信息：包括站点名、描述、年份
               this.settingService.setApp(res.app);
               // 用户信息：包括姓名、头像、邮箱地址
-              this.settingService.setUser(res.user);
+              // this.settingService.setUser(res.user);
               // ACL：设置权限为全量
               this.aclService.setFull(true);
               // 初始化菜单

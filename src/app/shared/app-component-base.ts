@@ -6,7 +6,7 @@ import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.ser
 import { NotifyService } from '@abp/notify/notify.service';
 import { SettingService } from '@abp/settings/setting.service';
 import { Injector } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
+import { AppConsts } from '@shared/consts/app-consts';
 import { NzMessageService } from 'ng-zorro-antd';
 
 export abstract class AppComponentBase {
@@ -73,6 +73,26 @@ export abstract class AppComponentBase {
   s(key: string): string {
     return abp.setting.get(key);
   }
+
+  // t(dateTime: Date, format: string = 'YYYY-MM-DD HH:mm'): string {
+  //   if (dateTime === undefined) {
+  //     return '';
+  //   }
+
+  //   abp.clock.provider.normalize();
+
+  //   const localDatetimeString = dateTime.local().format(format);
+  //   return localDatetimeString;
+  // }
+
+  // d(momentTime: Moment, format: string = 'YYYY-MM-DD'): string {
+  //   if (momentTime === undefined) {
+  //     return '';
+  //   }
+
+  //   const localDatetimeString = momentTime.local().format(format);
+  //   return localDatetimeString;
+  // }
 }
 
 export abstract class FormComponentBase extends AppComponentBase {

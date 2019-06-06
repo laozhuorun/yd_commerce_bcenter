@@ -1,4 +1,4 @@
-import { AppConsts } from '@shared/AppConsts';
+import { AppConsts } from '@shared/consts/app-consts';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Injectable } from '@angular/core';
 

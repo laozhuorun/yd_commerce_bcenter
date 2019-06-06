@@ -10,10 +10,13 @@ import {
   StateServiceProxy,
   StoreServiceProxy,
   CommonLookupServiceProxy,
+  SelectListItemDtoOfInt32,
 } from '@shared/service-proxies/service-proxies';
 
 import { getIndex } from '@shared/utils/utils';
 import { CNCurrencyPipe } from '@delon/theme';
+import { CacheService } from '@delon/cache';
+import { EnumConsts } from '@shared/consts/enum-consts';
 
 let that;
 
@@ -49,6 +52,7 @@ export class OrderEditComponent implements OnInit {
     private storeSvc: StoreServiceProxy,
     private enumsSvc: CommonLookupServiceProxy,
     private currency: CNCurrencyPipe,
+    private cacheSvc: CacheService,
   ) {
     that = this;
   }
@@ -143,17 +147,25 @@ export class OrderEditComponent implements OnInit {
       this.stores = res;
     });
 
-    this.getEnums(['OrderSource', 'OrderStatus', 'OrderType', 'PaymentStatus', 'ShippingStatus']);
+    this.getEnums([
+      EnumConsts.OrderSource,
+      EnumConsts.OrderStatus,
+      EnumConsts.OrderType,
+      EnumConsts.PaymentStatus,
+      EnumConsts.ShippingStatus,
+    ]);
   }
 
   getEnums(enumNames) {
     enumNames.forEach(enumName => {
-      this.enumsSvc.getEnumSelectItem(enumName).subscribe(res => {
-        res.forEach(item => {
-          item.value = item.value;
+      this.cacheSvc
+        .tryGet<SelectListItemDtoOfInt32[]>(enumNames, this.enumsSvc.getEnumSelectItem(enumName))
+        .subscribe(res => {
+          res.forEach(item => {
+            item.value = item.value;
+          });
+          this.enums[enumName] = res;
         });
-        this.enums[enumName] = res;
-      });
     });
   }
 

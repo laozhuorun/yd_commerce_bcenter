@@ -1,7 +1,6 @@
 import * as ApiServiceProxies from './service-proxies';
 
-import {HTTP_INTERCEPTORS} from '@angular/common/http';
-import {NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
 
 @NgModule({
   providers: [
@@ -10,7 +9,6 @@ import {NgModule} from '@angular/core';
     ApiServiceProxies.CommonLookupServiceProxy,
     ApiServiceProxies.EditionServiceProxy,
     ApiServiceProxies.HostSettingsServiceProxy,
-    ApiServiceProxies.InstallServiceProxy,
     ApiServiceProxies.LanguageServiceProxy,
     ApiServiceProxies.NotificationServiceProxy,
     ApiServiceProxies.OrganizationUnitServiceProxy,
@@ -19,11 +17,9 @@ import {NgModule} from '@angular/core';
     ApiServiceProxies.RoleServiceProxy,
     ApiServiceProxies.SessionServiceProxy,
     ApiServiceProxies.TenantServiceProxy,
-    ApiServiceProxies.TenantDashboardServiceProxy,
     ApiServiceProxies.TenantSettingsServiceProxy,
     ApiServiceProxies.TimingServiceProxy,
     ApiServiceProxies.UserServiceProxy,
-    ApiServiceProxies.UserLinkServiceProxy,
     ApiServiceProxies.UserLoginServiceProxy,
     ApiServiceProxies.WebLogServiceProxy,
     ApiServiceProxies.AccountServiceProxy,
@@ -34,7 +30,6 @@ import {NgModule} from '@angular/core';
     ApiServiceProxies.InvoiceServiceProxy,
     ApiServiceProxies.PictureServiceProxy,
     ApiServiceProxies.StoreServiceProxy,
-    ApiServiceProxies.InstallServiceProxy,
     ApiServiceProxies.SMSServiceProxy,
     ApiServiceProxies.CategoryServiceProxy,
     ApiServiceProxies.ProductServiceProxy,
@@ -45,8 +40,8 @@ import {NgModule} from '@angular/core';
     ApiServiceProxies.LogisticsServiceProxy,
     ApiServiceProxies.FileServiceProxy,
     ApiServiceProxies.AdvertAccountServiceProxy,
-    ApiServiceProxies.AdvertStatisticServiceProxy
-  ]
+    ApiServiceProxies.AdvertStatisticServiceProxy,
+    ApiServiceProxies.CommonStatisticServiceProxy,
+  ],
 })
-export class ServiceProxyModule {
-}
+export class ServiceProxyModule {}

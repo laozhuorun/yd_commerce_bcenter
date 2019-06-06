@@ -1,4 +1,4 @@
-import { AppConsts } from '@shared/AppConsts';
+import { AppConsts } from '@shared/consts/app-consts';
 import * as _ from 'lodash';
 
 export class LocaleMappingService {

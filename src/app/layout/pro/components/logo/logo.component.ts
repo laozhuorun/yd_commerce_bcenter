@@ -4,6 +4,7 @@ import { SettingsService } from '@delon/theme';
 @Component({
   selector: 'layout-pro-logo',
   templateUrl: './logo.component.html',
+  styleUrls: ['./logo.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayoutProLogoComponent {

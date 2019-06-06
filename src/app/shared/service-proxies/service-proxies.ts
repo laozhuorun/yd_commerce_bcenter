@@ -1162,18 +1162,77 @@ export class AdvertStatisticServiceProxy {
     }
 
     /**
+     * 获取广告数据小时统计
+     * @param dateOn (optional) 统计时间
+     * @return Success
+     */
+    getHourStatistics(dateOn: Date | null | undefined): Observable<DailyStatisticItemDto[]> {
+        let url_ = this.baseUrl + "/api/services/advert/AdvertStatistic/GetHourStatistics?";
+        if (dateOn !== undefined)
+            url_ += "DateOn=" + encodeURIComponent(dateOn ? "" + dateOn.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetHourStatistics(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetHourStatistics(<any>response_);
+                } catch (e) {
+                    return <Observable<DailyStatisticItemDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DailyStatisticItemDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetHourStatistics(response: HttpResponseBase): Observable<DailyStatisticItemDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(DailyStatisticItemDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DailyStatisticItemDto[]>(<any>null);
+    }
+
+    /**
      * 获取所有广告数据统计
      * @param advertChannels (optional) 渠道
      * @param productIds (optional) 产品Id
      * @param accountIds (optional) 账户Id
-     * @param statisticOn_FormDate (optional) 开始时间
-     * @param statisticOn_ToDate (optional) 结束时间
+     * @param dateOn_FormDate (optional) 开始时间
+     * @param dateOn_ToDate (optional) 结束时间
      * @param sorting (optional) 排序字段 (eg:Id DESC)
      * @param maxResultCount (optional) 最大结果数量(等同:PageSize)
      * @param skipCount (optional) 列表跳过数量(等同: PageSize*PageIndex)
      * @return Success
      */
-    getDailyStatistics(advertChannels: AdvertChannels2[] | null | undefined, productIds: number[] | null | undefined, accountIds: number[] | null | undefined, statisticOn_FormDate: Date | null | undefined, statisticOn_ToDate: Date | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfDailyStatisticDto> {
+    getDailyStatistics(advertChannels: AdvertChannels2[] | null | undefined, productIds: number[] | null | undefined, accountIds: number[] | null | undefined, dateOn_FormDate: Date | null | undefined, dateOn_ToDate: Date | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfDailyStatisticDto> {
         let url_ = this.baseUrl + "/api/services/advert/AdvertStatistic/GetDailyStatistics?";
         if (advertChannels !== undefined)
             advertChannels && advertChannels.forEach(item => { url_ += "AdvertChannels=" + encodeURIComponent("" + item) + "&"; });
@@ -1181,10 +1240,10 @@ export class AdvertStatisticServiceProxy {
             productIds && productIds.forEach(item => { url_ += "ProductIds=" + encodeURIComponent("" + item) + "&"; });
         if (accountIds !== undefined)
             accountIds && accountIds.forEach(item => { url_ += "AccountIds=" + encodeURIComponent("" + item) + "&"; });
-        if (statisticOn_FormDate !== undefined)
-            url_ += "StatisticOn.FormDate=" + encodeURIComponent(statisticOn_FormDate ? "" + statisticOn_FormDate.toJSON() : "") + "&"; 
-        if (statisticOn_ToDate !== undefined)
-            url_ += "StatisticOn.ToDate=" + encodeURIComponent(statisticOn_ToDate ? "" + statisticOn_ToDate.toJSON() : "") + "&"; 
+        if (dateOn_FormDate !== undefined)
+            url_ += "DateOn.FormDate=" + encodeURIComponent(dateOn_FormDate ? "" + dateOn_FormDate.toJSON() : "") + "&"; 
+        if (dateOn_ToDate !== undefined)
+            url_ += "DateOn.ToDate=" + encodeURIComponent(dateOn_ToDate ? "" + dateOn_ToDate.toJSON() : "") + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
@@ -2780,6 +2839,80 @@ export class CommonLookupServiceProxy {
             }));
         }
         return _observableOf<SelectListItemDtoOfString[]>(<any>null);
+    }
+}
+
+@Injectable()
+export class CommonStatisticServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * 获取基础统计
+     * @param statisticDateRange_FormDate (optional) 开始时间
+     * @param statisticDateRange_ToDate (optional) 结束时间
+     * @return Success
+     */
+    getAll(statisticDateRange_FormDate: Date | null | undefined, statisticDateRange_ToDate: Date | null | undefined): Observable<CommonStatisticsDto[]> {
+        let url_ = this.baseUrl + "/api/services/statistic/CommonStatistic/GetAll?";
+        if (statisticDateRange_FormDate !== undefined)
+            url_ += "StatisticDateRange.FormDate=" + encodeURIComponent(statisticDateRange_FormDate ? "" + statisticDateRange_FormDate.toJSON() : "") + "&"; 
+        if (statisticDateRange_ToDate !== undefined)
+            url_ += "StatisticDateRange.ToDate=" + encodeURIComponent(statisticDateRange_ToDate ? "" + statisticDateRange_ToDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<CommonStatisticsDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CommonStatisticsDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<CommonStatisticsDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CommonStatisticsDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CommonStatisticsDto[]>(<any>null);
     }
 }
 
@@ -16716,170 +16849,6 @@ export interface IEntityDtoOfInt64 {
     id: number | undefined;
 }
 
-export class PagedResultDtoOfDailyStatisticDto implements IPagedResultDtoOfDailyStatisticDto {
-    totalCount!: number | undefined;
-    items!: DailyStatisticDto[] | undefined;
-
-    constructor(data?: IPagedResultDtoOfDailyStatisticDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.totalCount = data["totalCount"];
-            if (data["items"] && data["items"].constructor === Array) {
-                this.items = [];
-                for (let item of data["items"])
-                    this.items.push(DailyStatisticDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): PagedResultDtoOfDailyStatisticDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PagedResultDtoOfDailyStatisticDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["totalCount"] = this.totalCount;
-        if (this.items && this.items.constructor === Array) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IPagedResultDtoOfDailyStatisticDto {
-    totalCount: number | undefined;
-    items: DailyStatisticDto[] | undefined;
-}
-
-export class DailyStatisticDto implements IDailyStatisticDto {
-    /** 商品名Id */
-    productId!: number | undefined;
-    /** 商品名 */
-    productName!: string | undefined;
-    /** 广告账户Id */
-    advertAccountId!: number | undefined;
-    /** 广告账户 */
-    advertAccount!: string | undefined;
-    /** 展现数 */
-    displayNum!: number | undefined;
-    /** 点击数 */
-    clickNum!: number | undefined;
-    /** 点击价格 */
-    clickPrice!: number | undefined;
-    /** 点记录 */
-    clickRate!: number | undefined;
-    /** 千次展现花费 */
-    thDisplayCost!: number | undefined;
-    /** 消耗金额 */
-    totalCost!: number | undefined;
-    /** 统计时间 */
-    statisticOn!: string | undefined;
-    /** 条目(每小时) */
-    items!: DailyStatisticItemDto[] | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IDailyStatisticDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.productId = data["productId"];
-            this.productName = data["productName"];
-            this.advertAccountId = data["advertAccountId"];
-            this.advertAccount = data["advertAccount"];
-            this.displayNum = data["displayNum"];
-            this.clickNum = data["clickNum"];
-            this.clickPrice = data["clickPrice"];
-            this.clickRate = data["clickRate"];
-            this.thDisplayCost = data["thDisplayCost"];
-            this.totalCost = data["totalCost"];
-            this.statisticOn = data["statisticOn"];
-            if (data["items"] && data["items"].constructor === Array) {
-                this.items = [];
-                for (let item of data["items"])
-                    this.items.push(DailyStatisticItemDto.fromJS(item));
-            }
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): DailyStatisticDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new DailyStatisticDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["productId"] = this.productId;
-        data["productName"] = this.productName;
-        data["advertAccountId"] = this.advertAccountId;
-        data["advertAccount"] = this.advertAccount;
-        data["displayNum"] = this.displayNum;
-        data["clickNum"] = this.clickNum;
-        data["clickPrice"] = this.clickPrice;
-        data["clickRate"] = this.clickRate;
-        data["thDisplayCost"] = this.thDisplayCost;
-        data["totalCost"] = this.totalCost;
-        data["statisticOn"] = this.statisticOn;
-        if (this.items && this.items.constructor === Array) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IDailyStatisticDto {
-    /** 商品名Id */
-    productId: number | undefined;
-    /** 商品名 */
-    productName: string | undefined;
-    /** 广告账户Id */
-    advertAccountId: number | undefined;
-    /** 广告账户 */
-    advertAccount: string | undefined;
-    /** 展现数 */
-    displayNum: number | undefined;
-    /** 点击数 */
-    clickNum: number | undefined;
-    /** 点击价格 */
-    clickPrice: number | undefined;
-    /** 点记录 */
-    clickRate: number | undefined;
-    /** 千次展现花费 */
-    thDisplayCost: number | undefined;
-    /** 消耗金额 */
-    totalCost: number | undefined;
-    /** 统计时间 */
-    statisticOn: string | undefined;
-    /** 条目(每小时) */
-    items: DailyStatisticItemDto[] | undefined;
-    id: number | undefined;
-}
-
 export class DailyStatisticItemDto implements IDailyStatisticItemDto {
     /** 小时（24小时制） */
     hourOfDay!: number | undefined;
@@ -16955,6 +16924,170 @@ export interface IDailyStatisticItemDto {
     thDisplayCost: number | undefined;
     /** 总消耗 */
     totalCost: number | undefined;
+    id: number | undefined;
+}
+
+export class PagedResultDtoOfDailyStatisticDto implements IPagedResultDtoOfDailyStatisticDto {
+    totalCount!: number | undefined;
+    items!: DailyStatisticDto[] | undefined;
+
+    constructor(data?: IPagedResultDtoOfDailyStatisticDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(DailyStatisticDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfDailyStatisticDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PagedResultDtoOfDailyStatisticDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfDailyStatisticDto {
+    totalCount: number | undefined;
+    items: DailyStatisticDto[] | undefined;
+}
+
+export class DailyStatisticDto implements IDailyStatisticDto {
+    /** 商品名Id */
+    productId!: number | undefined;
+    /** 商品名 */
+    productName!: string | undefined;
+    /** 广告账户Id */
+    advertAccountId!: number | undefined;
+    /** 广告账户 */
+    advertAccount!: string | undefined;
+    /** 展现数 */
+    displayNum!: number | undefined;
+    /** 点击数 */
+    clickNum!: number | undefined;
+    /** 点击价格 */
+    clickPrice!: number | undefined;
+    /** 点记录 */
+    clickRate!: number | undefined;
+    /** 千次展现花费 */
+    thDisplayCost!: number | undefined;
+    /** 消耗金额 */
+    totalCost!: number | undefined;
+    /** 统计时间 */
+    dateOn!: string | undefined;
+    /** 条目(每小时) */
+    items!: DailyStatisticItemDto[] | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IDailyStatisticDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.productId = data["productId"];
+            this.productName = data["productName"];
+            this.advertAccountId = data["advertAccountId"];
+            this.advertAccount = data["advertAccount"];
+            this.displayNum = data["displayNum"];
+            this.clickNum = data["clickNum"];
+            this.clickPrice = data["clickPrice"];
+            this.clickRate = data["clickRate"];
+            this.thDisplayCost = data["thDisplayCost"];
+            this.totalCost = data["totalCost"];
+            this.dateOn = data["dateOn"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(DailyStatisticItemDto.fromJS(item));
+            }
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): DailyStatisticDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DailyStatisticDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["productName"] = this.productName;
+        data["advertAccountId"] = this.advertAccountId;
+        data["advertAccount"] = this.advertAccount;
+        data["displayNum"] = this.displayNum;
+        data["clickNum"] = this.clickNum;
+        data["clickPrice"] = this.clickPrice;
+        data["clickRate"] = this.clickRate;
+        data["thDisplayCost"] = this.thDisplayCost;
+        data["totalCost"] = this.totalCost;
+        data["dateOn"] = this.dateOn;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IDailyStatisticDto {
+    /** 商品名Id */
+    productId: number | undefined;
+    /** 商品名 */
+    productName: string | undefined;
+    /** 广告账户Id */
+    advertAccountId: number | undefined;
+    /** 广告账户 */
+    advertAccount: string | undefined;
+    /** 展现数 */
+    displayNum: number | undefined;
+    /** 点击数 */
+    clickNum: number | undefined;
+    /** 点击价格 */
+    clickPrice: number | undefined;
+    /** 点记录 */
+    clickRate: number | undefined;
+    /** 千次展现花费 */
+    thDisplayCost: number | undefined;
+    /** 消耗金额 */
+    totalCost: number | undefined;
+    /** 统计时间 */
+    dateOn: string | undefined;
+    /** 条目(每小时) */
+    items: DailyStatisticItemDto[] | undefined;
     id: number | undefined;
 }
 
@@ -18062,6 +18195,68 @@ export interface ISelectListItemDtoOfString {
     text: string | undefined;
     /** 值 */
     value: string | undefined;
+}
+
+export class CommonStatisticsDto implements ICommonStatisticsDto {
+    /** 统计时间 */
+    statisticsOn!: Date | undefined;
+    /** 下单数量 */
+    numberOfOrders!: number | undefined;
+    /** 下单金额 */
+    totalOfOrders!: number | undefined;
+    /** 广告消耗 */
+    costOfAdvert!: number | undefined;
+    /** 发货数 */
+    numberOfShipped!: number | undefined;
+
+    constructor(data?: ICommonStatisticsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.statisticsOn = data["statisticsOn"] ? new Date(data["statisticsOn"].toString()) : <any>undefined;
+            this.numberOfOrders = data["numberOfOrders"];
+            this.totalOfOrders = data["totalOfOrders"];
+            this.costOfAdvert = data["costOfAdvert"];
+            this.numberOfShipped = data["numberOfShipped"];
+        }
+    }
+
+    static fromJS(data: any): CommonStatisticsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CommonStatisticsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["statisticsOn"] = this.statisticsOn ? this.statisticsOn.toISOString() : <any>undefined;
+        data["numberOfOrders"] = this.numberOfOrders;
+        data["totalOfOrders"] = this.totalOfOrders;
+        data["costOfAdvert"] = this.costOfAdvert;
+        data["numberOfShipped"] = this.numberOfShipped;
+        return data; 
+    }
+}
+
+export interface ICommonStatisticsDto {
+    /** 统计时间 */
+    statisticsOn: Date | undefined;
+    /** 下单数量 */
+    numberOfOrders: number | undefined;
+    /** 下单金额 */
+    totalOfOrders: number | undefined;
+    /** 广告消耗 */
+    costOfAdvert: number | undefined;
+    /** 发货数 */
+    numberOfShipped: number | undefined;
 }
 
 export class PagedResultDtoOfCustomerListDto implements IPagedResultDtoOfCustomerListDto {
@@ -26923,7 +27118,7 @@ export interface ICreateOrUpdateRoleInput {
 
 export class SaleStatisticDto implements ISaleStatisticDto {
     /** 统计时间 */
-    date!: string | undefined;
+    dateOn!: string | undefined;
     /** 渠道 */
     channel!: string | undefined;
     /** 商品 */
@@ -26980,7 +27175,7 @@ export class SaleStatisticDto implements ISaleStatisticDto {
 
     init(data?: any) {
         if (data) {
-            this.date = data["date"];
+            this.dateOn = data["dateOn"];
             this.channel = data["channel"];
             this.product = data["product"];
             this.orderNum = data["orderNum"];
@@ -27015,7 +27210,7 @@ export class SaleStatisticDto implements ISaleStatisticDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["date"] = this.date;
+        data["dateOn"] = this.dateOn;
         data["channel"] = this.channel;
         data["product"] = this.product;
         data["orderNum"] = this.orderNum;
@@ -27044,7 +27239,7 @@ export class SaleStatisticDto implements ISaleStatisticDto {
 
 export interface ISaleStatisticDto {
     /** 统计时间 */
-    date: string | undefined;
+    dateOn: string | undefined;
     /** 渠道 */
     channel: string | undefined;
     /** 商品 */
@@ -31219,14 +31414,8 @@ export class AuthenticateModel implements IAuthenticateModel {
     loginCertificate!: string;
     /** 密码 */
     password!: string;
-    /** 双重认证码 */
-    twoFactorVerificationCode!: string | undefined;
     /** 在客户端记住 */
     rememberClient!: boolean | undefined;
-    /** 双重认证在客户端记住 */
-    twoFactorRememberClientToken!: string | undefined;
-    /** 单步登陆 */
-    singleSignIn!: boolean | undefined;
 
     constructor(data?: IAuthenticateModel) {
         if (data) {
@@ -31241,10 +31430,7 @@ export class AuthenticateModel implements IAuthenticateModel {
         if (data) {
             this.loginCertificate = data["loginCertificate"];
             this.password = data["password"];
-            this.twoFactorVerificationCode = data["twoFactorVerificationCode"];
             this.rememberClient = data["rememberClient"];
-            this.twoFactorRememberClientToken = data["twoFactorRememberClientToken"];
-            this.singleSignIn = data["singleSignIn"];
         }
     }
 
@@ -31259,10 +31445,7 @@ export class AuthenticateModel implements IAuthenticateModel {
         data = typeof data === 'object' ? data : {};
         data["loginCertificate"] = this.loginCertificate;
         data["password"] = this.password;
-        data["twoFactorVerificationCode"] = this.twoFactorVerificationCode;
         data["rememberClient"] = this.rememberClient;
-        data["twoFactorRememberClientToken"] = this.twoFactorRememberClientToken;
-        data["singleSignIn"] = this.singleSignIn;
         return data; 
     }
 }
@@ -31272,14 +31455,8 @@ export interface IAuthenticateModel {
     loginCertificate: string;
     /** 密码 */
     password: string;
-    /** 双重认证码 */
-    twoFactorVerificationCode: string | undefined;
     /** 在客户端记住 */
     rememberClient: boolean | undefined;
-    /** 双重认证在客户端记住 */
-    twoFactorRememberClientToken: string | undefined;
-    /** 单步登陆 */
-    singleSignIn: boolean | undefined;
 }
 
 export class AuthenticateResultModel implements IAuthenticateResultModel {
@@ -31297,12 +31474,6 @@ export class AuthenticateResultModel implements IAuthenticateResultModel {
     userId!: number | undefined;
     /** 租户Id */
     tenantId!: number | undefined;
-    /** 需要双重验证 */
-    requiresTwoFactorVerification!: boolean | undefined;
-    /** 双重认证供应商 */
-    twoFactorAuthProviders!: string[] | undefined;
-    /** 记住双重认证 Token */
-    twoFactorRememberClientToken!: string | undefined;
 
     constructor(data?: IAuthenticateResultModel) {
         if (data) {
@@ -31322,13 +31493,6 @@ export class AuthenticateResultModel implements IAuthenticateResultModel {
             this.passwordResetCode = data["passwordResetCode"];
             this.userId = data["userId"];
             this.tenantId = data["tenantId"];
-            this.requiresTwoFactorVerification = data["requiresTwoFactorVerification"];
-            if (data["twoFactorAuthProviders"] && data["twoFactorAuthProviders"].constructor === Array) {
-                this.twoFactorAuthProviders = [];
-                for (let item of data["twoFactorAuthProviders"])
-                    this.twoFactorAuthProviders.push(item);
-            }
-            this.twoFactorRememberClientToken = data["twoFactorRememberClientToken"];
         }
     }
 
@@ -31348,13 +31512,6 @@ export class AuthenticateResultModel implements IAuthenticateResultModel {
         data["passwordResetCode"] = this.passwordResetCode;
         data["userId"] = this.userId;
         data["tenantId"] = this.tenantId;
-        data["requiresTwoFactorVerification"] = this.requiresTwoFactorVerification;
-        if (this.twoFactorAuthProviders && this.twoFactorAuthProviders.constructor === Array) {
-            data["twoFactorAuthProviders"] = [];
-            for (let item of this.twoFactorAuthProviders)
-                data["twoFactorAuthProviders"].push(item);
-        }
-        data["twoFactorRememberClientToken"] = this.twoFactorRememberClientToken;
         return data; 
     }
 }
@@ -31374,12 +31531,6 @@ export interface IAuthenticateResultModel {
     userId: number | undefined;
     /** 租户Id */
     tenantId: number | undefined;
-    /** 需要双重验证 */
-    requiresTwoFactorVerification: boolean | undefined;
-    /** 双重认证供应商 */
-    twoFactorAuthProviders: string[] | undefined;
-    /** 记住双重认证 Token */
-    twoFactorRememberClientToken: string | undefined;
 }
 
 export class PhoneAuthenticateModel implements IPhoneAuthenticateModel {

@@ -1,8 +1,8 @@
 export class AppConsts {
   static readonly tenancyNamePlaceHolderInUrl = '{TENANCY_NAME}';
 
-  static remoteServiceBaseUrl = 'http://test.api.vapps.com.cn';
-  static remoteServiceBaseUrlFormat = 'http://test.api.vapps.com.cn';
+  static remoteServiceBaseUrl = 'http://localhost:6001';
+  static remoteServiceBaseUrlFormat = 'http://localhost:6001';
   static appBaseUrl = 'http://localhost:4200';
   static appBaseHref = 'http://localhost:4200'; // returns angular's base-href parameter value if used during the publish
   static appBaseUrlFormat = 'http://localhost:4200';
@@ -27,6 +27,14 @@ export class AppConsts {
 
   static readonly grid = {
     defaultPageSize: 10,
+  };
+
+  static readonly enumName = {
+    OrderSource: 'OrderSource',
+    OrderStatus: 'OrderStatus',
+    OrderType: 'OrderType',
+    PaymentStatus: 'PaymentStatus',
+    ShippingStatus: 'ShippingStatus',
   };
 }
 

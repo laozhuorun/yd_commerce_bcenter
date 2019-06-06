@@ -1,0 +1,20 @@
+{
+  "/api": {
+    "target": "http://test.api.vapps.com.cn/api",
+    "secure": false,
+    "pathRewrite": {
+      "^/api/": ""
+    },
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "//api": {
+    "target": "http://test.api.vapps.com.cn/api",
+    "secure": false,
+    "pathRewrite": {
+      "^//api/": ""
+    },
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

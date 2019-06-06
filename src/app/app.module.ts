@@ -8,9 +8,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { default as ngLang } from '@angular/common/locales/zh';
 import { NZ_I18N, zh_CN as zorroLang } from 'ng-zorro-antd';
 import { DELON_LOCALE, zh_CN as delonLang } from '@delon/theme';
-import { JWTInterceptor } from '@delon/auth';
 
 import { DelonModule } from './delon.module';
+import { DelonCacheModule } from '@delon/cache';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { AppComponent } from './app.component';
@@ -29,6 +29,7 @@ const LANG = {
 import { registerLocaleData } from '@angular/common';
 registerLocaleData(LANG.ng, LANG.abbr);
 const LANG_PROVIDES = [
+  { provide: LOCALE_ID, useValue: 'fr-FR' },
   { provide: LOCALE_ID, useValue: LANG.abbr },
   { provide: NZ_I18N, useValue: LANG.zorro },
   { provide: DELON_LOCALE, useValue: LANG.delon },
@@ -77,16 +78,15 @@ import { DefaultInterceptor } from '@core';
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
 
 const INTERCEPTOR_PROVIDES = [
-  { provide: HTTP_INTERCEPTORS, useClass: JWTInterceptor, multi: true },
-  { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true },
 ];
 // #endregion
 
 // #region Startup Service
 import { StartupService } from '@core';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
-import { AppConsts } from '@shared/AppConsts';
+import { AppConsts } from '@shared/consts/app-consts';
 export function StartupServiceFactory(startupService: StartupService): Function {
   return () => startupService.load();
 }
@@ -113,6 +113,7 @@ const APPINIT_PROVIDES = [
     BrowserAnimationsModule,
     HttpClientModule,
     DelonModule.forRoot(),
+    DelonCacheModule,
     ServiceProxyModule,
     AbpModule,
     CoreModule,

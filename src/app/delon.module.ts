@@ -7,9 +7,7 @@ import { AlainThemeModule } from '@delon/theme';
 import { DelonMockModule } from '@delon/mock';
 import * as MOCKDATA from '../../_mock';
 import { environment } from '@env/environment';
-const MOCK_MODULES = !environment.production
-  ? [DelonMockModule.forRoot({ data: MOCKDATA })]
-  : [];
+const MOCK_MODULES = !environment.production ? [DelonMockModule.forRoot({ data: MOCKDATA })] : [];
 // #endregion
 
 // #region reuse-tab
@@ -41,13 +39,21 @@ export function fnDelonAuthConfig(): DelonAuthConfig {
   });
 }
 
+import { DelonCacheConfig } from '@delon/cache';
+export function fnDelonCacheConfig(): DelonCacheConfig {
+  return Object.assign(new DelonCacheConfig(), <DelonCacheConfig>{
+    prefix: 'yd',
+    meta_key: 'yd',
+  });
+}
+
 import { STConfig } from '@delon/abc';
 export function fnSTConfig(): STConfig {
   return {
     ...new STConfig(),
     ...{
-      modal: { size: 'lg' }
-    }
+      modal: { size: 'lg' },
+    },
   };
 }
 
@@ -56,6 +62,7 @@ const GLOBAL_CONFIG_PROVIDES = [
   { provide: STConfig, useFactory: fnSTConfig },
   { provide: PageHeaderConfig, useFactory: fnPageHeaderConfig },
   { provide: DelonAuthConfig, useFactory: fnDelonAuthConfig },
+  { provide: DelonCacheConfig, useFactory: fnDelonCacheConfig },
 ];
 
 // #endregion
@@ -68,10 +75,7 @@ const GLOBAL_CONFIG_PROVIDES = [
   ],
 })
 export class DelonModule {
-  constructor(
-    @Optional() @SkipSelf() parentModule: DelonModule,
-    reuseTabService: ReuseTabService
-  ) {
+  constructor(@Optional() @SkipSelf() parentModule: DelonModule, reuseTabService: ReuseTabService) {
     throwIfAlreadyLoaded(parentModule, 'DelonModule');
     // NOTICE: Only valid for menus with reuse property
     // Pls refer to the E-Mail demo effect

@@ -1,16 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   CommonLookupServiceProxy,
   OrderServiceProxy,
   StateServiceProxy,
+  SelectListItemDtoOfInt32,
 } from '@shared/service-proxies/service-proxies';
 import { _HttpClient, DrawerHelper } from '@delon/theme';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { OrderListViewComponent } from './view.component';
 
 import { OrderListShippingComponent } from './shipping.component';
+import { CacheService } from '@delon/cache';
+import { EnumConsts } from '@shared/consts/enum-consts';
 
 let that;
 
@@ -19,7 +22,7 @@ let that;
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
 })
-export class OrderListComponent {
+export class OrderListComponent implements OnInit {
   data;
   loading = false;
 
@@ -44,6 +47,7 @@ export class OrderListComponent {
     private stateSvc: StateServiceProxy,
     private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy,
+    private cacheSvc: CacheService,
   ) {
     that = this;
   }
@@ -78,22 +82,31 @@ export class OrderListComponent {
       skipCount: new FormControl(0, []),
     });
     this.getData();
-    this.getEnums(['OrderSource', 'OrderStatus', 'OrderType', 'PaymentStatus', 'ShippingStatus']);
+
+    this.getEnums([
+      EnumConsts.OrderSource,
+      EnumConsts.OrderStatus,
+      EnumConsts.OrderType,
+      EnumConsts.PaymentStatus,
+      EnumConsts.ShippingStatus,
+    ]);
   }
 
   getEnums(enumNames) {
     enumNames.forEach(enumName => {
-      this.enumsSvc.getEnumSelectItem(enumName).subscribe(res => {
-        res.forEach((item, index) => {
-          this.enums[enumName].push({
-            index: index,
-            text: item.text,
-            value: item.value,
-            type: 'default',
-            checked: false,
+      this.cacheSvc
+        .tryGet<SelectListItemDtoOfInt32[]>(enumNames, this.enumsSvc.getEnumSelectItem(enumName))
+        .subscribe(res => {
+          res.forEach((item, index) => {
+            this.enums[enumName].push({
+              index: index,
+              text: item.text,
+              value: item.value,
+              type: 'default',
+              checked: false,
+            });
           });
         });
-      });
     });
   }
 

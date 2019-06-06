@@ -1,5 +1,5 @@
 {
-  "remoteServiceBaseUrl": "http://test.api.vapps.com.cn/api",
+  "remoteServiceBaseUrl": "http://localhost:6001",
   "appBaseUrl": "http://localhost:4200",
   "localeMappings": [
     {

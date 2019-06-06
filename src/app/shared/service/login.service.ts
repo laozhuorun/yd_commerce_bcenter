@@ -13,7 +13,7 @@ import {
 import { Injectable, Inject, Optional } from '@angular/core';
 import { Params, Router } from '@angular/router';
 
-import { AppConsts } from '@shared/AppConsts';
+import { AppConsts } from '@shared/consts/app-consts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { LogService } from '@abp/log/log.service';
 import { MessageService } from '@abp/message/message.service';
@@ -58,7 +58,6 @@ export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
 
 @Injectable()
 export class LoginService {
-  static readonly twoFactorRememberClientTokenName = 'TwoFactorRememberClientToken';
 
   localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
   commonlocalizationSourceName = AppConsts.localization.commonLocalizationSourceName;
@@ -82,7 +81,7 @@ export class LoginService {
     @Optional()
     @Inject(ReuseTabService)
     private _reuseTabService: ReuseTabService,
-    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+    @Inject(DA_SERVICE_TOKEN) private _tokenService: ITokenService,
     private _startupService: StartupService,
   ) {
     this.clear();
@@ -90,11 +89,6 @@ export class LoginService {
 
   authenticate(finallyCallback?: () => void, redirectUrl?: string): void {
     finallyCallback = finallyCallback || (() => {});
-
-    // We may switch to localStorage instead of cookies
-    this.authenticateModel.twoFactorRememberClientToken = this._cookiesService.getCookieValue(
-      LoginService.twoFactorRememberClientTokenName,
-    );
 
     this._tokenAuthService
       .authenticate(this.authenticateModel)
@@ -243,10 +237,6 @@ export class LoginService {
       });
 
       this.clear();
-    } else if (authenticateResult.requiresTwoFactorVerification) {
-      // Two factor authentication
-
-      this._router.navigate(['account/send-code']);
     } else if (authenticateResult.accessToken) {
       // Successfully logged in
       this.login(
@@ -255,7 +245,6 @@ export class LoginService {
         authenticateResult.encryptedAccessToken,
         authenticateResult.expireInSeconds,
         this.rememberMe,
-        authenticateResult.twoFactorRememberClientToken,
         UrlHelper.redirectUrl,
       );
     } else {
@@ -272,7 +261,6 @@ export class LoginService {
     encryptedAccessToken: string,
     expireInSeconds: number,
     rememberMe?: boolean,
-    twoFactorRememberClientToken?: string,
     redirectUrl?: string,
   ): void {
     const tokenExpireDate = rememberMe ? new Date(new Date().getTime() + 1000 * expireInSeconds) : undefined;
@@ -287,19 +275,10 @@ export class LoginService {
       abp.appPath,
     );
 
-    if (twoFactorRememberClientToken) {
-      this._cookiesService.setCookieValue(
-        LoginService.twoFactorRememberClientTokenName,
-        twoFactorRememberClientToken,
-        new Date(new Date().getTime() + 365 * 86400000), // 1 year
-        abp.appPath,
-      );
-    }
-
     // 清空路由复用信息
     this._reuseTabService.clear();
     // 设置用户Token信息
-    this.tokenService.set({
+    this._tokenService.set({
       token: accessToken,
     });
 
@@ -317,7 +296,7 @@ export class LoginService {
 
     // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
     this._startupService.load().then(() => {
-      let url = this.tokenService.referrer.url || '/';
+      let url = this._tokenService.referrer.url || '/';
       if (url.includes('/passport')) url = '/';
       window.location.href = '/';
       this._router.navigateByUrl(url);
