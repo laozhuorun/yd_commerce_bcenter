@@ -23,7 +23,7 @@ let that;
 @Component({
   selector: 'app-order-edit',
   templateUrl: './edit.component.html',
-  styleUrls: ['./edit.component.scss'],
+  styleUrls: ['./edit.component.less'],
 })
 export class OrderEditComponent implements OnInit {
   id = this.route.snapshot.params['id'];

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Injector } from '@angular/core';
 
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
@@ -6,6 +6,7 @@ import {
   OrderServiceProxy,
   StateServiceProxy,
   SelectListItemDtoOfInt32,
+  PagedResultDtoOfOrderListDto,
 } from '@shared/service-proxies/service-proxies';
 import { _HttpClient, DrawerHelper } from '@delon/theme';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
@@ -14,21 +15,25 @@ import { OrderListViewComponent } from './view.component';
 import { OrderListShippingComponent } from './shipping.component';
 import { CacheService } from '@delon/cache';
 import { EnumConsts } from '@shared/consts/enum-consts';
+import { SFSchema } from '@delon/form';
+import { AppComponentBase } from '@shared/app-component-base';
+import { PaginationBaseDto } from '@shared/utils/pagination.dto';
+import { AppConsts } from '@shared/consts/app-consts';
 
 let that;
 
 @Component({
   selector: 'app-order-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss'],
+  styleUrls: ['./list.component.less'],
 })
-export class OrderListComponent implements OnInit {
+export class OrderListComponent extends AppComponentBase implements OnInit {
   data;
   loading = false;
-
-  isAllDisplayDataChecked = false;
-  isIndeterminate = false;
-  mapOfCheckedId = {};
+  page: PaginationBaseDto = new PaginationBaseDto(AppConsts.grid.defaultPageSize);
+  isAllChecked = false;
+  isIndeterminate = true;
+  checkedId = [];
   numberOfChecked = 0;
 
   enums = {
@@ -39,7 +44,34 @@ export class OrderListComponent implements OnInit {
     ShippingStatus: [],
   };
 
+  tabs: any[] = [
+    {
+      key: 'all',
+      tab: '所有',
+    },
+    {
+      key: 'wait-confirm',
+      tab: '待确认',
+    },
+    {
+      key: 'wait-ship',
+      tab: '待发货',
+    },
+    {
+      key: 'shipped',
+      tab: '已发货',
+    },
+    {
+      key: 'return',
+      tab: '退货中',
+    },
+  ];
+
+  tabsStatus = 0;
+  expandForm = false;
+
   constructor(
+    injector: Injector,
     private http: _HttpClient,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
@@ -48,7 +80,9 @@ export class OrderListComponent implements OnInit {
     private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy,
     private cacheSvc: CacheService,
+    private cdr: ChangeDetectorRef,
   ) {
+    super(injector);
     that = this;
   }
 
@@ -77,9 +111,6 @@ export class OrderListComponent implements OnInit {
       orderSource: new FormControl([], []),
       adminComment: new FormControl('', []),
       customerComment: new FormControl('', []),
-      sorting: new FormControl('', []),
-      maxResultCount: new FormControl(10, []),
-      skipCount: new FormControl(0, []),
     });
     this.getData();
 
@@ -116,18 +147,24 @@ export class OrderListComponent implements OnInit {
   }
 
   checkAll(value: boolean): void {
-    this.data.items.forEach(item => (this.mapOfCheckedId[item.id] = value));
+    this.isIndeterminate = false;
+    this.data.items.forEach(item => (this.checkedId[item.id] = value));
     this.refreshStatus();
+    this.cdr.detectChanges();
   }
 
   refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.data.items
-      .filter(item => !item.disabled)
-      .every(item => this.mapOfCheckedId[item.id]);
+    this.isAllChecked = this.data.items.every(item => this.checkedId[item.id]);
     this.isIndeterminate =
-      this.data.items.filter(item => !item.disabled).some(item => this.mapOfCheckedId[item.id]) &&
-      !this.isAllDisplayDataChecked;
-    this.numberOfChecked = this.data.items.filter(item => this.mapOfCheckedId[item.id]).length;
+      this.data.items.filter(item => !item.disabled).some(item => this.checkedId[item.id]) && !this.isAllChecked;
+    this.numberOfChecked = this.data.items.filter(item => this.checkedId[item.id]).length;
+  }
+
+  choose(i: number) {
+    this.refreshStatus();
+    this.cd();
+    // this.checkedId[i] = !this.checkedId[i];
+    // this.cd();
   }
 
   getData() {
@@ -154,13 +191,14 @@ export class OrderListComponent implements OnInit {
         this.searchForm.get('orderSource').value,
         this.searchForm.get('adminComment').value,
         this.searchForm.get('customerComment').value,
-        this.searchForm.get('sorting').value,
-        this.searchForm.get('maxResultCount').value,
-        this.searchForm.get('skipCount').value,
+        this.page.sorting,
+        this.page.pageSize,
+        this.page.getSkipCount(),
       )
       .subscribe(res => {
         this.loading = false;
         this.data = res;
+        this.cdr.detectChanges();
       });
   }
 
@@ -174,8 +212,13 @@ export class OrderListComponent implements OnInit {
     this.searchForm.get('receiveOn_ToDate').setValue(e[1]);
   }
 
-  pageChange(e) {
-    this.searchForm.get('skipCount').setValue(this.searchForm.get('maxResultCount').value * (e - 1));
+  pageIndexChange(e) {
+    this.page.index = e;
+    this.getData();
+  }
+
+  pageSizeChange(e) {
+    this.page.pageSize = e;
     this.getData();
   }
 
@@ -229,8 +272,8 @@ export class OrderListComponent implements OnInit {
     return str;
   }
 
-  view(i: any) {
-    this.drawer.create(`查看订单 #${i.orderNumber}`, OrderListViewComponent, { i }, { size: 666 }).subscribe();
+  view(order: any) {
+    this.drawer.create(`查看订单 #${order.orderNumber}`, OrderListViewComponent, { order }, { size: 666 }).subscribe();
   }
 
   sendShip(order) {
@@ -255,5 +298,14 @@ export class OrderListComponent implements OnInit {
 
   reset() {
     // this.q.orderNumber = undefined;
+  }
+
+  to(item: any) {
+    this.getData();
+  }
+
+  private cd() {
+    // wait checkbox
+    setTimeout(() => this.cdr.detectChanges());
   }
 }

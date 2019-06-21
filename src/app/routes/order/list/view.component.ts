@@ -1,14 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService, NzDrawerRef } from 'ng-zorro-antd';
-import { OrderServiceProxy, ShipmentServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+  OrderServiceProxy,
+  ShipmentServiceProxy,
+  OrderDetailDto,
+  ShipmentDto,
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'app-order-list-view',
   templateUrl: './view.component.html',
 })
 export class OrderListViewComponent implements OnInit {
-  i: any = {};
+  order: OrderDetailDto = new OrderDetailDto();
+  shipment: ShipmentDto = new ShipmentDto();
   loading = false;
 
   constructor(
@@ -21,29 +27,22 @@ export class OrderListViewComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    this.orderSvc.getOrderDetail(this.i.id).subscribe(res => {
-      this.i = res;
+    this.orderSvc.getOrderDetail(this.order.id).subscribe(res => {
+      this.order = res;
       this.loading = false;
-      console.log(this.i);
     });
-    this.shipmentSvc.getOrderShipments(this.i.id).subscribe(res => {
-      console.log(res);
-    });
-    /*this.http.get(`/trade/${this.i.id}`).subscribe(res => {
-      this.i = res;
-      this.loading = false;
-    });*/
+    this.shipmentSvc.getOrderShipments(this.order.id).subscribe(res => {});
   }
 
   status(status: string) {
     this.http
       .post('/trade/status', {
-        id: this.i.id,
+        id: this.order.id,
         status,
       })
       .subscribe((res: any) => {
         this.msg.success('Success');
-        this.i = res.item;
+        this.order = res.item;
       });
   }
 

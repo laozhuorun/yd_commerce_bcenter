@@ -42,6 +42,7 @@ import { NgModule } from '@angular/core';
     ApiServiceProxies.AdvertAccountServiceProxy,
     ApiServiceProxies.AdvertStatisticServiceProxy,
     ApiServiceProxies.CommonStatisticServiceProxy,
+    ApiServiceProxies.SaleStatisticServiceProxy,
   ],
 })
 export class ServiceProxyModule {}

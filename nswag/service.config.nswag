@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "swaggerGenerator": {
     "fromSwagger": {
-      "url": "http://test.api.vapps.com.cn/swagger/v1/swagger.json",
+      "url": "http://60.205.216.113/swagger/v1/swagger.json",
       "output": null
     }
   },

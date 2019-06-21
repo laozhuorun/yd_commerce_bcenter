@@ -2854,6 +2854,61 @@ export class CommonStatisticServiceProxy {
     }
 
     /**
+     * 获取时间范围基础统计
+     * @param period (optional) 时间范围
+     * @return Success
+     */
+    getPeriodData(period: Period | null | undefined): Observable<CommonStatisticsDto> {
+        let url_ = this.baseUrl + "/api/services/statistic/CommonStatistic/GetPeriodData?";
+        if (period !== undefined)
+            url_ += "Period=" + encodeURIComponent("" + period) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPeriodData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPeriodData(<any>response_);
+                } catch (e) {
+                    return <Observable<CommonStatisticsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CommonStatisticsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPeriodData(response: HttpResponseBase): Observable<CommonStatisticsDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CommonStatisticsDto.fromJS(resultData200) : new CommonStatisticsDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CommonStatisticsDto>(<any>null);
+    }
+
+    /**
      * 获取基础统计
      * @param statisticDateRange_FormDate (optional) 开始时间
      * @param statisticDateRange_ToDate (optional) 结束时间
@@ -10013,6 +10068,68 @@ export class SaleStatisticServiceProxy {
 
     /**
      * 获取销售统计
+     * @param formDate (optional) 开始时间
+     * @param toDate (optional) 结束时间
+     * @return Success
+     */
+    getCatelogSaleStatistics(formDate: Date | null | undefined, toDate: Date | null | undefined): Observable<CatelogSaleStatisticDto[]> {
+        let url_ = this.baseUrl + "/api/services/statistic/SaleStatistic/GetCatelogSaleStatistics?";
+        if (formDate !== undefined)
+            url_ += "FormDate=" + encodeURIComponent(formDate ? "" + formDate.toJSON() : "") + "&"; 
+        if (toDate !== undefined)
+            url_ += "ToDate=" + encodeURIComponent(toDate ? "" + toDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCatelogSaleStatistics(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCatelogSaleStatistics(<any>response_);
+                } catch (e) {
+                    return <Observable<CatelogSaleStatisticDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CatelogSaleStatisticDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCatelogSaleStatistics(response: HttpResponseBase): Observable<CatelogSaleStatisticDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CatelogSaleStatisticDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CatelogSaleStatisticDto[]>(<any>null);
+    }
+
+    /**
+     * 获取销售统计
      * @param sources (optional) 来源
      * @param productIds (optional) 产品Id
      * @param storeIds (optional) 店铺Id
@@ -10021,7 +10138,7 @@ export class SaleStatisticServiceProxy {
      * @param statisticRange_ToDate (optional) 结束时间
      * @return Success
      */
-    getSaleStatistics(sources: Sources[] | null | undefined, productIds: number[] | null | undefined, storeIds: number[] | null | undefined, searchMonth: Date | null | undefined, statisticRange_FormDate: Date | null | undefined, statisticRange_ToDate: Date | null | undefined): Observable<SaleStatisticDto[]> {
+    getSaleStatistics(sources: Sources[] | null | undefined, productIds: number[] | null | undefined, storeIds: number[] | null | undefined, searchMonth: Date | null | undefined, statisticRange_FormDate: Date | null | undefined, statisticRange_ToDate: Date | null | undefined): Observable<DateSaleStatisticDto[]> {
         let url_ = this.baseUrl + "/api/services/statistic/SaleStatistic/GetSaleStatistics?";
         if (sources !== undefined)
             sources && sources.forEach(item => { url_ += "Sources=" + encodeURIComponent("" + item) + "&"; });
@@ -10052,14 +10169,14 @@ export class SaleStatisticServiceProxy {
                 try {
                     return this.processGetSaleStatistics(<any>response_);
                 } catch (e) {
-                    return <Observable<SaleStatisticDto[]>><any>_observableThrow(e);
+                    return <Observable<DateSaleStatisticDto[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SaleStatisticDto[]>><any>_observableThrow(response_);
+                return <Observable<DateSaleStatisticDto[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetSaleStatistics(response: HttpResponseBase): Observable<SaleStatisticDto[]> {
+    protected processGetSaleStatistics(response: HttpResponseBase): Observable<DateSaleStatisticDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -10073,7 +10190,7 @@ export class SaleStatisticServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SaleStatisticDto.fromJS(item));
+                    result200.push(DateSaleStatisticDto.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -10082,7 +10199,7 @@ export class SaleStatisticServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SaleStatisticDto[]>(<any>null);
+        return _observableOf<DateSaleStatisticDto[]>(<any>null);
     }
 }
 
@@ -18201,13 +18318,13 @@ export class CommonStatisticsDto implements ICommonStatisticsDto {
     /** 统计时间 */
     statisticsOn!: Date | undefined;
     /** 下单数量 */
-    numberOfOrders!: number | undefined;
+    orderNum!: number | undefined;
     /** 下单金额 */
-    totalOfOrders!: number | undefined;
+    orderTotal!: number | undefined;
     /** 广告消耗 */
-    costOfAdvert!: number | undefined;
+    advertCost!: number | undefined;
     /** 发货数 */
-    numberOfShipped!: number | undefined;
+    shipmentNum!: number | undefined;
 
     constructor(data?: ICommonStatisticsDto) {
         if (data) {
@@ -18221,10 +18338,10 @@ export class CommonStatisticsDto implements ICommonStatisticsDto {
     init(data?: any) {
         if (data) {
             this.statisticsOn = data["statisticsOn"] ? new Date(data["statisticsOn"].toString()) : <any>undefined;
-            this.numberOfOrders = data["numberOfOrders"];
-            this.totalOfOrders = data["totalOfOrders"];
-            this.costOfAdvert = data["costOfAdvert"];
-            this.numberOfShipped = data["numberOfShipped"];
+            this.orderNum = data["orderNum"];
+            this.orderTotal = data["orderTotal"];
+            this.advertCost = data["advertCost"];
+            this.shipmentNum = data["shipmentNum"];
         }
     }
 
@@ -18238,10 +18355,10 @@ export class CommonStatisticsDto implements ICommonStatisticsDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["statisticsOn"] = this.statisticsOn ? this.statisticsOn.toISOString() : <any>undefined;
-        data["numberOfOrders"] = this.numberOfOrders;
-        data["totalOfOrders"] = this.totalOfOrders;
-        data["costOfAdvert"] = this.costOfAdvert;
-        data["numberOfShipped"] = this.numberOfShipped;
+        data["orderNum"] = this.orderNum;
+        data["orderTotal"] = this.orderTotal;
+        data["advertCost"] = this.advertCost;
+        data["shipmentNum"] = this.shipmentNum;
         return data; 
     }
 }
@@ -18250,13 +18367,13 @@ export interface ICommonStatisticsDto {
     /** 统计时间 */
     statisticsOn: Date | undefined;
     /** 下单数量 */
-    numberOfOrders: number | undefined;
+    orderNum: number | undefined;
     /** 下单金额 */
-    totalOfOrders: number | undefined;
+    orderTotal: number | undefined;
     /** 广告消耗 */
-    costOfAdvert: number | undefined;
+    advertCost: number | undefined;
     /** 发货数 */
-    numberOfShipped: number | undefined;
+    shipmentNum: number | undefined;
 }
 
 export class PagedResultDtoOfCustomerListDto implements IPagedResultDtoOfCustomerListDto {
@@ -22917,11 +23034,11 @@ export class OrderDetailDto implements IOrderDetailDto {
     /** 收货地址(姓名) */
     shippingName!: string | undefined;
     /** 创建时间 */
-    createOn!: Date | undefined;
+    creationTime!: Date | undefined;
     /** 付款时间(已付款状态才有值) */
-    paidOn!: Date | undefined;
+    paidTime!: Date | undefined;
     /** 签收时间(已签收状态才有值) */
-    receivedOn!: Date | undefined;
+    receivedTime!: Date | undefined;
     /** 下单Ip地址 */
     ipAddress!: string | undefined;
     /** 订单小计 */
@@ -22979,9 +23096,9 @@ export class OrderDetailDto implements IOrderDetailDto {
             this.shippingAddress = data["shippingAddress"];
             this.shippingPhoneNumber = data["shippingPhoneNumber"];
             this.shippingName = data["shippingName"];
-            this.createOn = data["createOn"] ? new Date(data["createOn"].toString()) : <any>undefined;
-            this.paidOn = data["paidOn"] ? new Date(data["paidOn"].toString()) : <any>undefined;
-            this.receivedOn = data["receivedOn"] ? new Date(data["receivedOn"].toString()) : <any>undefined;
+            this.creationTime = data["creationTime"] ? new Date(data["creationTime"].toString()) : <any>undefined;
+            this.paidTime = data["paidTime"] ? new Date(data["paidTime"].toString()) : <any>undefined;
+            this.receivedTime = data["receivedTime"] ? new Date(data["receivedTime"].toString()) : <any>undefined;
             this.ipAddress = data["ipAddress"];
             this.subtotalAmount = data["subtotalAmount"];
             this.totalAmount = data["totalAmount"];
@@ -23033,9 +23150,9 @@ export class OrderDetailDto implements IOrderDetailDto {
         data["shippingAddress"] = this.shippingAddress;
         data["shippingPhoneNumber"] = this.shippingPhoneNumber;
         data["shippingName"] = this.shippingName;
-        data["createOn"] = this.createOn ? this.createOn.toISOString() : <any>undefined;
-        data["paidOn"] = this.paidOn ? this.paidOn.toISOString() : <any>undefined;
-        data["receivedOn"] = this.receivedOn ? this.receivedOn.toISOString() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["paidTime"] = this.paidTime ? this.paidTime.toISOString() : <any>undefined;
+        data["receivedTime"] = this.receivedTime ? this.receivedTime.toISOString() : <any>undefined;
         data["ipAddress"] = this.ipAddress;
         data["subtotalAmount"] = this.subtotalAmount;
         data["totalAmount"] = this.totalAmount;
@@ -23105,11 +23222,11 @@ export interface IOrderDetailDto {
     /** 收货地址(姓名) */
     shippingName: string | undefined;
     /** 创建时间 */
-    createOn: Date | undefined;
+    creationTime: Date | undefined;
     /** 付款时间(已付款状态才有值) */
-    paidOn: Date | undefined;
+    paidTime: Date | undefined;
     /** 签收时间(已签收状态才有值) */
-    receivedOn: Date | undefined;
+    receivedTime: Date | undefined;
     /** 下单Ip地址 */
     ipAddress: string | undefined;
     /** 订单小计 */
@@ -27116,13 +27233,221 @@ export interface ICreateOrUpdateRoleInput {
     grantedPermissionNames: string[];
 }
 
-export class SaleStatisticDto implements ISaleStatisticDto {
+export class CatelogSaleStatisticDto implements ICatelogSaleStatisticDto {
+    /** 渠道 */
+    channel!: string | undefined;
+    /** 商品id */
+    productId!: number | undefined;
+    /** 商品 */
+    product!: string | undefined;
+    /** 下单数量 */
+    orderNum!: number | undefined;
+    /** 下单金额 */
+    orderTotal!: number | undefined;
+    /** 广告消耗 */
+    advertCost!: number | undefined;
+    /** 发货数量 */
+    shipmentNum!: number | undefined;
+    /** 发货金额 */
+    shipmentTotal!: number | undefined;
+    /** 签收数量 */
+    receivedNum!: number | undefined;
+    /** 签收金额 */
+    receivedTotal!: number | undefined;
+    /** 拒签数量 */
+    rejectNum!: number | undefined;
+    /** 拒签金额 */
+    rejectTotal!: number | undefined;
+    items!: CatelogDateSaleStatisticDto[] | undefined;
+
+    constructor(data?: ICatelogSaleStatisticDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.channel = data["channel"];
+            this.productId = data["productId"];
+            this.product = data["product"];
+            this.orderNum = data["orderNum"];
+            this.orderTotal = data["orderTotal"];
+            this.advertCost = data["advertCost"];
+            this.shipmentNum = data["shipmentNum"];
+            this.shipmentTotal = data["shipmentTotal"];
+            this.receivedNum = data["receivedNum"];
+            this.receivedTotal = data["receivedTotal"];
+            this.rejectNum = data["rejectNum"];
+            this.rejectTotal = data["rejectTotal"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(CatelogDateSaleStatisticDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CatelogSaleStatisticDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CatelogSaleStatisticDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["channel"] = this.channel;
+        data["productId"] = this.productId;
+        data["product"] = this.product;
+        data["orderNum"] = this.orderNum;
+        data["orderTotal"] = this.orderTotal;
+        data["advertCost"] = this.advertCost;
+        data["shipmentNum"] = this.shipmentNum;
+        data["shipmentTotal"] = this.shipmentTotal;
+        data["receivedNum"] = this.receivedNum;
+        data["receivedTotal"] = this.receivedTotal;
+        data["rejectNum"] = this.rejectNum;
+        data["rejectTotal"] = this.rejectTotal;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICatelogSaleStatisticDto {
+    /** 渠道 */
+    channel: string | undefined;
+    /** 商品id */
+    productId: number | undefined;
+    /** 商品 */
+    product: string | undefined;
+    /** 下单数量 */
+    orderNum: number | undefined;
+    /** 下单金额 */
+    orderTotal: number | undefined;
+    /** 广告消耗 */
+    advertCost: number | undefined;
+    /** 发货数量 */
+    shipmentNum: number | undefined;
+    /** 发货金额 */
+    shipmentTotal: number | undefined;
+    /** 签收数量 */
+    receivedNum: number | undefined;
+    /** 签收金额 */
+    receivedTotal: number | undefined;
+    /** 拒签数量 */
+    rejectNum: number | undefined;
+    /** 拒签金额 */
+    rejectTotal: number | undefined;
+    items: CatelogDateSaleStatisticDto[] | undefined;
+}
+
+export class CatelogDateSaleStatisticDto implements ICatelogDateSaleStatisticDto {
     /** 统计时间 */
     dateOn!: string | undefined;
+    /** 下单数量 */
+    orderNum!: number | undefined;
+    /** 下单金额 */
+    orderTotal!: number | undefined;
+    /** 广告消耗 */
+    advertCost!: number | undefined;
+    /** 发货数量 */
+    shipmentNum!: number | undefined;
+    /** 发货金额 */
+    shipmentTotal!: number | undefined;
+    /** 签收数量 */
+    receivedNum!: number | undefined;
+    /** 签收金额 */
+    receivedTotal!: number | undefined;
+    /** 拒签数量 */
+    rejectNum!: number | undefined;
+    /** 拒签金额 */
+    rejectTotal!: number | undefined;
+
+    constructor(data?: ICatelogDateSaleStatisticDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.dateOn = data["dateOn"];
+            this.orderNum = data["orderNum"];
+            this.orderTotal = data["orderTotal"];
+            this.advertCost = data["advertCost"];
+            this.shipmentNum = data["shipmentNum"];
+            this.shipmentTotal = data["shipmentTotal"];
+            this.receivedNum = data["receivedNum"];
+            this.receivedTotal = data["receivedTotal"];
+            this.rejectNum = data["rejectNum"];
+            this.rejectTotal = data["rejectTotal"];
+        }
+    }
+
+    static fromJS(data: any): CatelogDateSaleStatisticDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CatelogDateSaleStatisticDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["dateOn"] = this.dateOn;
+        data["orderNum"] = this.orderNum;
+        data["orderTotal"] = this.orderTotal;
+        data["advertCost"] = this.advertCost;
+        data["shipmentNum"] = this.shipmentNum;
+        data["shipmentTotal"] = this.shipmentTotal;
+        data["receivedNum"] = this.receivedNum;
+        data["receivedTotal"] = this.receivedTotal;
+        data["rejectNum"] = this.rejectNum;
+        data["rejectTotal"] = this.rejectTotal;
+        return data; 
+    }
+}
+
+export interface ICatelogDateSaleStatisticDto {
+    /** 统计时间 */
+    dateOn: string | undefined;
+    /** 下单数量 */
+    orderNum: number | undefined;
+    /** 下单金额 */
+    orderTotal: number | undefined;
+    /** 广告消耗 */
+    advertCost: number | undefined;
+    /** 发货数量 */
+    shipmentNum: number | undefined;
+    /** 发货金额 */
+    shipmentTotal: number | undefined;
+    /** 签收数量 */
+    receivedNum: number | undefined;
+    /** 签收金额 */
+    receivedTotal: number | undefined;
+    /** 拒签数量 */
+    rejectNum: number | undefined;
+    /** 拒签金额 */
+    rejectTotal: number | undefined;
+}
+
+export class DateSaleStatisticDto implements IDateSaleStatisticDto {
     /** 渠道 */
     channel!: string | undefined;
     /** 商品 */
     product!: string | undefined;
+    /** 统计时间 */
+    dateOn!: string | undefined;
     /** 下单数量 */
     orderNum!: number | undefined;
     /** 下单金额 */
@@ -27164,7 +27489,7 @@ export class SaleStatisticDto implements ISaleStatisticDto {
     /** 成本利润率 */
     costProfitRate!: number | undefined;
 
-    constructor(data?: ISaleStatisticDto) {
+    constructor(data?: IDateSaleStatisticDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -27175,9 +27500,9 @@ export class SaleStatisticDto implements ISaleStatisticDto {
 
     init(data?: any) {
         if (data) {
-            this.dateOn = data["dateOn"];
             this.channel = data["channel"];
             this.product = data["product"];
+            this.dateOn = data["dateOn"];
             this.orderNum = data["orderNum"];
             this.orderTotal = data["orderTotal"];
             this.advertCost = data["advertCost"];
@@ -27201,18 +27526,18 @@ export class SaleStatisticDto implements ISaleStatisticDto {
         }
     }
 
-    static fromJS(data: any): SaleStatisticDto {
+    static fromJS(data: any): DateSaleStatisticDto {
         data = typeof data === 'object' ? data : {};
-        let result = new SaleStatisticDto();
+        let result = new DateSaleStatisticDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["dateOn"] = this.dateOn;
         data["channel"] = this.channel;
         data["product"] = this.product;
+        data["dateOn"] = this.dateOn;
         data["orderNum"] = this.orderNum;
         data["orderTotal"] = this.orderTotal;
         data["advertCost"] = this.advertCost;
@@ -27237,13 +27562,13 @@ export class SaleStatisticDto implements ISaleStatisticDto {
     }
 }
 
-export interface ISaleStatisticDto {
-    /** 统计时间 */
-    dateOn: string | undefined;
+export interface IDateSaleStatisticDto {
     /** 渠道 */
     channel: string | undefined;
     /** 商品 */
     product: string | undefined;
+    /** 统计时间 */
+    dateOn: string | undefined;
     /** 下单数量 */
     orderNum: number | undefined;
     /** 下单金额 */
@@ -27866,9 +28191,11 @@ export class ShipmentDto implements IShipmentDto {
     /** 发货状态 */
     statusString!: string | undefined;
     /** 发货时间 */
-    deliveryOn!: Date | undefined;
+    creationTime!: Date | undefined;
     /** 签收时间 */
-    receivedOn!: Date | undefined;
+    receivedTime!: Date | undefined;
+    /** 拒签时间 */
+    rejectedTime!: Date | undefined;
     /** 收货姓名 */
     shippingName!: string | undefined;
     /** 收货电话 */
@@ -27903,8 +28230,9 @@ export class ShipmentDto implements IShipmentDto {
             this.logisticsName = data["logisticsName"];
             this.status = data["status"];
             this.statusString = data["statusString"];
-            this.deliveryOn = data["deliveryOn"] ? new Date(data["deliveryOn"].toString()) : <any>undefined;
-            this.receivedOn = data["receivedOn"] ? new Date(data["receivedOn"].toString()) : <any>undefined;
+            this.creationTime = data["creationTime"] ? new Date(data["creationTime"].toString()) : <any>undefined;
+            this.receivedTime = data["receivedTime"] ? new Date(data["receivedTime"].toString()) : <any>undefined;
+            this.rejectedTime = data["rejectedTime"] ? new Date(data["rejectedTime"].toString()) : <any>undefined;
             this.shippingName = data["shippingName"];
             this.shippingPhoneNumber = data["shippingPhoneNumber"];
             this.shippingAddress = data["shippingAddress"];
@@ -27936,8 +28264,9 @@ export class ShipmentDto implements IShipmentDto {
         data["logisticsName"] = this.logisticsName;
         data["status"] = this.status;
         data["statusString"] = this.statusString;
-        data["deliveryOn"] = this.deliveryOn ? this.deliveryOn.toISOString() : <any>undefined;
-        data["receivedOn"] = this.receivedOn ? this.receivedOn.toISOString() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["receivedTime"] = this.receivedTime ? this.receivedTime.toISOString() : <any>undefined;
+        data["rejectedTime"] = this.rejectedTime ? this.rejectedTime.toISOString() : <any>undefined;
         data["shippingName"] = this.shippingName;
         data["shippingPhoneNumber"] = this.shippingPhoneNumber;
         data["shippingAddress"] = this.shippingAddress;
@@ -27970,9 +28299,11 @@ export interface IShipmentDto {
     /** 发货状态 */
     statusString: string | undefined;
     /** 发货时间 */
-    deliveryOn: Date | undefined;
+    creationTime: Date | undefined;
     /** 签收时间 */
-    receivedOn: Date | undefined;
+    receivedTime: Date | undefined;
+    /** 拒签时间 */
+    rejectedTime: Date | undefined;
     /** 收货姓名 */
     shippingName: string | undefined;
     /** 收货电话 */
@@ -29805,8 +30136,12 @@ export class StoreListDto implements IStoreListDto {
     name!: string | undefined;
     /** 图片Id */
     pictureId!: number | undefined;
+    /** 图片url */
+    pictureUrl!: string | undefined;
     /** 订单来源10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
-    orderSourceType!: StoreListDtoOrderSourceType | undefined;
+    orderSource!: StoreListDtoOrderSource | undefined;
+    /** 订单来源 */
+    orderSourceString!: string | undefined;
     /** 订单同步 */
     orderSync!: boolean | undefined;
     id!: number | undefined;
@@ -29824,7 +30159,9 @@ export class StoreListDto implements IStoreListDto {
         if (data) {
             this.name = data["name"];
             this.pictureId = data["pictureId"];
-            this.orderSourceType = data["orderSourceType"];
+            this.pictureUrl = data["pictureUrl"];
+            this.orderSource = data["orderSource"];
+            this.orderSourceString = data["orderSourceString"];
             this.orderSync = data["orderSync"];
             this.id = data["id"];
         }
@@ -29841,7 +30178,9 @@ export class StoreListDto implements IStoreListDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["pictureId"] = this.pictureId;
-        data["orderSourceType"] = this.orderSourceType;
+        data["pictureUrl"] = this.pictureUrl;
+        data["orderSource"] = this.orderSource;
+        data["orderSourceString"] = this.orderSourceString;
         data["orderSync"] = this.orderSync;
         data["id"] = this.id;
         return data; 
@@ -29853,8 +30192,12 @@ export interface IStoreListDto {
     name: string | undefined;
     /** 图片Id */
     pictureId: number | undefined;
+    /** 图片url */
+    pictureUrl: string | undefined;
     /** 订单来源10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
-    orderSourceType: StoreListDtoOrderSourceType | undefined;
+    orderSource: StoreListDtoOrderSource | undefined;
+    /** 订单来源 */
+    orderSourceString: string | undefined;
     /** 订单同步 */
     orderSync: boolean | undefined;
     id: number | undefined;
@@ -29968,7 +30311,7 @@ export class CreateOrUpdateStoreInput implements ICreateOrUpdateStoreInput {
     /** 第三方App secret */
     appSecret!: string | undefined;
     /** 订单来源10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
-    orderSourceType!: CreateOrUpdateStoreInputOrderSourceType | undefined;
+    orderSource!: CreateOrUpdateStoreInputOrderSource | undefined;
     /** 订单同步 */
     orderSync!: boolean | undefined;
     /** 排序id */
@@ -29990,7 +30333,7 @@ export class CreateOrUpdateStoreInput implements ICreateOrUpdateStoreInput {
             this.pictureId = data["pictureId"];
             this.appKey = data["appKey"];
             this.appSecret = data["appSecret"];
-            this.orderSourceType = data["orderSourceType"];
+            this.orderSource = data["orderSource"];
             this.orderSync = data["orderSync"];
             this.displayOrder = data["displayOrder"];
         }
@@ -30010,7 +30353,7 @@ export class CreateOrUpdateStoreInput implements ICreateOrUpdateStoreInput {
         data["pictureId"] = this.pictureId;
         data["appKey"] = this.appKey;
         data["appSecret"] = this.appSecret;
-        data["orderSourceType"] = this.orderSourceType;
+        data["orderSource"] = this.orderSource;
         data["orderSync"] = this.orderSync;
         data["displayOrder"] = this.displayOrder;
         return data; 
@@ -30029,7 +30372,7 @@ export interface ICreateOrUpdateStoreInput {
     /** 第三方App secret */
     appSecret: string | undefined;
     /** 订单来源10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
-    orderSourceType: CreateOrUpdateStoreInputOrderSourceType | undefined;
+    orderSource: CreateOrUpdateStoreInputOrderSource | undefined;
     /** 订单同步 */
     orderSync: boolean | undefined;
     /** 排序id */
@@ -33414,6 +33757,13 @@ export enum AdvertChannels2 {
     _40 = 40, 
 }
 
+/** 时间范围 */
+export enum Period {
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -34040,7 +34390,7 @@ export enum CheckUserCodeInputCodeType {
     _80 = 80, 
 }
 
-export enum StoreListDtoOrderSourceType {
+export enum StoreListDtoOrderSource {
     _10 = 10, 
     _20 = 20, 
     _30 = 30, 
@@ -34056,7 +34406,7 @@ export enum GetStoreForEditOutputOrderSourceType {
     _50 = 50, 
 }
 
-export enum CreateOrUpdateStoreInputOrderSourceType {
+export enum CreateOrUpdateStoreInputOrderSource {
     _10 = 10, 
     _20 = 20, 
     _30 = 30, 

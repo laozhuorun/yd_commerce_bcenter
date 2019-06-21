@@ -1,11 +1,11 @@
 export class AppConsts {
   static readonly tenancyNamePlaceHolderInUrl = '{TENANCY_NAME}';
 
-  static remoteServiceBaseUrl = 'http://localhost:6001';
-  static remoteServiceBaseUrlFormat = 'http://localhost:6001';
-  static appBaseUrl = 'http://localhost:4200';
-  static appBaseHref = 'http://localhost:4200'; // returns angular's base-href parameter value if used during the publish
-  static appBaseUrlFormat = 'http://localhost:4200';
+  static remoteServiceBaseUrl = 'http://60.205.216.113';
+  static remoteServiceBaseUrlFormat = 'http://60.205.216.113';
+  static appBaseUrl = 'http://www.udosass.com';
+  static appBaseHref = 'http://www.udosass.com'; // returns angular's base-href parameter value if used during the publish
+  static appBaseUrlFormat = 'http://www.udosass.com';
   static recaptchaSiteKey: string;
   static subscriptionExpireNootifyDayCount: number;
 
@@ -26,7 +26,9 @@ export class AppConsts {
   };
 
   static readonly grid = {
-    defaultPageSize: 10,
+    defaultPageSize: 20,
+    pageSizeOptions: [5, 10, 20, 50, 100],
+    maxPageSize: 100,
   };
 
   static readonly enumName = {

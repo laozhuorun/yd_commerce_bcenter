@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://test.api.vapps.com.cn/api",
+    "target": "http://60.205.216.113/api",
     "secure": false,
     "pathRewrite": {
       "^/api/": ""
@@ -9,7 +9,7 @@
     "logLevel": "debug"
   },
   "//api": {
-    "target": "http://test.api.vapps.com.cn/api",
+    "target": "http://60.205.216.113/api",
     "secure": false,
     "pathRewrite": {
       "^//api/": ""

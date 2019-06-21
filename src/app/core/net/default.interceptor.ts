@@ -95,7 +95,8 @@ export class DefaultInterceptor implements HttpInterceptor {
       case 403:
       case 404:
       case 500:
-        this.goTo(`/exception/${ev.status}`);
+        const errortext = CODEMESSAGE[ev.status] || ev.statusText;
+        this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
         break;
       default:
         if (ev instanceof HttpErrorResponse) {

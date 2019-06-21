@@ -1,66 +1,72 @@
 <page-header-wrapper [title]="'查询店铺'">
-  <nz-card [nzBordered]="false" class>
-    <form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
-      <nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
-        <nz-col nzMd="8" nzSm="24">
-          <nz-form-item>
-            <nz-form-label nzFor="no">店铺编号</nz-form-label>
-            <nz-form-control>
-              <input nz-input [(ngModel)]="q.name" name="no" placeholder="请输入">
-            </nz-form-control>
-          </nz-form-item>
-        </nz-col>
-        <nz-col nzMd="8" nzSm="24">
-          <nz-form-item>
-            <nz-form-label nzFor="status">订单来源</nz-form-label>
-            <nz-form-control>
-              <nz-select [(ngModel)]="q.source" name="source" id="source" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
-                <nz-option *ngFor="let source of sources" [nzLabel]="source.text"
-                           [nzValue]="source.value"></nz-option>
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-        </nz-col>
-        <nz-col [nzSpan]="expandForm ? 24 : 8" [class.text-right]="expandForm">
-          <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
-          <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
-        </nz-col>
-      </nz-row>
-    </form>
-    <button nz-button routerLink="/store/add" [nzType]="'primary'">
-      <i nz-icon type="plus"></i>
-      <span>新建</span>
-    </button>
-    <ng-container *ngIf="selectedRows.length > 0">
-      <nz-dropdown [nzPlacement]="'bottomLeft'">
-        <button nz-button nz-dropdown>
-          更多操作
-          <i nz-icon type="down"></i>
+    <nz-card [nzBordered]="false" class>
+        <form nz-form (ngSubmit)="getData()" [nzLayout]="'inline'" class="search__form">
+            <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+                <div nz-col nzMd="8" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="no">店铺名称</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input [(ngModel)]="q.name" name="no" placeholder="请输入">
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col nzMd="8" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="status">订单来源</nz-form-label>
+                        <nz-form-control>
+                            <nz-select [(ngModel)]="q.source" name="source" id="source" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+                                <nz-option *ngFor="let source of sources" [nzLabel]="source.text" [nzValue]="source.value"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <nz-row nzGutter="16" style="text-align: center">
+                <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+                <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
+            </nz-row>
+        </form>
+        <button nz-button routerLink="/store/add" [nzType]="'primary'">
+            <i nz-icon type="plus"></i>
+            <span>新建</span>
         </button>
-        <ul nz-menu>
-          <li nz-menu-item (click)="remove()">删除</li>
-          <li nz-menu-item (click)="approval()">关闭</li>
-        </ul>
-      </nz-dropdown>
-    </ng-container>
-    <div class="my-md">
-      <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
-        <ng-template #message>
-          已选择
-          <strong class="text-primary">{{selectedRows.length}}</strong>
-          个店铺
-          <a *ngIf="totalCallNo > 0" (click)="st.clearCheck()" class="ml-lg">清空</a>
-        </ng-template>
-      </nz-alert>
-    </div>
-    <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)"></st>
-  </nz-card>
-  <ng-template #modalContent>
-    <nz-form-item>
-      <nz-form-label nzFor="no">描述</nz-form-label>
-      <nz-form-control>
-        <input nz-input [(ngModel)]="description" name="description" placeholder="请输入" id="no">
-      </nz-form-control>
-    </nz-form-item>
-  </ng-template>
+        <ng-container *ngIf="selectedRows.length > 0">
+            <nz-dropdown [nzPlacement]="'bottomLeft'">
+                <button nz-button nz-dropdown>
+                    更多操作
+                    <i nz-icon type="down"></i>
+                </button>
+                <ul nz-menu>
+                    <li nz-menu-item (click)="remove()">删除</li>
+                </ul>
+            </nz-dropdown>
+        </ng-container>
+        <div class="my-md">
+            <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
+                <ng-template #message>
+                    已选择
+                    <strong class="text-primary">{{selectedRows.length}}</strong>
+                    个店铺
+                    <a *ngIf="totalCallNo > 0" (click)="st.clearCheck()" class="ml-lg">清空</a>
+                </ng-template>
+            </nz-alert>
+        </div>
+        <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
+            <ng-template st-row="order-async" let-item let-index="index">
+                <nz-switch [(ngModel)]="item.orderSync" (ngModelChange)="changeSyncStaus($event,item)"></nz-switch>
+            </ng-template>
+            <ng-template st-row="store-name" let-item let-index="index">
+                <img width="30" alt="item.name" src="{{getDefaultPictureUrl(item)}}" />
+                <span class="pl-md">{{item.name}}</span>
+            </ng-template>
+        </st>
+    </nz-card>
+    <ng-template #modalContent>
+        <nz-form-item>
+            <nz-form-label nzFor="no">描述</nz-form-label>
+            <nz-form-control>
+                <input nz-input [(ngModel)]="description" name="description" placeholder="请输入" id="no">
+            </nz-form-control>
+        </nz-form-item>
+    </ng-template>
 </page-header-wrapper>

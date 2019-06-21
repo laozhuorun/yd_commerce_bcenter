@@ -18,7 +18,7 @@ export class StoreEditComponent implements OnInit, OnDestroy {
     pictureId: 0,
     appKey: '',
     appSecret: '',
-    orderSourceType: 10,
+    orderSource: 10,
     orderSync: true,
     displayOrder: 0,
   });

@@ -8,6 +8,7 @@ import { SettingService } from '@abp/settings/setting.service';
 import { Injector } from '@angular/core';
 import { AppConsts } from '@shared/consts/app-consts';
 import { NzMessageService } from 'ng-zorro-antd';
+import { PaginationBaseDto } from './utils/pagination.dto';
 
 export abstract class AppComponentBase {
   localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
@@ -100,5 +101,14 @@ export abstract class FormComponentBase extends AppComponentBase {
     super(injector);
   }
 
+  loading = false;
+}
+
+export abstract class ListComponentBase extends AppComponentBase {
+  constructor(injector: Injector) {
+    super(injector);
+  }
+
+  page: PaginationBaseDto = new PaginationBaseDto(AppConsts.grid.defaultPageSize);
   loading = false;
 }
