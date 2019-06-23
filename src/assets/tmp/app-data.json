@@ -39,17 +39,17 @@
           "children": [
             {
               "text": "查找商品",
-              "link": "/goods/list",
+              "link": "/product/list",
               "i18n": "BusiCenter.Catelog.Product"
             },
             {
               "text": "分类管理",
-              "link": "/goods/category/list",
+              "link": "/product/category/list",
               "i18n": "BusiCenter.Catelog.Category"
             },
             {
               "text": "属性管理",
-              "link": "/goods/attribute/list",
+              "link": "/product/attribute/list",
               "i18n": "BusiCenter.Catelog.ProductAttribute"
             }
           ]
@@ -67,7 +67,7 @@
               "i18n": "BusiCenter.SalesManage.Order"
             },
             {
-              "text": "发货管理",
+              "text": "批量发货",
               "link": "/shipping/list",
               "i18n": "BusiCenter.SalesManage.Shipment"
             }
@@ -87,7 +87,7 @@
             },
             {
               "text": "物流供应商",
-              "link": "/shipment/support/list",
+              "link": "/shipment/logistics",
               "i18n": "BusiCenter.StoreConfiguration.TenantLogistics"
             }
           ]

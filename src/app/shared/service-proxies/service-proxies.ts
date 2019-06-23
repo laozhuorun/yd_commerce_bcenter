@@ -27475,7 +27475,7 @@ export class DateSaleStatisticDto implements IDateSaleStatisticDto {
     /** 拒签率 */
     rejectRate!: number | undefined;
     /** 货物成本 */
-    goodsCost!: number | undefined;
+    productCost!: number | undefined;
     /** 物流费用 */
     shipmentCost!: number | undefined;
     /** 佣金 */
@@ -27516,7 +27516,7 @@ export class DateSaleStatisticDto implements IDateSaleStatisticDto {
             this.rejectNum = data["rejectNum"];
             this.rejectTotal = data["rejectTotal"];
             this.rejectRate = data["rejectRate"];
-            this.goodsCost = data["goodsCost"];
+            this.productCost = data["productCost"];
             this.shipmentCost = data["shipmentCost"];
             this.rewardAmount = data["rewardAmount"];
             this.totalCost = data["totalCost"];
@@ -27551,7 +27551,7 @@ export class DateSaleStatisticDto implements IDateSaleStatisticDto {
         data["rejectNum"] = this.rejectNum;
         data["rejectTotal"] = this.rejectTotal;
         data["rejectRate"] = this.rejectRate;
-        data["goodsCost"] = this.goodsCost;
+        data["productCost"] = this.productCost;
         data["shipmentCost"] = this.shipmentCost;
         data["rewardAmount"] = this.rewardAmount;
         data["totalCost"] = this.totalCost;
@@ -27596,7 +27596,7 @@ export interface IDateSaleStatisticDto {
     /** 拒签率 */
     rejectRate: number | undefined;
     /** 货物成本 */
-    goodsCost: number | undefined;
+    productCost: number | undefined;
     /** 物流费用 */
     shipmentCost: number | undefined;
     /** 佣金 */

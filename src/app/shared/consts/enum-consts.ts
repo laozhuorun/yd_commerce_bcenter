@@ -1,4 +1,10 @@
-import { Period, StoreListDtoOrderSource } from '@shared/service-proxies/service-proxies';
+import {
+  Period,
+  StoreListDtoOrderSource,
+  OrderStatuses,
+  PaymentStatuses,
+  ShippingStatuses,
+} from '@shared/service-proxies/service-proxies';
 
 export class EnumConsts {
   static OrderSource = 'OrderSource';
@@ -6,6 +12,22 @@ export class EnumConsts {
   static OrderType = 'OrderType';
   static PaymentStatus = 'PaymentStatus';
   static ShippingStatus = 'ShippingStatus';
+}
+
+/** 订单状态(缺省为待确认)10 = WaitConfirm ; 20 = Processing ; 30 = Completed ; 40 = Canceled */
+export class OrderStatus {
+  static WaitConfirm: number = OrderStatuses._10;
+  static Processing: number = OrderStatuses._20;
+  static Completed: number = OrderStatuses._30;
+  static Canceled: number = OrderStatuses._40;
+}
+
+/** 支付状态10 = Pending ; 30 = Paid ; 35 = PartiallyRefunded ; 40 = Refunded */
+export class PaymentStatus {
+  static Pending: number = PaymentStatuses._10;
+  static Paid: number = PaymentStatuses._30;
+  static PartiallyRefunded: number = PaymentStatuses._35;
+  static Refunded: number = PaymentStatuses._40;
 }
 
 /** 订单来源10 = Self ; 20 = FxgAd ; 30 = FxgPd ; 40 = Tenant ; 50 = YouZan */
@@ -23,22 +45,20 @@ export class Periods {
   static Year = Period._3;
 }
 
+/** 物流状态100 = NotRequired ; 200 = NotYetShipped ; 250 = PartiallyShipped ; 300 = Shipped ; 302 = Taked ; 303 = OnPassag ; 304 = DestinationCity ; 305 = Delivering ; 306 = Received ; 400 = Issue ; 404 = IssueWithRejected ; 500 = Cancel ; 600 = Intercept */
 export class ShippingStatus {
-  static Week = Period._2;
-  static Month = Period._3;
-  static Year = Period._3;
+  static NotRequired = ShippingStatuses._100;
+  static NotYetShipped = ShippingStatuses._200;
+  static PartiallyShipped = ShippingStatuses._250;
+  static Shipped = ShippingStatuses._300;
 
-  static NotRequired = 100;
-  static NotYetShipped = 200;
-  static PartiallyShipped = 250;
-  static Shipped = 300;
-  static Taked = 302;
-  static OnPassag = 303;
-  static DestinationCity = 304;
-  static Delivering = 305;
-  static Received = 306;
-  static Issue = 400;
-  static IssueWithRejected = 404;
-  static Cancel = 500;
-  static Intercept = 600;
+  static Taked = ShippingStatuses._302;
+  static OnPassag = ShippingStatuses._303;
+  static DestinationCity = ShippingStatuses._304;
+  static Delivering = ShippingStatuses._305;
+  static Received = ShippingStatuses._306;
+  static Issue = ShippingStatuses._400;
+  static IssueWithRejected = ShippingStatuses._404;
+  static Cancel = ShippingStatuses._500;
+  static Intercept = ShippingStatuses._600;
 }

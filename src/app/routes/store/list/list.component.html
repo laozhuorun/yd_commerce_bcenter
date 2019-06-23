@@ -1,4 +1,4 @@
-<page-header-wrapper [title]="'查询店铺'">
+<page-header-wrapper [title]="'店铺管理'">
     <nz-card [nzBordered]="false" class>
         <form nz-form (ngSubmit)="getData()" [nzLayout]="'inline'" class="search__form">
             <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
@@ -15,7 +15,10 @@
                         <nz-form-label nzFor="status">订单来源</nz-form-label>
                         <nz-form-control>
                             <nz-select [(ngModel)]="q.source" name="source" id="source" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
-                                <nz-option *ngFor="let source of sources" [nzLabel]="source.text" [nzValue]="source.value"></nz-option>
+                                <nz-option nzCustomContent *ngFor="let source of sources" [nzLabel]="source.text" [nzValue]="source.value">
+                                    <img width="18" alt="item.name" src="{{getSourcePicture(source.value)}}" />
+                                    <span class="pl-sm">{{source.text}}</span>
+                                </nz-option>
                             </nz-select>
                         </nz-form-control>
                     </nz-form-item>
@@ -26,7 +29,7 @@
                 <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
             </nz-row>
         </form>
-        <button nz-button routerLink="/store/add" [nzType]="'primary'">
+        <button nz-button routerLink="/store/add" [nzType]="'primary'" class="ant-row-flex-end">
             <i nz-icon type="plus"></i>
             <span>新建</span>
         </button>

@@ -15,6 +15,7 @@ import {
   ShopOutline,
   UserOutline,
   TeamOutline,
+  CheckOutline,
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS = [
@@ -32,4 +33,5 @@ export const ICONS = [
   ShopOutline,
   UserOutline,
   TeamOutline,
+  CheckOutline,
 ];

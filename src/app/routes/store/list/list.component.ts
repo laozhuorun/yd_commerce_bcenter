@@ -7,7 +7,7 @@ import { StoreListDto, StoreServiceProxy } from '@shared/service-proxies/service
 import { STChange, STColumn, STComponent, STData } from '@delon/abc';
 import { _HttpClient } from '@delon/theme';
 import { OrderSource } from '@shared/consts/enum-consts';
-import { LogoImgUrl } from '@shared/consts/static-source';
+import { SourcePictureHelper } from '@shared/consts/static-source';
 import { ListComponentBase } from '@shared/app-component-base';
 
 @Component({
@@ -167,11 +167,11 @@ export class StoreListComponent extends ListComponentBase implements OnInit {
   getDefaultPictureUrl(item: StoreListDto): string {
     if (!!item.pictureUrl) return item.pictureUrl;
 
-    if (item.orderSource === OrderSource.Tenant) return LogoImgUrl.Tenant;
-    else if (item.orderSource === OrderSource.FxgAd) return LogoImgUrl.Toutiao;
-    else if (item.orderSource === OrderSource.FxgPd) return LogoImgUrl.Toutiao;
-    else if (item.orderSource === OrderSource.YouZan) return LogoImgUrl.Youzan;
-    else return LogoImgUrl.Self;
+    return SourcePictureHelper.getSourcePicture(item.orderSource);
+  }
+
+  getSourcePicture(orderSource: number): string {
+    return SourcePictureHelper.getSourcePicture(orderSource);
   }
 
   changeSyncStaus(status: boolean, item: StoreListDto) {

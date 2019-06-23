@@ -1,4 +1,4 @@
-<page-header-wrapper [title]="'查询发货单'">
+<page-header-wrapper [title]="'查询发货记录'">
     <nz-card [nzBordered]="false" class>
         <button nz-button [nzType]="'primary'">
             <i nz-icon type="plus"></i>
@@ -29,11 +29,11 @@
 
         <nz-table #nzTable [nzData]="data">
             <thead>
-            <tr>
-                <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th>
-                <th nzCustomFilter>
-                    订单号
-                    <!--<nz-dropdown nzTrigger="click" nzPlacement="bottomRight" [nzClickHide]="false" nzTableFilter
+                <tr>
+                    <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th>
+                    <th nzCustomFilter>
+                        订单号
+                        <!--<nz-dropdown nzTrigger="click" nzPlacement="bottomRight" [nzClickHide]="false" nzTableFilter
                                  #dropdown>
                         <i nz-icon nzType="search" class="ant-table-filter-icon"
                            [class.ant-table-filter-open]="dropdown.nzVisible" nz-dropdown></i>
@@ -45,10 +45,10 @@
                             <button nz-button nzSize="small" (click)="reset()">Reset</button>
                         </div>
                     </nz-dropdown>-->
-                </th>
-                <th>
-                    运单号
-                    <!--<nz-dropdown nzTrigger="click" nzPlacement="bottomRight" [nzClickHide]="false" nzTableFilter
+                    </th>
+                    <th>
+                        运单号
+                        <!--<nz-dropdown nzTrigger="click" nzPlacement="bottomRight" [nzClickHide]="false" nzTableFilter
                                  #dropdown>
                         <i nz-icon nzType="search" class="ant-table-filter-icon"
                            [class.ant-table-filter-open]="dropdown.nzVisible" nz-dropdown></i>
@@ -60,35 +60,35 @@
                             <button nz-button nzSize="small" (click)="reset()">Reset</button>
                         </div>
                     </nz-dropdown>-->
-                </th>
-                <th>
-                    状态
-                </th>
-                <th>
-                    服务商
-                </th>
-                <th nzShowSort nzSortKey="deliveryOn">
-                    配送日期
-                </th>
-                <th>操作</th>
-            </tr>
+                    </th>
+                    <th>
+                        状态
+                    </th>
+                    <th>
+                        服务商
+                    </th>
+                    <th nzShowSort nzSortKey="deliveryOn">
+                        配送日期
+                    </th>
+                    <th>操作</th>
+                </tr>
             </thead>
             <tbody>
-            <ng-template ngFor let-data [ngForOf]="nzTable.data">
-                <tr>
-                    <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-                    <td>{{data.orderNumber}}</td>
-                    <td>{{data.logisticsNumber}}</td>
-                    <td>{{data.statusString}}</td>
-                    <td>{{data.logisticsName}}</td>
-                    <td>{{data.deliveryOn | _date}}</td>
-                    <td>
-                        <a [routerLink]="'/shipment/edit/' + data.id">编辑</a>
-                        <nz-divider nzType="vertical"></nz-divider>
-                        <a>删除</a>
-                    </td>
-                </tr>
-                <!--<tr [nzExpand]="mapOfExpandData[data.id]">
+                <ng-template ngFor let-data [ngForOf]="nzTable.data">
+                    <tr>
+                        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+                        <td>{{data.orderNumber}}</td>
+                        <td>{{data.logisticsNumber}}</td>
+                        <td>{{data.statusString}}</td>
+                        <td>{{data.logisticsName}}</td>
+                        <td>{{data.deliveryOn | _date}}</td>
+                        <td>
+                            <a [routerLink]="'/shipment/edit/' + data.id">编辑</a>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <a>删除</a>
+                        </td>
+                    </tr>
+                    <!--<tr [nzExpand]="mapOfExpandData[data.id]">
                     <td></td>
                     <td></td>
                     <td colspan="7">
@@ -97,7 +97,7 @@
                         </div>
                     </td>
                 </tr>-->
-            </ng-template>
+                </ng-template>
             </tbody>
         </nz-table>
 

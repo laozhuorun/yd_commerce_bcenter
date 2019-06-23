@@ -1,5 +1,5 @@
 <nz-skeleton [nzLoading]="loading">
-    <sv-container col="2" [title]="'基本信息'">
+    <sv-container col="2" [title]="'订单信息'">
         <sv label="状态">{{ order.orderStatusString }}</sv>
         <sv label="收货人姓名">{{ order.shippingName }}</sv>
         <sv label="收货人电话">{{ order.shippingPhoneNumber }}</sv>
@@ -26,8 +26,11 @@
         </thead>
         <tbody>
             <tr *ngFor="let g of order.items">
-                <td [innerHTML]="g.productName"></td>
-                <td [innerHTML]="g.attributeDesciption"></td>
+                <td>
+                    <img src="{{g.pictureUrl}}" width="100%" />
+                    <ellipsis length="10" tooltip>{{ g.productName }}</ellipsis>
+                </td>
+                <td [innerHTML]="toHTML(g.attributeDesciption)"></td>
                 <td>{{ g.price | _currency }}</td>
                 <td>{{ g.discountAmount | _currency }}</td>
                 <td>{{ g.quantity }}</td>
@@ -36,8 +39,18 @@
         <ng-template #footer>
             <div class="text-right">
                 <p>
-                    商品总金额：{{ order.subtotalAmount | _currency }} - 优惠：{{ order.discountAmount | _currency }} - 佣金
-                    {{ order.rewardAmount | _currency }} - + 运费：{{ order.shippingAmount | _currency }}
+                    商品总金额：{{ order.subtotalAmount | _currency }}
+                </p>
+                <p>
+                    优惠：{{ order.discountAmount | _currency }}
+                </p>
+                <p>
+                    佣金：
+                    {{ order.rewardAmount | _currency }}
+                </p>
+                <p>
+                    运费：
+                    {{ order.shippingAmount | _currency }}
                 </p>
                 订单支付金额：
                 <strong class="text-error">{{ order.totalAmount | _currency }}</strong>

@@ -1,4 +1,4 @@
-<page-header-wrapper [title]="'查询商品'">
+<page-header-wrapper [title]="'广告账户'">
     <nz-card [nzBordered]="false" class>
         <button nz-button routerLink="/advert/edit/0" [nzType]="'primary'">
             <i nz-icon type="plus"></i>
@@ -18,57 +18,54 @@
             </nz-alert>
         </div>
 
-        <nz-table *ngIf="data" #nzTable [nzData]="data.items" [nzTotal]="data.totalCount" [nzFrontPagination]="false"
-                  (nzPageIndexChange)="pageChange($event)">
+        <nz-table *ngIf="data" #nzTable [nzData]="data.items" [nzTotal]="data.totalCount" [nzFrontPagination]="false" (nzPageIndexChange)="pageChange($event)">
             <thead>
-            <tr>
-                <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate"
-                    (nzCheckedChange)="checkAll($event)"></th>
-                <th>
-                    平台ID
-                </th>
-                <th nzCustomFilter>
-                    显示名称
-                </th>
-                <th>
-                    账户名
-                </th>
-                <th>
-                    商品
-                </th>
-                <th>
-                    渠道
-                </th>
-                <th>
-                    历史消耗
-                </th>
-                <th>
-                    余额
-                </th>
-                <th>操作</th>
-            </tr>
+                <tr>
+                    <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th>
+                    <th>
+                        平台ID
+                    </th>
+                    <th nzCustomFilter>
+                        显示名称
+                    </th>
+                    <th>
+                        账户名
+                    </th>
+                    <th>
+                        商品
+                    </th>
+                    <th>
+                        渠道
+                    </th>
+                    <th>
+                        历史消耗
+                    </th>
+                    <th>
+                        余额
+                    </th>
+                    <th>操作</th>
+                </tr>
             </thead>
             <tbody>
-            <ng-template ngFor let-data [ngForOf]="nzTable.data">
-                <tr>
-                    <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-                    <td>{{data.thirdpartyId}}</td>
-                    <td>{{data.displayName}}</td>
-                    <td>{{data.username}}</td>
-                    <td>{{data.product}}</td>
-                    <td>{{data.channel}}</td>
-                    <td>{{data.totalCost}}</td>
-                    <td>{{data.totalOrder}}</td>
-                    <td>
-                        <a *ngIf="data.isAuthed" [href]="getUrl(data)">授权</a>
-                        <nz-divider *ngIf="data.isAuthed" nzType="vertical"></nz-divider>
-                        <a [routerLink]="['/advert/edit',data.id]">编辑</a>
-                        <nz-divider nzType="vertical"></nz-divider>
-                        <a nz-popconfirm nzTitle="确认要删除吗?" (nzOnConfirm)="remove([data.id])"
-                           (nzOnCancel)="cancel()">删除</a>
-                    </td>
-                </tr>
-            </ng-template>
+                <ng-template ngFor let-data [ngForOf]="nzTable.data">
+                    <tr>
+                        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+                        <td>{{data.thirdpartyId}}</td>
+                        <td>{{data.displayName}}</td>
+                        <td>{{data.username}}</td>
+                        <td>{{data.product}}</td>
+                        <td>{{data.channel}}</td>
+                        <td>{{data.totalCost}}</td>
+                        <td>{{data.totalOrder}}</td>
+                        <td>
+                            <a *ngIf="data.isAuthed" [href]="getUrl(data)">授权</a>
+                            <nz-divider *ngIf="data.isAuthed" nzType="vertical"></nz-divider>
+                            <a [routerLink]="['/advert/edit',data.id]">编辑</a>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <a nz-popconfirm nzTitle="确认要删除吗?" (nzOnConfirm)="remove([data.id])" (nzOnCancel)="cancel()">删除</a>
+                        </td>
+                    </tr>
+                </ng-template>
             </tbody>
         </nz-table>
 

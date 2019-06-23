@@ -1,40 +1,36 @@
 <page-header-wrapper [title]="'添加店铺'">
-  <form nz-form #f="ngForm" (ngSubmit)="update(f)" class="sf__no-error">
-    <nz-card nzTitle="店铺基本信息">
-      <div se-container>
-        <se label="店铺名" required error="必填项">
-          <input nz-input [(ngModel)]="store.name" name="name" required maxlength="50">
-        </se>
-        <se label="订单来源" error="必填项">
-          <nz-select [(ngModel)]="store.orderSourceType" name="orderSourceType" required>
-            <nz-option nzLabel="自营" [nzValue]="10"></nz-option>
-            <nz-option nzLabel="鲁班" [nzValue]="20"></nz-option>
-            <nz-option nzLabel="放心购" [nzValue]="30"></nz-option>
-            <nz-option nzLabel="广点通" [nzValue]="40"></nz-option>
-            <nz-option nzLabel="有赞" [nzValue]="50"></nz-option>
-          </nz-select>
-        </se>
-        <se label="第三方App id">
-          <input nz-input [(ngModel)]="store.appKey" name="appKey" maxlength="50">
-        </se>
-        <se label="第三方App secret">
-          <input nz-input [(ngModel)]="store.appSecret" name="appSecret" maxlength="30">
-        </se>
-        <se label="排序id">
-          <input nz-input type="number" [(ngModel)]="store.displayOrder" name="displayOrder" maxlength="100"
-                 placeholder="">
-        </se>
-        <se label="">
-          <label nz-checkbox [(ngModel)]="store.orderSync" name="orderSync">订单同步</label>
-        </se>
-        <se label="">
-          <app-store-logo></app-store-logo>
-        </se>
-      </div>
-    </nz-card>
-    <footer-toolbar>
-      <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">更新</button>
-      <button type="button" nz-button (click)="cancel()">返回</button>
-    </footer-toolbar>
-  </form>
+    <form nz-form #f="ngForm" (ngSubmit)="update(f)" class="sf__no-error">
+        <nz-card nzTitle="店铺基本信息">
+            <div se-container>
+                <se label="店铺名" required error="必填项">
+                    <input nz-input [(ngModel)]="store.name" name="name" required maxlength="50">
+                </se>
+                <se label="订单来源" error="必填项">
+                    <nz-select [(ngModel)]="store.orderSource" name="orderSource" required>
+                        <nz-option nzLabel="自营" [nzValue]="10"></nz-option>
+                        <nz-option nzLabel="鲁班" [nzValue]="20"></nz-option>
+                        <nz-option nzLabel="放心购" [nzValue]="30"></nz-option>
+                        <nz-option nzLabel="广点通" [nzValue]="40"></nz-option>
+                        <nz-option nzLabel="有赞" [nzValue]="50"></nz-option>
+                    </nz-select>
+                </se>
+                <se label="第三方App id">
+                    <input nz-input [(ngModel)]="store.appKey" name="appKey" maxlength="50">
+                </se>
+                <se label="第三方App secret">
+                    <input nz-input [(ngModel)]="store.appSecret" name="appSecret" maxlength="30">
+                </se>
+                <se label="图片">
+                    <app-store-logo></app-store-logo>
+                </se>
+                <se label="订单同步">
+                    <nz-switch [(ngModel)]="store.orderSync" name="orderSync"></nz-switch>
+                </se>
+            </div>
+        </nz-card>
+        <footer-toolbar>
+            <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">更新</button>
+            <button type="button" nz-button (click)="cancel()">返回</button>
+        </footer-toolbar>
+    </form>
 </page-header-wrapper>

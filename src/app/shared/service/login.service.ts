@@ -58,7 +58,6 @@ export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
 
 @Injectable()
 export class LoginService {
-
   localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
   commonlocalizationSourceName = AppConsts.localization.commonLocalizationSourceName;
   outputUa: any;
@@ -298,9 +297,8 @@ export class LoginService {
     this._startupService.load().then(() => {
       let url = this._tokenService.referrer.url || '/';
       if (url.includes('/passport')) url = '/';
-      window.location.href = '/';
+      // window.location.href = '/';
       this._router.navigateByUrl(url);
-      /*this.router.navigateByUrl(url);*/
     });
   }
 

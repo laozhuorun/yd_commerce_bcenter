@@ -1,21 +1,22 @@
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 
-import {ShipmentListComponent} from './list/list.component';
-import {ShipmentSupportListComponent} from './support/list/list.component';
+import { ShipmentListComponent } from './list/list.component';
+import { LogisticsComponent } from './logistics/logistics.component';
 
 const routes: Routes = [
   {
-    path: 'list', component: ShipmentListComponent
+    path: 'list',
+    component: ShipmentListComponent,
   },
   {
-    path: 'support/list', component: ShipmentSupportListComponent
-  }
+    path: 'logistics',
+    component: LogisticsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ShipmentRoutingModule {
-}
+export class ShipmentRoutingModule {}

@@ -12,7 +12,7 @@ import { tap } from 'rxjs/operators';
 export class ProProfileBaseComponent {
   basicNum = 0;
   amountNum = 0;
-  goods = this.http.get('/profile/goods').pipe(
+  product = this.http.get('/profile/product').pipe(
     tap((list: any[]) => {
       list.forEach(item => {
         this.basicNum += Number(item.num);
@@ -20,7 +20,7 @@ export class ProProfileBaseComponent {
       });
     }),
   );
-  goodsColumns: STColumn[] = [
+  productColumns: STColumn[] = [
     {
       title: '商品编号',
       index: 'id',

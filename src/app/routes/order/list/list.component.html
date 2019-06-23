@@ -3,15 +3,16 @@
         <nz-card [nzBordered]="false" [nzBodyStyle]="{ 'padding.px': 0 }">
             <form nz-form [formGroup]="searchForm" [nzLayout]="'inline'" class="search__form">
                 <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
-                    <div nz-col nzMd="8" nzSm="24">
+                    <div nz-col nzMd="6" nzSm="24">
                         <nz-form-item>
                             <nz-form-label nzFor="name">商品</nz-form-label>
                             <nz-form-control>
+
                                 <input nz-input formControlName="productIds" placeholder="请选择商品">
                             </nz-form-control>
                         </nz-form-item>
                     </div>
-                    <div nz-col nzMd="8" nzSm="24">
+                    <div nz-col nzMd="6" nzSm="8">
                         <nz-form-item>
                             <nz-form-label>订单号</nz-form-label>
                             <nz-form-control>
@@ -19,7 +20,7 @@
                             </nz-form-control>
                         </nz-form-item>
                     </div>
-                    <div nz-col nzMd="8" nzSm="24">
+                    <div nz-col nzMd="6" nzSm="8">
                         <nz-form-item>
                             <nz-form-label>物流单号</nz-form-label>
                             <nz-form-control>
@@ -27,8 +28,15 @@
                             </nz-form-control>
                         </nz-form-item>
                     </div>
-
-                    <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+                    <div nz-col nzMd="6" nzSm="8">
+                        <nz-form-item>
+                            <nz-form-label nzFor="name">收件电话</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="phoneNumber" placeholder="收件人电话">
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col nzMd="6" nzSm="8" *ngIf="expandForm">
                         <nz-form-item>
                             <nz-form-label nzFor="name">下单时间</nz-form-label>
                             <nz-form-control>
@@ -36,7 +44,7 @@
                             </nz-form-control>
                         </nz-form-item>
                     </div>
-                    <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+                    <div nz-col nzMd="6" nzSm="8" *ngIf="expandForm">
                         <nz-form-item>
                             <nz-form-label nzFor="name">收件人</nz-form-label>
                             <nz-form-control>
@@ -44,11 +52,11 @@
                             </nz-form-control>
                         </nz-form-item>
                     </div>
-                    <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+                    <div nz-col nzMd="6" nzSm="8" *ngIf="expandForm">
                         <nz-form-item>
                             <nz-form-label nzFor="name">收件地区</nz-form-label>
                             <nz-form-control>
-                                <nz-cascader [ngModelOptions]="{standalone: true}" [(ngModel)]="address" nzChangeOnSelect [nzLabelProperty]="'text'" [nzValueProperty]="'value'" [nzLoadData]="loadData" (ngModelChange)="onChanges($event)">
+                                <nz-cascader nzPlaceHolder="请选择" [ngModelOptions]="{standalone: true}" [(ngModel)]="address" nzChangeOnSelect [nzLabelProperty]="'text'" [nzValueProperty]="'value'" [nzLoadData]="loadAddressData" (ngModelChange)="onChanges($event)">
                                 </nz-cascader>
                             </nz-form-control>
                         </nz-form-item>
@@ -79,16 +87,6 @@
                 <span>删除已选订单</span>
             </button>
         </ng-template>
-        <!-- <div class="my-md">
-            <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
-                <ng-template #message>
-                    已选择
-                    <strong class="text-primary">{{numberOfChecked}}</strong>
-                    项
-                    <a *ngIf="numberOfChecked > 0" (click)="checkAll(false)" class="ml-lg">清空</a>
-                </ng-template>
-            </nz-alert>
-        </div> -->
         <div class="list-header">
             <!-- <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
                 <ng-template #message>
@@ -133,66 +131,11 @@
 
             </nz-card>
         </div>
-        <!-- <nz-table *ngIf="data" #nzTable [nzData]="data.items" [nzTotal]="data.totalCount" [nzFrontPagination]="false" (nzPageIndexChange)="pageChange($event)">
-            <thead>
-                <tr>
-                    <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th>
-                    <th nzCustomFilter>
-                        订单号
-                    </th>
-                    <th>
-                        商品
-                    </th>
-                    <th nzShowFilter [nzFilters]="enums.OrderStatus" (nzFilterChange)="filterChange('orderStatus',$event)">
-                        订单状态
-                    </th>
-                    <th nzShowFilter [nzFilters]="enums.PaymentStatus" (nzFilterChange)="filterChange('paymentStatus',$event)">
-                        付款状态
-                    </th>
-                    <th nzShowFilter [nzFilters]="enums.ShippingStatus" (nzFilterChange)="filterChange('shippingStatus',$event)">
-                        配送状态
-                    </th>
-                    <th nzShowFilter [nzFilters]="enums.OrderSource" (nzFilterChange)="filterChange('orderSource',$event)">
-                        订单来源
-                    </th>
-                    <th nzShowSort nzSortKey="createOn">更新时间</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-template ngFor let-data [ngForOf]="nzTable.data">
-                    <tr>
-                        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-                        <td><a (click)="view(data)">{{data.orderNumber}}</a></td>
-                        <td>
-                            <ng-container *ngFor="let g of data.items; let first=first">
-                                <a [ngClass]="{'pl-sm': !first}" nz-tooltip="{{g.productName}}，数量：{{g.quantity}}，价格：{{g.price | _currency}}" routerLink="/product/edit/{{g.id}}">
-                                    <img src="{{g.pictureUrl}}" height="32" width="32" />
-                                </a>
-                            </ng-container>
-                        </td>
-                        <td>{{data.orderStatusString}}</td>
-                        <td>{{data.paymentStatusString}}</td>
-                        <td>{{data.shippingStatusString}}</td>
-                        <td>{{data.orderSourceString}}</td>
-                        <td>{{data.createOn | date : 'yyyy/MM/dd HH:mm:ss'}}</td>
-                        <td>
-                            <a *ngIf="data.shippingStatus === 200 || data.shippingStatus === 250" (click)="sendShip(data)">发货</a>
-                            <nz-divider *ngIf="data.shippingStatus === 200 || data.shippingStatus === 250" nzType="vertical"></nz-divider>
-                            <a [routerLink]="'/order/edit/' + data.id">编辑</a>
-                            <nz-divider nzType="vertical"></nz-divider>
-                            <a>删除</a>
-                        </td>
-                    </tr>
-                </ng-template>
-            </tbody>
-        </nz-table> -->
-
         <nz-list *ngIf="data" [nzDataSource]="data.items" [nzItemLayout]="'vertical'" [nzRenderItem]="item" [nzPagination]="pagination">
             <ng-template #item let-item>
                 <nz-list-item [nzContent]="nzContent">
                     <ng-template #nzContent>
-                        <nz-card nzHoverable [nzLoading]="loading">
+                        <nz-card nzHoverable [nzLoading]="loading" (click)="view(item)">
                             <div nz-row class="order-header" nzSpan=24>
                                 <div nz-col nzXs="12" nzSm="12" nzMd="12" nzLg="6" nzXl="6" nzXXl="6">
                                     <label nz-checkbox [(ngModel)]="checkedId[item.id]" (ngModelChange)="choose(item.id)">
@@ -202,7 +145,8 @@
                                 </div>
                                 <div nz-col nzXs="12" nzSm="12" nzMd="12" nzLg="6" nzXl="6" nzXXl="6">
                                     来源:
-                                    <span class="pl-sm">{{ item.orderSourceString }}</span>
+                                    <img class="pl-sm source-img" height="16" alt="item.orderSourceString" src="{{getSourcePicture(item.orderSource)}}" />
+                                    <span class="pl-sm">{{item.orderSourceString}}</span>
                                 </div>
                                 <div nz-col nzXs="12" nzSm="12" nzMd="12" nzLg="6" nzXl="6" nzXXl="6">
                                     店铺:
@@ -221,9 +165,10 @@
                                                 <img src="{{g.pictureUrl}}" width="100%" />
                                             </a>
                                         </div>
-                                        <div class="pl-sm" nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="18" nzXl="18" nzXXl="18" routerLink="/goods/edit/{{g.id}}">
+                                        <div class="pl-sm" nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="18" nzXl="18" nzXXl="18" routerLink="/product/edit/{{g.id}}">
                                             {{g.productName}}
-                                            <p>数量：{{g.quantity}}，价格：{{g.price | _currency}}</p>
+                                            <p>数量：{{g.quantity}}</p>
+                                            <p>单价：{{g.price | _currency}}</p>
                                         </div>
                                     </ng-container>
                                 </div>
@@ -231,29 +176,42 @@
                                     {{item.totalAmount | _currency}}
                                 </div>
                                 <div nz-col nzXs="6" nzSm="6" nzMd="6" nzLg="4" nzXl="4" nzXXl="4">
-                                    <p>{{item.shippingName}}</p>
-                                    <p>{{item.shippingPhoneNumber}}</p>
-                                    <p>{{item.shippingAddress}}</p>
+                                    <span>{{item.shippingName}}</span>
+                                    <span class="pl-md">{{item.shippingPhoneNumber}}</span>
+                                    <!-- <p>{{item.shippingAddress}}</p> -->
                                 </div>
                                 <div nz-col nzXs="4" nzSm="4" nzMd="4" nzLg="2" nzXl="2" nzXXl="2">
-                                    {{item.orderStatusString}}
+                                    <nz-tag [nzColor]="getStatusColor(item.orderStatus)">{{item.orderStatusString}}</nz-tag>
                                 </div>
                                 <div nz-col nzXs="4" nzSm="4" nzMd="4" nzLg="2" nzXl="2" nzXXl="2">
-                                    {{item.shippingStatusString}}
+                                    <nz-tag [nzColor]="getShippingColor(item.shippingStatus)">{{item.shippingStatusString}}</nz-tag>
                                 </div>
-
                                 <div nz-col nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="3" nzXXl="3">
                                     {{item.customerComment}}
                                 </div>
                                 <div nz-col nzXs="4" nzSm="4" nzMd="4" nzLg="4" nzXl="3" nzXXl="3">
                                     {{item.adminComment}}
                                 </div>
-                                <div nz-col nzXs="8" nzSm="8" nzMd="8" nzLg="4" nzXl="24" nzXXl="2" class="text-right">
-                                    <a *ngIf="item.shippingStatus === 200 || item.shippingStatus === 250" (click)="sendShip(data)">发货</a>
-                                    <nz-divider *ngIf="item.shippingStatus === 200 || item.shippingStatus === 250" nzType="vertical"></nz-divider>
-                                    <a [routerLink]="'/order/edit/' + item.id">编辑</a>
-                                    <nz-divider nzType="vertical"></nz-divider>
-                                    <a>删除</a>
+                                <div nz-col nzXs="8" nzSm="8" nzMd="8" nzLg="4" nzXl="2" nzXXl="2" class="text-right">
+                                    <a class="pl-xs " *ngIf="item.orderStatus === 10 " (click)="sendShip(data)">
+                                        <i nz-icon nzType="check"></i>
+                                        确认
+                                        <nz-divider nzType="vertical"></nz-divider>
+                                    </a>
+                                    <a class="pl-xs " *ngIf="item.shippingStatus === 200 || item.shippingStatus === 250" (click)="sendShip(data)">
+                                        <i nz-icon nzType="inbox"></i>
+                                        发货
+                                        <nz-divider nzType="vertical"></nz-divider>
+                                    </a>
+                                    <a class="pl-xs " [routerLink]="'/order/edit/' + item.id">
+                                        <i nz-icon nzType="edit"></i>
+                                        编辑
+                                        <nz-divider nzType="vertical"></nz-divider>
+                                    </a>
+                                    <a class="pl-xs " (click)="sendShip(data)">
+                                        <i nz-icon nzType="delete"></i>
+                                        删除
+                                    </a>
                                 </div>
                             </div>
                         </nz-card>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService, NzDrawerRef } from 'ng-zorro-antd';
 import {
@@ -11,18 +11,19 @@ import {
 @Component({
   selector: 'app-order-list-view',
   templateUrl: './view.component.html',
+  styleUrls: ['./view.component.less'],
 })
 export class OrderListViewComponent implements OnInit {
   order: OrderDetailDto = new OrderDetailDto();
   shipment: ShipmentDto = new ShipmentDto();
   loading = false;
-
   constructor(
     private http: _HttpClient,
     private msg: NzMessageService,
     private drawer: NzDrawerRef,
     private orderSvc: OrderServiceProxy,
     private shipmentSvc: ShipmentServiceProxy,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -34,19 +35,13 @@ export class OrderListViewComponent implements OnInit {
     this.shipmentSvc.getOrderShipments(this.order.id).subscribe(res => {});
   }
 
-  status(status: string) {
-    this.http
-      .post('/trade/status', {
-        id: this.order.id,
-        status,
-      })
-      .subscribe((res: any) => {
-        this.msg.success('Success');
-        this.order = res.item;
-      });
-  }
+  status(status: string) {}
 
   close() {
     this.drawer.close();
+  }
+
+  toHTML(input): any {
+    return new DOMParser().parseFromString(input, 'text/html').documentElement.textContent;
   }
 }

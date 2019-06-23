@@ -1,4 +1,4 @@
-<page-header-wrapper [title]="'查询订单'">
+<page-header-wrapper [title]="'批量发货'">
     <nz-card>
         <form nz-form [formGroup]="searchForm" [nzLayout]="'horizontal'">
             <nz-card [nzBordered]="false">
@@ -33,9 +33,7 @@
                         <nz-form-item>
                             <nz-form-label nzFor="name">下单时间</nz-form-label>
                             <nz-form-control>
-                                <nz-range-picker ngModel (ngModelChange)="createOn($event)"
-                                                 [ngModelOptions]="{standalone: true}"
-                                                 [nzFormat]="'yyyy/MM/dd'"></nz-range-picker>
+                                <nz-range-picker ngModel (ngModelChange)="createOn($event)" [ngModelOptions]="{standalone: true}" [nzFormat]="'yyyy/MM/dd'"></nz-range-picker>
                             </nz-form-control>
                         </nz-form-item>
                     </nz-col>
@@ -43,9 +41,7 @@
                         <nz-form-item>
                             <nz-form-label nzFor="name">签收时间</nz-form-label>
                             <nz-form-control>
-                                <nz-range-picker ngModel (ngModelChange)="receiveOn($event)"
-                                                 [ngModelOptions]="{standalone: true}"
-                                                 [nzFormat]="'yyyy/MM/dd'"></nz-range-picker>
+                                <nz-range-picker ngModel (ngModelChange)="receiveOn($event)" [ngModelOptions]="{standalone: true}" [nzFormat]="'yyyy/MM/dd'"></nz-range-picker>
                             </nz-form-control>
                         </nz-form-item>
                     </nz-col>
@@ -72,14 +68,7 @@
                         <nz-form-item>
                             <nz-form-label nzFor="name">城市</nz-form-label>
                             <nz-form-control>
-                                <nz-cascader
-                                        [ngModelOptions]="{standalone: true}"
-                                        [(ngModel)]="address"
-                                        nzChangeOnSelect
-                                        [nzLabelProperty]="'text'"
-                                        [nzValueProperty]="'value'"
-                                        [nzLoadData]="loadData"
-                                        (ngModelChange)="onChanges($event)">
+                                <nz-cascader [ngModelOptions]="{standalone: true}" [(ngModel)]="address" nzChangeOnSelect [nzLabelProperty]="'text'" [nzValueProperty]="'value'" [nzLoadData]="loadData" (ngModelChange)="onChanges($event)">
                                 </nz-cascader>
                             </nz-form-control>
                         </nz-form-item>
@@ -128,15 +117,13 @@
             </nz-alert>
         </div>
 
-        <nz-table *ngIf="data" #nzTable [nzData]="data.items" [nzTotal]="data.totalCount" [nzFrontPagination]="false"
-                  (nzPageIndexChange)="pageChange($event)">
+        <nz-table *ngIf="data" #nzTable [nzData]="data.items" [nzTotal]="data.totalCount" [nzFrontPagination]="false" (nzPageIndexChange)="pageChange($event)">
             <thead>
-            <tr>
-                <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked"
-                    (nzCheckedChange)="checkAll($event)"></th>
-                <th nzCustomFilter>
-                    订单号
-                    <!--<nz-dropdown nzTrigger="click" nzPlacement="bottomRight" [nzClickHide]="false" nzTableFilter
+                <tr>
+                    <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" (nzCheckedChange)="checkAll($event)"></th>
+                    <th nzCustomFilter>
+                        订单号
+                        <!--<nz-dropdown nzTrigger="click" nzPlacement="bottomRight" [nzClickHide]="false" nzTableFilter
                                  #dropdown>
                         <i nz-icon nzType="search" class="ant-table-filter-icon"
                            [class.ant-table-filter-open]="dropdown.nzVisible" nz-dropdown></i>
@@ -148,40 +135,40 @@
                             <button nz-button nzSize="small" (click)="reset()">Reset</button>
                         </div>
                     </nz-dropdown>-->
-                </th>
-                <th>商品</th>
-                <th width="80px">客户</th>
-                <th>手机号</th>
-                <th width="200px">收货地址</th>
-                <th>订单总额</th>
-                <th>留言</th>
-                <th>备注</th>
-                <th>商城</th>
-                <th nzShowSort nzSortKey="createOn">创建日期</th>
-            </tr>
+                    </th>
+                    <th>商品</th>
+                    <th width="80px">客户</th>
+                    <th>手机号</th>
+                    <th width="200px">收货地址</th>
+                    <th>订单总额</th>
+                    <th>留言</th>
+                    <th>备注</th>
+                    <th>商城</th>
+                    <th nzShowSort nzSortKey="createOn">创建日期</th>
+                </tr>
             </thead>
             <tbody>
-            <ng-template ngFor let-data [ngForOf]="nzTable.data">
-                <tr>
-                    <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-                    <td><a (click)="view(data)">{{data.orderNumber}}</a></td>
-                    <td>
-                        <ng-container *ngFor="let item of data.items; let first=first">
-                            <a routerLink="/product/edit/{{item.id}}">
-                                {{item.productName}} * {{item.quantity}}
-                            </a>
-                        </ng-container>
-                    </td>
-                    <td>{{data.shippingName}}</td>
-                    <td>{{data.shippingPhoneNumber}}</td>
-                    <td>{{data.shippingAddress}}</td>
-                    <td>{{data.totalAmount}}</td>
-                    <td>{{data.customerComment}}</td>
-                    <td>{{data.adminComment}}</td>
-                    <td>{{data.store}}</td>
-                    <td>{{data.createOn | date : 'yyyy/MM/dd HH:mm:ss'}}</td>
-                </tr>
-                <!--<tr [nzExpand]="mapOfExpandData[data.id]">
+                <ng-template ngFor let-data [ngForOf]="nzTable.data">
+                    <tr>
+                        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+                        <td><a (click)="view(data)">{{data.orderNumber}}</a></td>
+                        <td>
+                            <ng-container *ngFor="let item of data.items; let first=first">
+                                <a routerLink="/product/edit/{{item.id}}">
+                                    {{item.productName}} * {{item.quantity}}
+                                </a>
+                            </ng-container>
+                        </td>
+                        <td>{{data.shippingName}}</td>
+                        <td>{{data.shippingPhoneNumber}}</td>
+                        <td>{{data.shippingAddress}}</td>
+                        <td>{{data.totalAmount}}</td>
+                        <td>{{data.customerComment}}</td>
+                        <td>{{data.adminComment}}</td>
+                        <td>{{data.store}}</td>
+                        <td>{{data.createOn | date : 'yyyy/MM/dd HH:mm:ss'}}</td>
+                    </tr>
+                    <!--<tr [nzExpand]="mapOfExpandData[data.id]">
                     <td></td>
                     <td></td>
                     <td colspan="7">
@@ -190,7 +177,7 @@
                         </div>
                     </td>
                 </tr>-->
-            </ng-template>
+                </ng-template>
             </tbody>
         </nz-table>
 

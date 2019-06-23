@@ -9,6 +9,7 @@ import {
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { SettingsService } from '@delon/theme';
+import { Source } from '@shared/consts/static-source';
 
 @Injectable()
 export class AppSessionService {
@@ -68,9 +69,7 @@ export class AppSessionService {
                 const user = {
                   token: abp.auth.getToken(),
                   name: result.user.nickName,
-                  avatar:
-                    result.user.profilePictureUrl ||
-                    'https://gw.alipayobjects.com/zos/rmsportal/lctvVCLfRpYCkYxAsiVQ.png',
+                  avatar: result.user.profilePictureUrl || Source.DefaultProfile,
                   email: result.user.emailAddress,
                   application: result.application,
                   user: result.user,

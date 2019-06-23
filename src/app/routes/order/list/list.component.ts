@@ -14,11 +14,12 @@ import { OrderListViewComponent } from './view.component';
 
 import { OrderListShippingComponent } from './shipping.component';
 import { CacheService } from '@delon/cache';
-import { EnumConsts } from '@shared/consts/enum-consts';
+import { EnumConsts, OrderStatus, ShippingStatus } from '@shared/consts/enum-consts';
 import { SFSchema } from '@delon/form';
 import { AppComponentBase } from '@shared/app-component-base';
 import { PaginationBaseDto } from '@shared/utils/pagination.dto';
 import { AppConsts } from '@shared/consts/app-consts';
+import { SourcePictureHelper } from '@shared/consts/static-source';
 
 let that;
 
@@ -228,7 +229,7 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
     this.searchForm.get('districtId').setValue(values[2]);
   }
 
-  loadData(node: any, index: number) {
+  loadAddressData(node: any, index: number) {
     return new Promise(resolve => {
       if (index < 0) {
         // if index less than 0 it is root node
@@ -307,5 +308,24 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
   private cd() {
     // wait checkbox
     setTimeout(() => this.cdr.detectChanges());
+  }
+
+  getSourcePicture(orderSource: number): string {
+    return SourcePictureHelper.getSourcePicture(orderSource);
+  }
+
+  getStatusColor(orderStatus: number): string {
+    if (orderStatus === OrderStatus.WaitConfirm) return '#fa8c16';
+    else if (orderStatus === OrderStatus.Processing) return '#2db7f5';
+    else if (orderStatus === OrderStatus.Completed) return '#87d068';
+    else return '#f50';
+  }
+
+  getShippingColor(shippingStatus: number): string {
+    if (shippingStatus === ShippingStatus.NotYetShipped) return '#fa8c16';
+    else if (shippingStatus === ShippingStatus.IssueWithRejected || shippingStatus === ShippingStatus.Issue)
+      return '#f50';
+    else if (shippingStatus === ShippingStatus.Received) return '#87d068';
+    else return '#2db7f5';
   }
 }

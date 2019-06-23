@@ -6,8 +6,6 @@ import { LayoutProComponent } from '@brand';
 import { LayoutPassportComponent } from '../layout/passport/passport.component';
 // dashboard pages
 import { DashboardAnalysisComponent } from './dashboard/analysis/analysis.component';
-import { DashboardMonitorComponent } from './dashboard/monitor/monitor.component';
-import { DashboardWorkplaceComponent } from './dashboard/workplace/workplace.component';
 // passport pages
 import { UserLoginComponent } from './passport/login/login.component';
 import { UserRegisterComponent } from './passport/register/register.component';
@@ -16,21 +14,17 @@ import { UserLockComponent } from './passport/lock/lock.component';
 // single pages
 import { CallbackComponent } from './callback/callback.component';
 
-// files pages
-import { FilesComponent } from './files/files.component';
 const routes: Routes = [
   {
     path: '',
     component: LayoutProComponent,
     children: [
-      { path: '', redirectTo: 'dashboard/analysis', pathMatch: 'full' },
-      { path: 'dashboard', redirectTo: 'dashboard/analysis', pathMatch: 'full' },
-      { path: 'dashboard/analysis', component: DashboardAnalysisComponent },
-      { path: 'dashboard/monitor', component: DashboardMonitorComponent },
-      { path: 'dashboard/workplace', component: DashboardWorkplaceComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      // { path: 'dashboard', redirectTo: 'dashboard/analysis', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardAnalysisComponent },
       { path: 'tenant', loadChildren: './tenant/tenant.module#TenantModule' },
       { path: 'store', loadChildren: './store/store.module#StoreModule' },
-      { path: 'goods', loadChildren: './goods/goods.module#GoodsModule' },
+      { path: 'product', loadChildren: './product/product.module#ProductModule' },
       { path: 'order', loadChildren: './order/order.module#OrderModule' },
       { path: 'shipping', loadChildren: './shipping/shipping.module#ShippingModule' },
       { path: 'shipment', loadChildren: './shipment/shipment.module#ShipmentModule' },
@@ -38,7 +32,6 @@ const routes: Routes = [
       { path: 'sys', loadChildren: './sys/sys.module#SysModule' },
       // Exception
       { path: 'exception', loadChildren: './exception/exception.module#ExceptionModule' },
-      { path: 'files', component: FilesComponent },
     ],
   },
   // passport
