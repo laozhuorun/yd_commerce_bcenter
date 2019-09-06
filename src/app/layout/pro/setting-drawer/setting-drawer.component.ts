@@ -1,10 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  NgZone,
-  Inject,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, NgZone, Inject, ChangeDetectorRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd';
 import { LazyService, copy } from '@delon/util';
@@ -36,14 +30,12 @@ export class ProSettingDrawerComponent {
     {
       key: 'dark',
       title: 'app.setting.pagestyle.dark',
-      img:
-        'https://gw.alipayobjects.com/zos/rmsportal/LCkqqYNmvBEbokSDscrm.svg',
+      img: 'https://gw.alipayobjects.com/zos/rmsportal/LCkqqYNmvBEbokSDscrm.svg',
     },
     {
       key: 'light',
       title: 'app.setting.pagestyle.light',
-      img:
-        'https://gw.alipayobjects.com/zos/rmsportal/jpRkZQMyYRryryPNtyIC.svg',
+      img: 'https://gw.alipayobjects.com/zos/rmsportal/jpRkZQMyYRryryPNtyIC.svg',
     },
   ];
 
@@ -87,14 +79,12 @@ export class ProSettingDrawerComponent {
     {
       key: 'side',
       title: 'app.setting.sidemenu',
-      img:
-        'https://gw.alipayobjects.com/zos/rmsportal/JopDzEhOqwOjeNTXkoje.svg',
+      img: 'https://gw.alipayobjects.com/zos/rmsportal/JopDzEhOqwOjeNTXkoje.svg',
     },
     {
       key: 'top',
       title: 'app.setting.topmenu',
-      img:
-        'https://gw.alipayobjects.com/zos/rmsportal/KDNDBbriJhLwuqMoxcAr.svg',
+      img: 'https://gw.alipayobjects.com/zos/rmsportal/KDNDBbriJhLwuqMoxcAr.svg',
     },
   ];
 
@@ -118,7 +108,7 @@ export class ProSettingDrawerComponent {
     private lazy: LazyService,
     private zone: NgZone,
     @Inject(DOCUMENT) private doc: any,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) {
     this.setLayout('menu', this.brand.menu, false);
   }
@@ -140,11 +130,7 @@ export class ProSettingDrawerComponent {
         `;
         this.doc.body.appendChild(lessConfigNode);
       })
-      .then(() =>
-        this.lazy.loadScript(
-          'https://gw.alipayobjects.com/os/lib/less.js/3.8.1/less.min.js',
-        ),
-      )
+      .then(() => this.lazy.loadScript('https://gw.alipayobjects.com/os/lib/less.js/3.8.1/less.min.js'))
       .then(() => {
         this.loadedLess = true;
       });
@@ -184,11 +170,12 @@ export class ProSettingDrawerComponent {
       case 'menu':
         const isTop = value === 'top';
         this.contentWidths.find(w => w.key === 'fixed').disabled = !isTop;
-        const newLayout = Object.assign(this.brand.layout, <ProLayout>{
+        const newLayout = {
+          ...this.brand.layout,
           contentWidth: isTop ? 'fixed' : 'fluid',
           onlyIcon: isTop,
-          collapsed: isTop && !this.brand.isMobile ? false : this.brand.layout.collapsed
-        });
+          collapsed: isTop && !this.brand.isMobile ? false : this.brand.layout.collapsed,
+        };
         this.brand.setLayout(newLayout);
         break;
       case 'fixedHeader':

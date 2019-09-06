@@ -1,7 +1,13 @@
 <ng-template #sideTpl>
-  <nz-sider [nzTrigger]="null" [nzCollapsible]="true" [nzCollapsed]="isMobile ? false : pro.collapsed"
-    [nzWidth]="pro.width" [nzCollapsedWidth]="pro.widthInCollapsed" class="alain-pro__sider"
-    [ngClass]="{ 'alain-pro__sider-fixed': pro.fixSiderbar }">
+  <nz-sider
+    [nzTrigger]="null"
+    [nzCollapsible]="true"
+    [nzCollapsed]="isMobile ? false : pro.collapsed"
+    [nzWidth]="pro.width"
+    [nzCollapsedWidth]="pro.widthInCollapsed"
+    class="alain-pro__sider"
+    [ngClass]="{ 'alain-pro__sider-fixed': pro.fixSiderbar }"
+  >
     <layout-pro-logo class="alain-pro__sider-logo"></layout-pro-logo>
     <div class="alain-pro__side-nav" style="padding: 16px 0; width: 100%;">
       <div class="alain-pro__side-nav-wrap" layout-pro-menu></div>
@@ -10,8 +16,15 @@
 </ng-template>
 <div class="ant-layout ant-layout-has-sider">
   <ng-container *ngIf="pro.menu === 'side' || isMobile">
-    <nz-drawer *ngIf="isMobile" [nzWidth]="pro.width" nzWrapClassName="alain-pro__drawer" [nzVisible]="!pro.collapsed"
-      [nzClosable]="false" nzPlacement="left" (nzOnClose)="pro.setCollapsed(true)">
+    <nz-drawer
+      *ngIf="isMobile"
+      [nzWidth]="pro.width"
+      nzWrapClassName="alain-pro__drawer"
+      [nzVisible]="!pro.collapsed"
+      [nzClosable]="false"
+      nzPlacement="left"
+      (nzOnClose)="pro.setCollapsed(true)"
+    >
       <ng-template [ngTemplateOutlet]="sideTpl"></ng-template>
     </nz-drawer>
     <ng-container *ngIf="!isMobile">
@@ -27,7 +40,7 @@
       <reuse-tab></reuse-tab>
       ```
     -->
-    <div class="ant-layout-content" [ngStyle]="getContentStyle">
+    <div class="ant-layout-content alain-pro__body" [ngStyle]="getContentStyle">
       <div *ngIf="isFetching" style="padding-top: 100px; text-align: center;">
         <nz-spin nzSpinning></nz-spin>
       </div>

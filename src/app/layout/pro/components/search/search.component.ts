@@ -14,15 +14,16 @@ import { _HttpClient } from '@delon/theme';
 @Component({
   selector: 'layout-pro-search',
   templateUrl: 'search.component.html',
+  // tslint:disable-next-line: no-host-metadata-property
   host: {
     '[class.alain-pro__header-item]': 'true',
     '[class.alain-pro__header-search]': 'true',
     '[class.alain-pro__header-search-show]': 'show',
   },
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayoutProWidgetSearchComponent implements OnDestroy {
-  @ViewChild('ipt') private ipt: ElementRef<any>;
+  @ViewChild('ipt', { static: true }) private ipt: ElementRef<any>;
   show = false;
   q: string;
   search$ = new Subject<string>();

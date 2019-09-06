@@ -35,7 +35,7 @@ import { BrandService } from './pro.service';
 export class LayoutProComponent implements OnInit, AfterViewInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
   private queryCls: string;
-  @ViewChild('settingHost', { read: ViewContainerRef }) private settingHost: ViewContainerRef;
+  @ViewChild('settingHost', { read: ViewContainerRef, static: false }) private settingHost: ViewContainerRef;
 
   isFetching = false;
 
@@ -77,8 +77,8 @@ export class LayoutProComponent implements OnInit, AfterViewInit, OnDestroy {
     private renderer: Renderer2,
     public pro: BrandService,
     @Inject(DOCUMENT) private doc: any,
-    // private cdr: ChangeDetectorRef
-  ) {
+  ) // private cdr: ChangeDetectorRef
+  {
     // scroll to top in change page
     router.events.pipe(takeUntil(this.unsubscribe$)).subscribe(evt => {
       if (!this.isFetching && evt instanceof RouteConfigLoadStart) {
@@ -122,31 +122,25 @@ export class LayoutProComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private setClass() {
     const { body, renderer, queryCls, pro } = this;
-    updateHostClass(
-      body,
-      renderer,
-      {
-        ['color-weak']: pro.layout.colorWeak,
-        [`layout-fixed`]: pro.layout.fixed,
-        [`aside-collapsed`]: pro.collapsed,
-        ['alain-pro']: true,
-        [queryCls]: true,
-        [`alain-pro__content-${pro.layout.contentWidth}`]: true,
-        [`alain-pro__fixed`]: pro.layout.fixedHeader,
-        [`alain-pro__wide`]: pro.isFixed,
-        [`alain-pro__dark`]: pro.theme === 'dark',
-        [`alain-pro__light`]: pro.theme === 'light',
-      },
-    );
+    updateHostClass(body, renderer, {
+      ['color-weak']: pro.layout.colorWeak,
+      [`layout-fixed`]: pro.layout.fixed,
+      [`aside-collapsed`]: pro.collapsed,
+      ['alain-pro']: true,
+      [queryCls]: true,
+      [`alain-pro__content-${pro.layout.contentWidth}`]: true,
+      [`alain-pro__fixed`]: pro.layout.fixedHeader,
+      [`alain-pro__wide`]: pro.isFixed,
+      [`alain-pro__dark`]: pro.theme === 'dark',
+      [`alain-pro__light`]: pro.theme === 'light',
+    });
   }
 
   ngAfterViewInit(): void {
     // Setting componet for only developer
     if (!environment.production) {
       setTimeout(() => {
-        const settingFactory = this.resolver.resolveComponentFactory(
-          ProSettingDrawerComponent,
-        );
+        const settingFactory = this.resolver.resolveComponentFactory(ProSettingDrawerComponent);
         this.settingHost.createComponent(settingFactory);
       }, 22);
     }
@@ -168,7 +162,7 @@ export class LayoutProComponent implements OnInit, AfterViewInit, OnDestroy {
       `alain-pro__fixed`,
       `alain-pro__wide`,
       `alain-pro__dark`,
-      `alain-pro__light`
+      `alain-pro__light`,
     );
   }
 }

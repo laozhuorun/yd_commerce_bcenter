@@ -25,8 +25,13 @@
 // footer-toolbar component
 @{footer-toolbar-prefix} {
   left: @alain-pro-sider-menu-width;
-  z-index: 10000;
+  z-index: 99;
   width: auto;
+  &__body {
+    @{alain-pro-prefix}__body {
+      margin-bottom: @layout-gutter + @footer-toolbar-height !important;
+    }
+  }
 }
 
 @{aside-collapsed-prefix} {

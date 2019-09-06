@@ -32,15 +32,22 @@
           <button (click)="msg.success('Dismiss')" nz-button class="btn-flat text-white text-hover">Dismiss</button>
           <button (click)="msg.success('View')" nz-button class="btn-flat text-white text-hover">View</button>
         </div>
-        <nz-dropdown nzPlacement="bottomRight">
-          <span class="dd-btn brand-top-right text-white" nz-dropdown><i nz-icon nzType="ellipsis"></i></span>
+        <span
+          nz-dropdown
+          [nzDropdownMenu]="actionMenu"
+          nzPlacement="bottomRight"
+          class="dd-btn brand-top-right text-white"
+        >
+          <i nz-icon nzType="ellipsis"></i>
+        </span>
+        <nz-dropdown-menu #actionMenu="nzDropdownMenu">
           <ul nz-menu>
             <li nz-menu-item (click)="msg.success('Item1')">Item1</li>
             <li nz-menu-item (click)="msg.success('Item2')">Item2</li>
             <li nz-menu-divider></li>
             <li nz-menu-item (click)="msg.success('Item3')">Item3</li>
           </ul>
-        </nz-dropdown>
+        </nz-dropdown-menu>
       </div>
     </ng-container>
     <ng-container *ngIf="type === 2">

@@ -1,8 +1,8 @@
 .ware {
   &__color {
     display: inline-block;
-    height: 12px;
     width: 12px;
+    height: 12px;
   }
   &__imgs {
     .se__label {
@@ -13,17 +13,17 @@
       align-items: center;
     }
     &-color {
-      list-style: none;
-      padding: 0;
-      margin: 0;
       display: flex;
+      margin: 0;
+      padding: 0;
+      list-style: none;
     }
     &-item {
+      position: relative;
       width: 72px;
       height: 72px;
-      border: 1px solid #ccc;
       margin-right: @layout-gutter * 2;
-      position: relative;
+      border: 1px solid #ccc;
       &-img {
         width: 70px;
         height: 70px;
@@ -34,28 +34,28 @@
       }
       &-del {
         position: absolute;
-        right: 4px;
         top: 2px;
-        line-height: normal;
+        right: 4px;
         color: #fff;
+        line-height: normal;
       }
-      &:before {
-        content: '细节图';
-        text-align: center;
-        display: block;
+      &::before {
         position: absolute;
-        width: 100%;
         top: 24px;
+        display: block;
+        width: 100%;
         color: #ccc;
         line-height: normal;
+        text-align: center;
+        content: '细节图';
       }
       &:first-child {
-        &:before {
+        &::before {
           content: '主图*';
         }
       }
       &-exists {
-        &:before {
+        &::before {
           content: '';
         }
       }

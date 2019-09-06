@@ -18,21 +18,24 @@ export class LayoutProWidgetNotifyComponent {
       title: '通知',
       list: [],
       emptyText: '你已查看所有通知',
-      emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg',
+      emptyImage:
+        'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg',
       clearText: '清空通知',
     },
     {
       title: '消息',
       list: [],
       emptyText: '您已读完所有消息',
-      emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/sAuJeJzSKbUmHfBQRzmZ.svg',
+      emptyImage:
+        'https://gw.alipayobjects.com/zos/rmsportal/sAuJeJzSKbUmHfBQRzmZ.svg',
       clearText: '清空消息',
     },
     {
       title: '待办',
       list: [],
       emptyText: '你已完成所有待办',
-      emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/HsIsxMZiWKrNUavQUXqx.svg',
+      emptyImage:
+        'https://gw.alipayobjects.com/zos/rmsportal/HsIsxMZiWKrNUavQUXqx.svg',
       clearText: '清空待办',
     },
   ];

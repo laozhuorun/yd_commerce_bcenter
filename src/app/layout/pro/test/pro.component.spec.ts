@@ -29,9 +29,9 @@ describe('pro: layout-pro', () => {
         TranslateModule.forRoot(),
         AlainThemeModule.forRoot(),
         LayoutModule,
-        NgZorroAntdModule
+        NgZorroAntdModule,
       ],
-      declarations: [TestComponent]
+      declarations: [TestComponent],
     });
   });
 
@@ -46,15 +46,13 @@ describe('pro: layout-pro', () => {
       srv.setCollapsed(true);
       srv.setLayout('theme', 'dark');
       fixture.detectChanges();
-      page.checkBodyClass('alain-pro__dark')
-          .checkBodyClass('aside-collapsed');
+      page.checkBodyClass('alain-pro__dark').checkBodyClass('aside-collapsed');
     });
     it('when destroy', () => {
       srv.setCollapsed(true);
       srv.setLayout('theme', 'dark');
       fixture.detectChanges();
-      page.checkBodyClass('alain-pro__dark')
-          .checkBodyClass('aside-collapsed');
+      page.checkBodyClass('alain-pro__dark').checkBodyClass('aside-collapsed');
       context.comp.ngOnDestroy();
       page.checkBodyClass('alain-pro__dark', false);
     });
@@ -76,16 +74,19 @@ describe('pro: layout-pro', () => {
       isMobile.and.returnValue(false);
       srv.setCollapsed(true);
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
-        page.checkCls(siderCls, true);
-        // Hide sider when is mobile
-        isMobile.and.returnValue(true);
-        srv.setCollapsed(true);
-        fixture.detectChanges();
-        return fixture.whenStable();
-      }).then(() => {
-        page.checkCls(siderCls, false);
-      });
+      fixture
+        .whenStable()
+        .then(() => {
+          page.checkCls(siderCls, true);
+          // Hide sider when is mobile
+          isMobile.and.returnValue(true);
+          srv.setCollapsed(true);
+          fixture.detectChanges();
+          return fixture.whenStable();
+        })
+        .then(() => {
+          page.checkCls(siderCls, false);
+        });
     });
   });
 
@@ -107,8 +108,10 @@ describe('pro: layout-pro', () => {
 });
 
 @Component({
-  template: `<layout-pro #comp></layout-pro>`
+  template: `
+    <layout-pro #comp></layout-pro>
+  `,
 })
 class TestComponent {
-  @ViewChild('comp') comp: LayoutProComponent;
+  @ViewChild('comp', { static: true }) comp: LayoutProComponent;
 }

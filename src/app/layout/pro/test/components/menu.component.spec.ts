@@ -97,5 +97,5 @@ describe('pro: layout-pro-menu', () => {
   `,
 })
 class TestComponent {
-  @ViewChild(LayoutProMenuComponent) comp: LayoutProMenuComponent;
+  @ViewChild(LayoutProMenuComponent, { static: true }) comp: LayoutProMenuComponent;
 }

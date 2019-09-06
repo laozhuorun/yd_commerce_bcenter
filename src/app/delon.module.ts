@@ -2,6 +2,7 @@ import { NgModule, Optional, SkipSelf, ModuleWithProviders } from '@angular/core
 import { throwIfAlreadyLoaded } from '@core/module-import-guard';
 
 import { AlainThemeModule } from '@delon/theme';
+import { DelonACLModule } from '@delon/acl';
 
 // #region mock
 import { DelonMockModule } from '@delon/mock';
@@ -34,9 +35,10 @@ export function fnPageHeaderConfig(): PageHeaderConfig {
 
 import { DelonAuthConfig } from '@delon/auth';
 export function fnDelonAuthConfig(): DelonAuthConfig {
-  return Object.assign(new DelonAuthConfig(), <DelonAuthConfig>{
+  return {
+    ...new DelonAuthConfig(),
     login_url: '/passport/login',
-  });
+  };
 }
 
 import { DelonCacheConfig } from '@delon/cache';
@@ -51,9 +53,7 @@ import { STConfig } from '@delon/abc';
 export function fnSTConfig(): STConfig {
   return {
     ...new STConfig(),
-    ...{
-      modal: { size: 'lg' },
-    },
+    modal: { size: 'lg' },
   };
 }
 
@@ -70,6 +70,7 @@ const GLOBAL_CONFIG_PROVIDES = [
 @NgModule({
   imports: [
     AlainThemeModule.forRoot(),
+    DelonACLModule.forRoot(),
     // mock
     ...MOCK_MODULES,
   ],

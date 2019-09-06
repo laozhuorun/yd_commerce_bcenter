@@ -10,11 +10,11 @@ describe('pro: BrandService', () => {
 
   beforeEach(() => {
     injector = TestBed.configureTestingModule({
-      providers: [BrandService]
+      providers: [BrandService],
     });
   });
 
-  afterEach(() => (environment as any).pro = null);
+  afterEach(() => ((environment as any).pro = null));
 
   describe('should be initialized configuration', () => {
     it('with default', () => {
@@ -41,15 +41,15 @@ describe('pro: BrandService', () => {
   });
 
   describe('should be trigger notify', () => {
-    beforeEach(() => srv = injector.get(BrandService));
+    beforeEach(() => (srv = injector.get(BrandService)));
 
-    it('when mobile changed in constructor', (done) => {
+    it('when mobile changed in constructor', done => {
       srv.notify.pipe(filter(v => v != null && v === 'mobile')).subscribe(type => {
         expect(true).toBe(true);
         done();
       });
     });
-    it('when layout changed', (done) => {
+    it('when layout changed', done => {
       srv.notify.pipe(filter(v => v != null && v === 'layout')).subscribe(type => {
         expect(true).toBe(true);
         done();
@@ -70,6 +70,7 @@ describe('pro: BrandService', () => {
 
   it('should be onlyIcon always be false when menu is side', () => {
     srv = injector.get(BrandService);
+    srv.setLayout('menu', 'top');
     srv.setLayout('onlyIcon', true);
     expect(srv.onlyIcon).toBe(true);
     srv.setLayout('menu', 'side');
