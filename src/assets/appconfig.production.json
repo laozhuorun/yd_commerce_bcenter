@@ -1,6 +1,6 @@
 {
-  "remoteServiceBaseUrl": "http://60.205.216.113/api",
-  "appBaseUrl": "http://localhost:4200",
+  "remoteServiceBaseUrl": "https://api.udosass.com/api",
+  "appBaseUrl": "https://www.udosass.com",
   "localeMappings": [
     {
       "from": "zh-CN",

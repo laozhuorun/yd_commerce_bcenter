@@ -19,8 +19,8 @@ export class AppComponent implements OnInit {
     private titleSrv: TitleService,
     private modalSrv: NzModalService,
   ) {
-    renderer.setAttribute(el.nativeElement, 'ng-alain-version', VERSION_ALAIN.full);
-    renderer.setAttribute(el.nativeElement, 'ng-zorro-version', VERSION_ZORRO.full);
+    // renderer.setAttribute(el.nativeElement, 'ng-alain-version', VERSION_ALAIN.full);
+    // renderer.setAttribute(el.nativeElement, 'ng-zorro-version', VERSION_ZORRO.full);
   }
 
   ngOnInit() {

@@ -1,53 +1,61 @@
 <page-header-wrapper [title]="account.id ? '编辑广告账户' : '添加广告账户'">
-    <form nz-form #f="ngForm" (ngSubmit)="update(f)" class="sf__no-error">
-        <nz-card nzTitle="账户基本信息">
-            <div se-container>
-                <se label="平台ID" required error="必填项">
-                    <nz-input-number nz-input [(ngModel)]="account.thirdpartyId" name="thirdpartyId"
-                                     required style="width: 100%"></nz-input-number>
-                </se>
-                <se label="店铺" required error="必填项">
-                    <nz-select [(ngModel)]="account.storeId" name="storeId" required>
-                        <nz-option *ngFor="let store of stores" [nzLabel]="store.text"
-                                   [nzValue]="store.value"></nz-option>
-                    </nz-select>
-                </se>
-                <se label="账户名" required error="必填项">
-                    <input nz-input [(ngModel)]="account.username" name="username" required maxlength="50">
-                </se>
-                <se label="显示名称" required error="必填项">
-                    <input nz-input [(ngModel)]="account.displayName" name="displayName" required maxlength="50">
-                </se>
-                <se label="渠道" required error="必填项">
-                    <nz-select [(ngModel)]="account.channel" name="channel" required>
-                        <nz-option nzLabel="今日头条" [nzValue]="20"></nz-option>
-                        <nz-option nzLabel="广点通" [nzValue]="40"></nz-option>
-                    </nz-select>
-                </se>
-                <se label="商品" required error="必填项">
-                    <nz-select [(ngModel)]="account.productId" name="productId" required>
-                        <nz-option *ngFor="let product of products" [nzLabel]="product.text"
-                                   [nzValue]="product.value"></nz-option>
-                    </nz-select>
-                </se>
-                <se label="余额" required error="必填项">
-                    <nz-input-number nz-input [(ngModel)]="account.balance" name="balance" required style="width: 100%"></nz-input-number>
-                </se>
-                <se label="数据同步" required error="必填项">
-                    <nz-switch [(ngModel)]="account.dataAutoSync"
-                               name="dataAutoSync" nzCheckedChildren="开"
-                               nzUnCheckedChildren="关"></nz-switch>
-                </se>
-                <se label="授权" required error="必填项">
-                    <nz-switch [(ngModel)]="account.isAuthed" (ngModelChange)="authChange($event)"
-                               name="isAuthed" nzCheckedChildren="开"
-                               nzUnCheckedChildren="关"></nz-switch>
-                </se>
-            </div>
-        </nz-card>
-        <footer-toolbar>
-            <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">更新</button>
-            <button type="button" nz-button (click)="cancel()">返回</button>
-        </footer-toolbar>
-    </form>
+    <nz-card [nzBordered]="false">
+        <form nz-form #f="ngForm" (ngSubmit)="update(f)" class="sf__no-error" se-container="2" labelWidth="200">
+            <se label="平台ID" required error="必填项">
+                <nz-input-number nz-input [(ngModel)]="account.thirdpartyId" name="thirdpartyId" required style="width: 100%"></nz-input-number>
+            </se>
+            <se label="账户名" required error="必填项">
+                <input nz-input [(ngModel)]="account.username" name="username" required maxlength="50">
+            </se>
+            <se label="显示名称" required error="必填项">
+                <input nz-input [(ngModel)]="account.displayName" name="displayName" required maxlength="50">
+            </se>
+            <se label="账户类型" required error="必填项">
+                <nz-select [(ngModel)]="account.type" name="type" required nzShowSearch>
+                    <nz-option nzCustomContent *ngFor="let source of enums.AdvertAccountType" [nzLabel]="source.text" [nzValue]="source.value">
+                        <span class="pl-sm">{{source.text}}</span>
+                    </nz-option>
+                </nz-select>
+            </se>
+            <se label="渠道" required error="必填项" optionalHelp="广告账户所属渠道">
+                <nz-select [(ngModel)]="account.channel" name="channel" nzPlaceHolder="请选择" required nzShowSearch>
+                    <nz-option nzCustomContent *ngFor="let source of enums.AdvertChannel" [nzLabel]="source.text" [nzValue]="source.value">
+                        <img width="18" alt="item.name" src="{{getChannelPicture(source.value)}}" />
+                        <span class="pl-sm">{{source.text}}</span>
+                    </nz-option>
+                </nz-select>
+                <ng-template #custom let-selected>
+                    <img width="18" alt="item.name" src="{{getChannelPicture(selected.value)}}" />
+                    <span class="pl-sm">{{selected.text}}</span>
+                </ng-template>
+            </se>
+            <se label="店铺" *ngIf="account.type===1" optional="(可选)" optionalHelp="绑定账户关联店铺">
+                <nz-select [(ngModel)]="account.storeId" name="storeId" nzPlaceHolder="请选择" nzShowSearch>
+                    <nz-option *ngFor="let store of stores" [nzLabel]="store.text" [nzValue]="store.value"></nz-option>
+                </nz-select>
+            </se>
+            <se label="商品" *ngIf="account.type===1" optional="(管家/代理账号选填)" optionalHelp="绑定账户关联商品，与销售统计关联，单个广告主账号请务必关联，否者无法同步广告消耗">
+                <nz-select [(ngModel)]="account.productId" name="productId" nzPlaceHolder="请选择" nzAllowClear nzShowSearch>
+                    <nz-option *ngFor="let product of products" [nzLabel]="product.text" [nzValue]="product.value"></nz-option>
+                </nz-select>
+            </se>
+            <se label="余额" optionalHelp="账户余额">
+                {{account.balance |_currency}}
+                <!-- <nz-input-number nz-input [(ngModel)]="account.balance" name="balance" style="width: 100%"></nz-input-number> -->
+            </se>
+            <se label="数据同步" required error="必填项">
+                <nz-switch [(ngModel)]="account.dataAutoSync" name="dataAutoSync" nzCheckedChildren="开" nzUnCheckedChildren="关"></nz-switch>
+            </se>
+            <se label="授权" required error="必填项">
+                <td *ngIf="account.isAuthed" [innerHTML]="account.isAuthed | yn"></td>
+                <!-- <a *ngIf="data.isAuthed" [href]="getUrl(data)">授权</a> -->
+                <button class="ml-sm" nz-button nzType="primary" *ngIf="!account.isAuthed" (click)="redirect2Auth($event)">授权</button>
+            </se>
+            <se col='1'>
+                <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">更新</button>
+                <button type="button" nz-button (click)="cancel()">返回</button>
+            </se>
+        </form>
+    </nz-card>
+
 </page-header-wrapper>

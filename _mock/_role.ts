@@ -50,13 +50,12 @@ export const ROLES_PRO = {
     const id = req.body.id || 0;
     if (id > 0) {
       const idx = getIdx(id);
-      RuleData[idx] = Object.assign(RuleData[idx], req.body);
+      RuleData[idx] = {...RuleData[idx], ...req.body};
       return { msg: 'ok', item: RuleData[idx] };
     }
 
-    const item = Object.assign({}, req.body, {
-      id: RuleData.sort((a, b) => b.id - a.id)[0].id + 1,
-    });
+    const item = {...req.body, 
+      id: RuleData.sort((a, b) => b.id - a.id)[0].id + 1};
     RuleData.push(item);
     return { msg: 'ok', item };
   },

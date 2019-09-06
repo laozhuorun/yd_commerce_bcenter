@@ -1,25 +1,41 @@
-import { Component, OnInit, ChangeDetectorRef, Injector } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Injector, TemplateRef, AfterViewInit } from '@angular/core';
 
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   CommonLookupServiceProxy,
   OrderServiceProxy,
   StateServiceProxy,
   SelectListItemDtoOfInt32,
-  PagedResultDtoOfOrderListDto,
+  OrderListDto,
+  EditAdminCommentInput,
+  ChangeOrderStatusInputOfOrderStatus,
+  SelectListItemDtoOfInt64,
+  ProductServiceProxy,
+  AddTagsInput,
 } from '@shared/service-proxies/service-proxies';
 import { _HttpClient, DrawerHelper } from '@delon/theme';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { OrderListViewComponent } from './view.component';
+import { OrderListViewComponent } from '../view/view.component';
 
-import { OrderListShippingComponent } from './shipping.component';
 import { CacheService } from '@delon/cache';
-import { EnumConsts, OrderStatus, ShippingStatus } from '@shared/consts/enum-consts';
+import {
+  EnumConsts,
+  OrderStatus,
+  ShippingStatus,
+  PaymentStatus,
+  OrderTags,
+  OrderType,
+} from '@shared/consts/enum-consts';
 import { SFSchema } from '@delon/form';
-import { AppComponentBase } from '@shared/app-component-base';
+import { AppComponentBase, ListComponentBase } from '@shared/app-component-base';
 import { PaginationBaseDto } from '@shared/utils/pagination.dto';
-import { AppConsts } from '@shared/consts/app-consts';
-import { SourcePictureHelper } from '@shared/consts/static-source';
+import { AppConsts, MediaCompressFormat } from '@shared/consts/app-consts';
+import { SourcePictureHelper, TagColor } from '@shared/consts/static-source';
+import { QuickShipComponent } from './quick-ship/quick-ship.component';
+import { finalize, concatMap } from 'rxjs/operators';
+import { ShipTrackComponent } from '../ship-track/ship-track.component';
+import { ResultComponent } from '@delon/abc';
+import { addDate } from '@shared/utils/utils';
+import { endOfDay, startOfDay } from 'date-fns';
 
 let that;
 
@@ -28,14 +44,15 @@ let that;
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.less'],
 })
-export class OrderListComponent extends AppComponentBase implements OnInit {
+export class OrderListComponent extends ListComponentBase implements OnInit, AfterViewInit {
   data;
-  loading = false;
-  page: PaginationBaseDto = new PaginationBaseDto(AppConsts.grid.defaultPageSize);
   isAllChecked = false;
   isIndeterminate = true;
   checkedId = [];
   numberOfChecked = 0;
+  editItem: OrderListDto = new OrderListDto();
+  productSelectData: SelectListItemDtoOfInt64[] = [];
+  geo = [];
 
   enums = {
     OrderSource: [],
@@ -48,73 +65,82 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
   tabs: any[] = [
     {
       key: 'all',
-      tab: '所有',
+      name: '所有',
     },
     {
       key: 'wait-confirm',
-      tab: '待确认',
+      name: '待确认',
     },
     {
       key: 'wait-ship',
-      tab: '待发货',
+      name: '待发货',
     },
     {
       key: 'shipped',
-      tab: '已发货',
+      name: '已发货',
     },
     {
       key: 'return',
-      tab: '退货中',
+      name: '退货中',
+    },
+    {
+      key: 'issue',
+      name: '异常单',
     },
   ];
 
-  tabsStatus = 0;
+  tabsIndex = 1;
   expandForm = false;
+  address;
+  q: any = {
+    productIds: [],
+    storeIds: [],
+    logisticsNumber: '',
+    orderNumber: '',
+    createOn_FormDate: undefined,
+    createOn_ToDate: undefined,
+    receiveOn_FormDate: undefined,
+    receiveOn_ToDate: undefined,
+    shippingName: '',
+    phoneNumber: '',
+    provinceId: undefined,
+    cityId: undefined,
+    districtId: undefined,
+    orderStatus: [],
+    paymentStatus: [],
+    shippingStatus: [],
+    orderTypes: [],
+    orderSource: [],
+    adminComment: undefined,
+    customerComment: undefined,
+    orderTags: [],
+  };
 
   constructor(
     injector: Injector,
-    private http: _HttpClient,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
     private drawer: DrawerHelper,
     private stateSvc: StateServiceProxy,
     private enumsSvc: CommonLookupServiceProxy,
     private orderSvc: OrderServiceProxy,
+    private productSvc: ProductServiceProxy,
     private cacheSvc: CacheService,
-    private cdr: ChangeDetectorRef,
   ) {
     super(injector);
     that = this;
   }
 
-  address;
-  searchForm: FormGroup;
-
   ngOnInit() {
-    this.searchForm = new FormGroup({
-      productIds: new FormControl([], []),
-      storeIds: new FormControl('', []),
-      logisticsNumber: new FormControl('', []),
-      orderNumber: new FormControl('', []),
-      createOn_FormDate: new FormControl('', []),
-      createOn_ToDate: new FormControl('', []),
-      receiveOn_FormDate: new FormControl('', []),
-      receiveOn_ToDate: new FormControl('', []),
-      shippingName: new FormControl('', []),
-      phoneNumber: new FormControl('', []),
-      provinceId: new FormControl('', []),
-      cityId: new FormControl('', []),
-      districtId: new FormControl('', []),
-      orderStatus: new FormControl([], []),
-      paymentStatus: new FormControl([], []),
-      shippingStatus: new FormControl([], []),
-      orderTypes: new FormControl([], []),
-      orderSource: new FormControl([], []),
-      adminComment: new FormControl('', []),
-      customerComment: new FormControl('', []),
-    });
-    this.getData();
+    this.tabSelect('wait-confirm');
+    this.cacheSvc
+      .tryGet<SelectListItemDtoOfInt64[]>(AppConsts.CacheKey.ProductSelectData, this.productSvc.getProductSelectList())
+      .subscribe(res => {
+        this.productSelectData = res;
+      });
+  }
 
+  ngAfterViewInit() {
     this.getEnums([
       EnumConsts.OrderSource,
       EnumConsts.OrderStatus,
@@ -127,7 +153,7 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
   getEnums(enumNames) {
     enumNames.forEach(enumName => {
       this.cacheSvc
-        .tryGet<SelectListItemDtoOfInt32[]>(enumNames, this.enumsSvc.getEnumSelectItem(enumName))
+        .tryGet<SelectListItemDtoOfInt32[]>(enumName, this.enumsSvc.getEnumSelectItem(enumName))
         .subscribe(res => {
           res.forEach((item, index) => {
             this.enums[enumName].push({
@@ -143,15 +169,19 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
   }
 
   filterChange(target, e) {
-    this.searchForm.get(target).setValue(e);
+    // this.q.get(target).setValue(e);
     this.getData();
   }
 
   checkAll(value: boolean): void {
     this.isIndeterminate = false;
-    this.data.items.forEach(item => (this.checkedId[item.id] = value));
-    this.refreshStatus();
-    this.cdr.detectChanges();
+
+    if (!!this.data) {
+      this.data.items.forEach(item => (this.checkedId[item.id] = value));
+      this.refreshStatus();
+    }
+
+    this.cdRefresh();
   }
 
   refreshStatus(): void {
@@ -161,56 +191,71 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
     this.numberOfChecked = this.data.items.filter(item => this.checkedId[item.id]).length;
   }
 
-  choose(i: number) {
+  choose(id: number, checked: boolean) {
+    console.log(id + ':' + checked);
     this.refreshStatus();
-    this.cd();
+    this.cdRefresh();
     // this.checkedId[i] = !this.checkedId[i];
-    // this.cd();
+    // this.cdRefresh();
   }
 
   getData() {
     this.loading = true;
     this.orderSvc
       .getOrders(
-        this.searchForm.get('logisticsNumber').value,
-        this.searchForm.get('receiveOn_FormDate').value,
-        this.searchForm.get('receiveOn_ToDate').value,
-        this.searchForm.get('orderStatus').value,
-        this.searchForm.get('paymentStatus').value,
-        this.searchForm.get('shippingStatus').value,
-        this.searchForm.get('storeIds').value,
-        this.searchForm.get('productIds').value,
-        this.searchForm.get('orderNumber').value,
-        this.searchForm.get('createOn_FormDate').value,
-        this.searchForm.get('createOn_ToDate').value,
-        this.searchForm.get('shippingName').value,
-        this.searchForm.get('phoneNumber').value,
-        this.searchForm.get('provinceId').value,
-        this.searchForm.get('cityId').value,
-        this.searchForm.get('districtId').value,
-        this.searchForm.get('orderTypes').value,
-        this.searchForm.get('orderSource').value,
-        this.searchForm.get('adminComment').value,
-        this.searchForm.get('customerComment').value,
+        this.q.logisticsNumber,
+        this.q.receiveOn_FormDate === undefined ? undefined : endOfDay(this.q.receiveOn_FormDate),
+        this.q.receiveOn_ToDate === undefined ? undefined : endOfDay(this.q.receiveOn_ToDate),
+        this.q.orderStatus,
+        this.q.paymentStatus,
+        this.q.shippingStatus,
+        this.q.storeIds,
+        this.q.productIds,
+        this.q.orderNumber,
+        this.q.createOn_FormDate === undefined ? undefined : startOfDay(this.q.createOn_FormDate),
+        this.q.createOn_ToDate === undefined ? undefined : endOfDay(this.q.createOn_ToDate),
+        this.q.shippingName,
+        this.q.phoneNumber,
+        this.q.provinceId,
+        this.q.cityId,
+        this.q.districtId,
+        this.q.orderTypes,
+        this.q.orderSource,
+        this.q.orderTags,
+        this.q.adminComment,
+        this.q.customerComment,
         this.page.sorting,
         this.page.pageSize,
-        this.page.getSkipCount(),
+        this.page.skipCount,
+      )
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        }),
       )
       .subscribe(res => {
-        this.loading = false;
         this.data = res;
-        this.cdr.detectChanges();
+        this.data.items.forEach(item => {
+          item.orderStatusColor = this.getStatusColor(item.orderStatus);
+          item.shippingStatusColor = this.getShippingColor(item.shippingStatus);
+          item.paymentStatusColor = this.getPaymentColor(item);
+          item.tags = this.getOrderTag(item.tags);
+        });
+
+        this.cdRefresh();
       });
   }
 
   createOn(e) {
-    this.searchForm.get('createOn_FormDate').setValue(e[0]);
-    this.searchForm.get('createOn_ToDate').setValue(e[1]);
-  }
-
-  receiveOn(e) {
-    this.searchForm.get('receiveOn_FormDate').setValue(e[0]);
-    this.searchForm.get('receiveOn_ToDate').setValue(e[1]);
+    // if (e.length === 0) {
+    //   this.q.createOn_FormDate').setValue(undefined);
+    //   this.q.createOn_ToDate').setValue(undefined);
+    //   return;
+    // }
+    // const startDate = startOfDay(e[0]);
+    // this.q.createOn_FormDate').setValue(startDate);
+    // const endDate = endOfDay(e[1]);
+    // this.q.createOn_ToDate').setValue(endDate);
   }
 
   pageIndexChange(e) {
@@ -224,9 +269,9 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
   }
 
   onChanges(values: any): void {
-    this.searchForm.get('provinceId').setValue(values[0]);
-    this.searchForm.get('cityId').setValue(values[1]);
-    this.searchForm.get('districtId').setValue(values[2]);
+    this.q.provinceId = values[0];
+    this.q.cityId = values[1];
+    this.q.districtId = values[2];
   }
 
   loadAddressData(node: any, index: number) {
@@ -273,13 +318,17 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
     return str;
   }
 
-  view(order: any) {
+  viewOrderInfo(order: any) {
     this.drawer.create(`查看订单 #${order.orderNumber}`, OrderListViewComponent, { order }, { size: 666 }).subscribe();
+  }
+
+  viewShipTrackingInfo(order: any) {
+    this.drawer.create(`物流跟踪 #${order.orderNumber}`, ShipTrackComponent, { order }, { size: 666 }).subscribe();
   }
 
   sendShip(order) {
     this.drawer
-      .create(`快速发送 #${order.orderNumber}`, OrderListShippingComponent, { order }, { size: 666 })
+      .create(`快速发送 #${order.orderNumber}`, QuickShipComponent, { order }, { size: 666 })
       .subscribe((res: any) => {
         console.log(res);
       });
@@ -301,13 +350,48 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
     // this.q.orderNumber = undefined;
   }
 
-  to(item: any) {
-    this.getData();
+  selectedIndexChange(index: number) {
+    this.tabsIndex = index;
   }
 
-  private cd() {
-    // wait checkbox
-    setTimeout(() => this.cdr.detectChanges());
+  tabSelect(tabkey: any) {
+    this.clearAllStatus();
+    if (tabkey === 'all') {
+    } else if (tabkey === 'wait-confirm') {
+      this.q.orderStatus = [Number(OrderStatus.WaitConfirm)];
+    } else if (tabkey === 'wait-ship') {
+      this.q.orderStatus = [Number(OrderStatus.Processing)];
+      this.q.shippingStatus = [Number(ShippingStatus.NotYetShipped)];
+    } else if (tabkey === 'shipped') {
+      this.q.shippingStatus = [
+        Number(ShippingStatus.Shipped),
+        Number(ShippingStatus.OnPassag),
+        Number(ShippingStatus.Taked),
+        Number(ShippingStatus.DestinationCity),
+        Number(ShippingStatus.Delivering),
+      ];
+    } else if (tabkey === 'return') {
+      this.q.paymentStatus = [Number(PaymentStatus.Refunded), Number(PaymentStatus.PartiallyRefunded)];
+    } else if (tabkey === 'issue') {
+      this.q.orderTags = [
+        OrderTags.UnPaid,
+        OrderTags.Repeat,
+        OrderTags.ShipError,
+        OrderTags.LowReceive,
+        OrderTags.OverRange,
+        OrderTags.ReDeliver,
+      ];
+    }
+
+    this.getData();
+    this.isIndeterminate = true;
+  }
+
+  clearAllStatus() {
+    this.checkAll(false);
+    this.q.orderStatus = [];
+    this.q.paymentStatus = [];
+    this.q.shippingStatus = [];
   }
 
   getSourcePicture(orderSource: number): string {
@@ -315,17 +399,150 @@ export class OrderListComponent extends AppComponentBase implements OnInit {
   }
 
   getStatusColor(orderStatus: number): string {
-    if (orderStatus === OrderStatus.WaitConfirm) return '#fa8c16';
-    else if (orderStatus === OrderStatus.Processing) return '#2db7f5';
-    else if (orderStatus === OrderStatus.Completed) return '#87d068';
-    else return '#f50';
+    if (orderStatus === OrderStatus.WaitConfirm) return TagColor.Warning;
+    else if (orderStatus === OrderStatus.Processing) return TagColor.Info;
+    else if (orderStatus === OrderStatus.Completed) return TagColor.Success;
+    else return TagColor.Error;
   }
 
   getShippingColor(shippingStatus: number): string {
-    if (shippingStatus === ShippingStatus.NotYetShipped) return '#fa8c16';
+    if (shippingStatus === ShippingStatus.NotYetShipped) return TagColor.Warning;
     else if (shippingStatus === ShippingStatus.IssueWithRejected || shippingStatus === ShippingStatus.Issue)
-      return '#f50';
-    else if (shippingStatus === ShippingStatus.Received) return '#87d068';
-    else return '#2db7f5';
+      return TagColor.Error;
+    else if (shippingStatus === ShippingStatus.Received) return TagColor.Success;
+    else return TagColor.Info;
+  }
+
+  getPaymentColor(item: OrderListDto): string {
+    if (item.paymentStatus === PaymentStatus.Pending && item.orderType === OrderType.PayOnline) return TagColor.Warning;
+    else if (item.paymentStatus === PaymentStatus.Pending) return TagColor.Info;
+    else if (item.paymentStatus === PaymentStatus.Refunded || item.paymentStatus === PaymentStatus.PartiallyRefunded)
+      return TagColor.Error;
+    else if (item.paymentStatus === PaymentStatus.Paid) return TagColor.Success;
+    else return TagColor.Warning;
+  }
+
+  getTagColor(tag: string): string {
+    if (tag === OrderTags.Repeat) return TagColor.Warning;
+    else if (tag === OrderTags.UnPaid) return TagColor.Error;
+    else if (tag === OrderTags.ShipError) return TagColor.Error;
+    else return TagColor.Error;
+  }
+
+  editAdminCom(tpl: TemplateRef<{}>, item: OrderListDto) {
+    this.editItem = item;
+    this.modalSrv.create({
+      nzTitle: '编辑备注',
+      nzContent: tpl,
+      nzOnOk: () => {
+        const input = new EditAdminCommentInput();
+        input.orderId = item.id;
+        input.adminComment = item.adminComment;
+        this.orderSvc.editAdminComment(input).subscribe(() => {});
+      },
+    });
+  }
+
+  confirmOrder(all: boolean) {
+    if (all) {
+      this.orderSvc
+        .confirmOrders(
+          new ChangeOrderStatusInputOfOrderStatus({
+            all: true,
+            ids: [],
+            stauts: Number(OrderStatus.Processing),
+          }),
+        )
+        .subscribe(() => {
+          this.notify.success('任务已启动', '注意：只有非异常订单会被自动确认，异常订单请手动处理');
+        });
+    } else {
+      const ids = this.getCheckOrderId();
+      this.orderSvc
+        .changeOrderStatus(
+          new ChangeOrderStatusInputOfOrderStatus({
+            all: false,
+            ids: ids,
+            stauts: Number(OrderStatus.Processing),
+          }),
+        )
+        .subscribe(() => {
+          this.msg.success('确认成功');
+          this.data.items.forEach(item => {
+            if (ids.indexOf(item.id) > 0) {
+              item.orderStatus = Number(OrderStatus.Processing);
+              item.orderStatusString = '处理中';
+            }
+          });
+        });
+    }
+  }
+
+  confirm(item: OrderListDto) {
+    this.orderSvc
+      .changeOrderStatus(
+        new ChangeOrderStatusInputOfOrderStatus({
+          all: false,
+          ids: [item.id],
+          stauts: Number(OrderStatus.Processing),
+        }),
+      )
+      .subscribe(() => {
+        this.msg.success('确认成功');
+        item.orderStatus = Number(OrderStatus.Processing);
+        item.orderStatusString = '处理中';
+        // this.data.items.removeAt(index);
+      });
+  }
+
+  getCheckOrderId(): number[] {
+    const ids = [];
+    for (const id in this.checkedId) {
+      if (this.checkedId[id]) {
+        ids.push(id);
+      }
+    }
+
+    return ids;
+  }
+
+  getOrderTag(tags: string[]) {
+    if (tags === null || tags === undefined) return;
+
+    const tagItems = [];
+
+    tags.forEach(tag => {
+      tagItems.push({
+        value: this.l('order.tags.' + tag),
+        color: this.getTagColor(tag),
+      });
+    });
+
+    return tagItems;
+  }
+
+  setOverRange(orderId: number) {
+    let duration = 0;
+
+    this.msg
+      .loading('添加中', { nzDuration: duration })
+      .onClose!.pipe(concatMap(() => this.msg.success('添加成功', { nzDuration: 2500 }).onClose!))
+      .subscribe(() => {});
+
+    this.orderSvc
+      .addTags(
+        new AddTagsInput({
+          ids: [orderId],
+          tag: OrderTags.OverRange,
+        }),
+      )
+      .subscribe(() => {
+        duration = 1;
+      });
+  }
+
+  getPictureCompressUrl(url: string): string {
+    if (url) return url + MediaCompressFormat.orderListFormat;
+    return AppConsts.defaultPicture + MediaCompressFormat.orderListFormat;
   }
 }

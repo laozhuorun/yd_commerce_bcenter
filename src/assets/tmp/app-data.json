@@ -1,7 +1,7 @@
 {
   "app": {
-    "name": "有度电商管理后台",
-    "description": "有度电商管理后台",
+    "name": "有度云",
+    "description": "有度云",
     "year": "2019"
   },
   "user": {
@@ -20,7 +20,7 @@
           "text": "工作台",
           "i18n": "BusiCenter.Dashboard",
           "icon": "anticon anticon-dashboard",
-          "link": "/dashboard/analysis",
+          "link": "/dashboard",
           "group": false
         }
       ]
@@ -32,16 +32,27 @@
       "hideInBreadcrumb": true,
       "children": [
         {
-          "text": "商品管理",
+          "text": "商品中心",
           "i18n": "BusiCenter.Catelog",
           "icon": "anticon anticon-inbox",
           "hideInBreadcrumb": false,
           "children": [
             {
-              "text": "查找商品",
+              "text": "商品管理",
               "link": "/product/list",
-              "i18n": "BusiCenter.Catelog.Product"
+              "i18n": "BusiCenter.Catelog.Product",
+              "group": false,
+              "children": [
+                {
+                  "text": "编辑商品",
+                  "link": "/product/edit",
+                  "i18n": "BusiCenter.Catelog.Product.Edit",
+                  "hide": true,
+                  "hideInBreadcrumb": true
+                }
+              ]
             },
+
             {
               "text": "分类管理",
               "link": "/product/category/list",
@@ -67,9 +78,9 @@
               "i18n": "BusiCenter.SalesManage.Order"
             },
             {
-              "text": "批量发货",
-              "link": "/shipping/list",
-              "i18n": "BusiCenter.SalesManage.Shipment"
+              "text": "快速导单",
+              "link": "/order/batchship",
+              "i18n": "menu.order.batchship"
             }
           ]
         },
@@ -95,19 +106,42 @@
         {
           "text": "广告管理",
           "i18n": "BusiCenter.AdvertManage",
-          "icon": "anticon anticon-area-chart",
+          "icon": "anticon anticon-account-book",
           "group": true,
           "hideInBreadcrumb": true,
           "children": [
             {
               "text": "广告账户",
               "link": "/advert/list",
-              "i18n": "BusiCenter.AdvertManage.Account"
+              "i18n": "BusiCenter.AdvertManage.Account",
+              "children": [
+                {
+                  "text": "编辑广告账户",
+                  "link": "/advert/edit",
+                  "i18n": "BusiCenter.AdvertManage.Account.Edit",
+                  "hide": true,
+                  "hideInBreadcrumb": true
+                }
+              ]
             },
             {
               "text": "广告统计",
               "link": "/advert/statistics",
               "i18n": "BusiCenter.AdvertManage.DailyStatistic"
+            }
+          ]
+        },
+        {
+          "text": "数据统计",
+          "i18n": "BusiCenter.Statistic",
+          "icon": "anticon anticon-area-chart",
+          "group": true,
+          "hideInBreadcrumb": true,
+          "children": [
+            {
+              "text": "综合统计",
+              "link": "/statistics/compre",
+              "i18n": "BusiCenter.Statistic.Compre"
             }
           ]
         },

@@ -4,16 +4,16 @@ import { deepCopy } from '@delon/util';
 import { MockStatusError, MockRequest } from '@delon/mock';
 
 interface FileItem {
-  id: number;
-  parent_id: number;
-  type: 'folder' | 'file';
-  title: string;
+  id?: number;
+  parent_id?: number;
+  type?: 'folder' | 'file';
+  title?: string;
   mp?: string;
   ext?: string;
   size?: number;
   width?: number;
   height?: number;
-  created: Date;
+  created?: Date;
 }
 
 let point = 1;
@@ -27,21 +27,23 @@ DATA = DATA.concat(
 );
 
 function genFolds(parent_id: number, count: number): FileItem[] {
-  return new Array(count).fill({}).map((v, idx) => {
-    return <FileItem>{
+  return new Array(count).fill({}).map(() => {
+    // tslint:disable-next-line: no-object-literal-type-assertion
+    return {
       id: point++,
       parent_id,
       type: 'folder',
       ext: 'folder',
       title: Random.ctitle(3, 5),
       created: new Date(),
-    };
+    } as FileItem;
   });
 }
 
 function genFiles(parent_id: number, count: number, ext = 'png'): FileItem[] {
-  return new Array(count).fill({}).map((v, idx) => {
-    return <FileItem>{
+  return new Array(count).fill({}).map(() => {
+    // tslint:disable-next-line: no-object-literal-type-assertion
+    return {
       id: point++,
       parent_id,
       type: 'file',
@@ -53,7 +55,7 @@ function genFiles(parent_id: number, count: number, ext = 'png'): FileItem[] {
       width: Random.natural(100, 1000),
       height: Random.natural(100, 1000),
       created: new Date(),
-    };
+    } as FileItem;
   });
 }
 
@@ -101,7 +103,7 @@ export const FILES = {
   },
   '/file/:id': (req: MockRequest) => {
     const idx = getIdx(req.params.id || 0);
-    const item = Object.assign(DATA[idx], req.body);
+    const item = { ...DATA[idx], ...req.body };
     return item;
   },
   'POST /file/rename': (req: MockRequest) => {
@@ -116,9 +118,7 @@ export const FILES = {
   },
   'POST /file/copy/:id': (req: MockRequest) => {
     const idx = getIdx(req.params.id || 0);
-    const item = Object.assign({}, DATA[idx], {
-      id: point++,
-    });
+    const item = { ...DATA[idx], id: point++ };
     item.title += ' - Copy';
     DATA.push(item);
     return { msg: 'ok', item };

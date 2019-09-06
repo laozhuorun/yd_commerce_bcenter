@@ -15,10 +15,10 @@
                     </nz-select>
                 </se>
                 <se label="第三方App id">
-                    <input nz-input [(ngModel)]="store.appKey" name="appKey" maxlength="50">
+                    <input nz-input [(ngModel)]="store.appKey" name="appKey">
                 </se>
                 <se label="第三方App secret">
-                    <input nz-input [(ngModel)]="store.appSecret" name="appSecret" maxlength="30">
+                    <input nz-input [(ngModel)]="store.appSecret" name="appSecret">
                 </se>
                 <se label="图片">
                     <app-store-logo></app-store-logo>
@@ -27,10 +27,10 @@
                     <nz-switch [(ngModel)]="store.orderSync" name="orderSync"></nz-switch>
                 </se>
             </div>
+            <div class="text-center">
+                <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">保存</button>
+                <button type="button" nz-button (click)="cancel()">返回</button>
+            </div>
         </nz-card>
-        <footer-toolbar>
-            <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">更新</button>
-            <button type="button" nz-button (click)="cancel()">返回</button>
-        </footer-toolbar>
     </form>
 </page-header-wrapper>

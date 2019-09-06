@@ -1,0 +1,80 @@
+<page-header-wrapper [title]="'综合统计'" [phContent]="phNgContent">
+    <ng-template #phNgContent>
+        <nz-card [nzBordered]="false" [nzBodyStyle]="{ 'padding.px': 0 }">
+            <form nz-form (ngSubmit)="getData()" [nzLayout]="'inline'" class="search__form">
+                <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+                    <div nz-col nzMd="8" nzSm="24">
+                        <nz-form-item>
+                            <nz-form-label nzFor="no">渠道</nz-form-label>
+                            <nz-form-control>
+                                <nz-select [(ngModel)]="q.source" name="source" id="source" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+                                    <nz-option nzCustomContent *ngFor="let source of advertSource" [nzLabel]="source.text" [nzValue]="source.value">
+                                        <img width="18" alt="item.name" src="{{getSourcePicture(source.value)}}" />
+                                        <span class="pl-sm">{{source.text}}</span>
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col nzMd="8" nzSm="24">
+                        <nz-form-item>
+                            <nz-form-label nzFor="no">商品</nz-form-label>
+                            <nz-form-control>
+                                <nz-select [(ngModel)]="q.productIds" name="productIds" id="productIds" nzShowSearch nzAllowClear nzPlaceHolder="搜索/选择商品" nzMode="multiple">
+                                    <nz-option *ngFor="let t of productSelectData" [nzLabel]="t.text" [nzValue]="t.value"> </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col nzMd="8" nzSm="24">
+                        <nz-form-item>
+                            <nz-form-label nzFor="no">统计时间</nz-form-label>
+                            <nz-form-control>
+                                <range-picker name="dateOn" id="dateOn" [(ngModel)]="q.dateOn.form" [(ngModelEnd)]="q.dateOn.to" [nzFormat]="'yyyy/MM/dd'" nzShowTime="false" [shortcut]="true"></range-picker>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                </div>
+                <nz-row nzGutter="16" style="text-align: center">
+                    <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+                    <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
+                    <!-- <a (click)="expandForm = !expandForm">
+                        {{ expandForm ? '收起' : '展开' }}
+                        <i nz-icon [nzType]="expandForm ? 'up' : 'down'"></i>
+                    </a> -->
+                </nz-row>
+            </form>
+
+        </nz-card>
+    </ng-template>
+    <nz-card [nzBordered]="false" class="list-content">
+        <st #st *ngIf="data" [columns]="columns" [data]="data" [pi]="page.index" [ps]="page.pageSize" [total]="data.totalCount" [loading]="loading" [page]="stPage" [scroll]="{x: '2100px'}">
+            <ng-template st-row="orderNum-tag" let-item let-index="index">
+                <nz-tag [nzColor]="'#fa8c16'">{{item.orderNum | number: '.0'}}</nz-tag>
+            </ng-template>
+            <ng-template st-row="roi-tag" let-item let-index="index">
+                <nz-tag *ngIf="item.roi>2" [nzColor]="'#52c41a'">{{item.roi }}</nz-tag>
+                <nz-tag *ngIf="item.roi<=2" [nzColor]="'#f5222d'">{{item.roi }}</nz-tag>
+            </ng-template>
+            <ng-template st-row="shipmentNum-tag" let-item let-index="index">
+                <nz-tag [nzColor]="'#1890ff'">{{item.shipmentNum | number: '.0'}}({{item.orderNum - item.shipmentNum | number: '.0'}})</nz-tag>
+            </ng-template>
+            <ng-template st-row="receivedRate-tag" let-item let-index="index">
+                <nz-tag *ngIf="item.receivedRate>0.8" [nzColor]="'#52c41a'"> {{ item.receivedRate | percent: '1.1-2' }}</nz-tag>
+                <nz-tag *ngIf="item.receivedRate<=0.8" [nzColor]="'#f5222d'"> {{ item.receivedRate | percent: '1.1-2' }}</nz-tag>
+            </ng-template>
+            <ng-template st-row="receivedNum-tag" let-item let-index="index">
+                <nz-tag [nzColor]="'#52c41a'">{{item.receivedNum | number: '.0'}}</nz-tag>
+            </ng-template>
+            <ng-template st-row="rejectNum-tag" let-item let-index="index">
+                <nz-tag [nzColor]="'#f5222d'">{{item.rejectNum | number: '.0'}}</nz-tag>
+            </ng-template>
+            <ng-template st-row="profit-tag" let-item let-index="index">
+                <nz-tag *ngIf="item.profit>0" [nzColor]="'#52c41a'">{{item.profit | _currency}}</nz-tag>
+                <nz-tag *ngIf="item.profit<=0" [nzColor]="'#f5222d'">{{item.profit | _currency}}</nz-tag>
+            </ng-template>
+        </st>
+        <nz-empty *ngIf="!data"></nz-empty>
+    </nz-card>
+</page-header-wrapper>

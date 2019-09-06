@@ -68,19 +68,18 @@ export const USERS_PRO = {
 
     if (id > 0) {
       const idx = getIdx(id);
-      DATA[idx] = Object.assign(DATA[idx], req.body);
+      DATA[idx] = {...DATA[idx], ...req.body};
       return { msg: 'ok', item: DATA[idx] };
     }
 
-    const item = Object.assign({}, req.body, {
-      id: DATA.sort((a, b) => b.id - a.id)[0].id + 1,
-    });
+    const item = {...req.body, 
+      id: DATA.sort((a, b) => b.id - a.id)[0].id + 1};
     DATA.push(item);
     return { msg: 'ok', item };
   },
   '/user-pro/:id': (req: MockRequest) => {
     const idx = getIdx(req.params.id || 0);
-    const item = Object.assign(DATA[idx], req.body);
+    const item = {...DATA[idx], ...req.body};
     return item;
   },
   'DELETE /user-pro/:id': (req: MockRequest) => {

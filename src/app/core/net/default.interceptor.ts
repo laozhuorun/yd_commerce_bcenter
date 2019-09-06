@@ -54,7 +54,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     }
 
     const errortext = CODEMESSAGE[ev.status] || ev.statusText;
-    this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
+    // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
   }
 
   private handleData(ev: HttpResponseBase): Observable<any> {
@@ -95,9 +95,9 @@ export class DefaultInterceptor implements HttpInterceptor {
       case 403:
       case 404:
       case 500:
-        const errortext = CODEMESSAGE[ev.status] || ev.statusText;
-        this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
-        break;
+      // const errortext = CODEMESSAGE[ev.status] || ev.statusText;
+      // this.notification.error(`请求错误`, errortext);
+      // break;
       default:
         if (ev instanceof HttpErrorResponse) {
           console.warn('未可知错误，大部分是由于后端不支持CORS或无效配置引起', ev);

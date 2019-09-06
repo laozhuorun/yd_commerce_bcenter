@@ -1,0 +1,45 @@
+<nz-skeleton [nzLoading]="loading">
+    <sv-container col="2" [title]="'订单信息'">
+        <sv label="收货人姓名">{{ order.shippingName }}</sv>
+        <sv label="收货人电话">{{ order.shippingPhoneNumber }}</sv>
+        <sv label="收货人地址" col="1">{{ order.shippingAddress }}</sv>
+        <sv label="订单类型">
+            {{ order.orderTypeString }}
+        </sv>
+        <sv label="物流状态">
+            <nz-tag class="ml-sm" [nzColor]="getShippingColor(order.shippingStatus)">{{order.shippingStatusString}}</nz-tag>
+        </sv>
+        <sv label="付款状态">
+            <nz-tag class="ml-sm" [nzColor]="getPaymentColor(order)">{{order.paymentStatusString}}</nz-tag>
+        </sv>
+        <sv label="物流" *ngIf="trackingDto">{{ trackingDto.logisticsName }}</sv>
+        <sv label="发货时间" *ngIf="trackingDto.createOn">{{ trackingDto.createOn | _date }}</sv>
+        <sv label="单号" *ngIf="trackingDto"> {{ trackingDto.logisticsNumber }}</sv>
+    </sv-container>
+    <nz-divider nzDashed="true"></nz-divider>
+    <div class="mt-md tracking-content">
+        <nz-timeline *ngIf="trackingDto" [nzReverse]="reverse">
+
+            <!-- <nz-timeline-item nzColor="getTackingColor(order.shippingStatus)" *ngFor="let trace of trackingDto.traces">
+                        <p>
+                            <span>{{trace.time}}</span>
+                            <span class="ml-sm">{{trace.station}}</span>
+                        </p>
+                        <p *ngIf="trace.remark">
+                            <span>{{trace.remark}}</span>
+                        </p>
+                    </nz-timeline-item> -->
+
+            <nz-timeline-item *ngFor="let trace of trackingDto.traces;let last=last" nzColor="{{getTackingColor(order.shippingStatus,last)}}">
+                <p>
+                    <span>{{trace.time}}</span>
+                    <span class="ml-sm">{{trace.station}}</span>
+                </p>
+                <p *ngIf="trace.remark">
+                    <span>{{trace.remark}}</span>
+                </p>
+            </nz-timeline-item>
+        </nz-timeline>
+        <nz-empty *ngIf="!trackingDto||!trackingDto.traces"></nz-empty>
+    </div>
+</nz-skeleton>

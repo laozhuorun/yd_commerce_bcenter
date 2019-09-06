@@ -1,11 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  Input,
-  OnInit,
-  ChangeDetectorRef,
-  forwardRef,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, ChangeDetectorRef, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
   CascaderOption,
@@ -15,7 +8,10 @@ import {
   NzCascaderTriggerType,
 } from 'ng-zorro-antd';
 import { InputBoolean } from '@delon/util';
-import { AddressService, AddressType } from './address.service';
+import { ModoodAddressService, AddressType } from './modood-address.service';
+import { AddressService } from './address.service';
+
+let that;
 
 @Component({
   selector: 'address',
@@ -48,34 +44,81 @@ export class AddressComponent implements OnInit, ControlValueAccessor {
   @Input() size: NzCascaderSize = 'default';
   @Input() showSearch: boolean | NzShowSearchOptions;
   @Input() placeHolder = '请选择所在地';
-  @Input() mouseEnterDelay: number = 150; // ms
-  @Input() mouseLeaveDelay: number = 150; // ms
-  @Input() triggerAction: NzCascaderTriggerType | NzCascaderTriggerType[] = [
-    'click',
-  ] as NzCascaderTriggerType[];
+  @Input() mouseEnterDelay: number = 0; // ms
+  @Input() mouseLeaveDelay: number = 0; // ms
+  @Input() triggerAction: NzCascaderTriggerType | NzCascaderTriggerType[] = ['click'] as NzCascaderTriggerType[];
+
+  // data attributes
+  provinces = [];
+
+  cities: { [key: number]: Array<{ value: string; label: string; isLeaf?: boolean }> } = {};
+
+  district: { [key: string]: Array<{ value: string; label: string; isLeaf?: boolean }> } = {};
 
   // #endregion
-
-  constructor(private srv: AddressService, private cdr: ChangeDetectorRef) {}
+  that;
+  constructor(private addSvc: AddressService, private cdr: ChangeDetectorRef) {
+    that = this;
+  }
 
   change() {
     this.onChangeFn(this.value.pop());
+    console.log(this.value);
   }
 
   ngOnInit(): void {
-    this.srv[this.type].subscribe(res => {
-      this.data = res;
-      this.cdr.markForCheck();
-    });
+    // this.srv[this.type].subscribe(res => {
+    //   this.data = res;
+    //   this.cdr.markForCheck();
+    // });
   }
 
   writeValue(geo: string): void {
+    console.log(geo);
     if (geo == null) {
       this.value = [];
-      return ;
+      return;
     }
-    this.value = this.srv.toValueArr(geo, this.type);
+    // this.value = this.srv.toValueArr(geo, this.type);
   }
+
+  /** load data async execute by `nzLoadData` method */
+  loadData(node: any, index: number): PromiseLike<any> {
+    node.loading = true;
+    return new Promise(resolve => {
+      if (index < 0) {
+        // if index less than 0 it is root node
+        // const result = that.addSvc.getProvince();
+        // that.provinces = result;
+        // node.children = result;
+        that.addSvc.getProvince().then(result => {
+          that.provinces = result;
+          node.children = that.provinces;
+        });
+      } else if (index === 0) {
+        // const result = that.addSvc.getCity(node.value);
+        // that.cities[node.value] = result;
+        // node.children = result;
+
+        that.addSvc.getCity(node.value).then(result => {
+          that.cities[node.value] = result;
+          node.children = that.cities[node.value];
+        });
+      } else {
+        // const result = await that.addSvc.getDistrict(node.value);
+        // that.district[node.value] = result;
+        // node.children = result;
+
+        that.addSvc.getDistrict(node.value).then(result => {
+          that.district[node.value] = result;
+          node.children = that.district[node.value];
+        });
+      }
+      node.loading = false;
+      resolve();
+    });
+  }
+
   registerOnChange(fn: any): void {
     this.onChangeFn = fn;
   }

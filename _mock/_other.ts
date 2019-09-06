@@ -50,13 +50,12 @@ function save(type: string, body: any) {
   const id = body.id || 0;
   if (id > 0) {
     const idx = getIdx(type, id);
-    DATA[type][idx] = Object.assign(DATA[type][idx], body);
+    DATA[type][idx] = {...DATA[type][idx], ...body};
     return { msg: 'ok', item: DATA[type][idx], type: 'edit' };
   }
 
-  const item = Object.assign({}, body, {
-    id: DATA[type].sort((a, b) => b.id - a.id)[0].id + 1,
-  });
+  const item = {...body, 
+    id: DATA[type].sort((a, b) => b.id - a.id)[0].id + 1};
   (DATA[type] as any[]).splice(0, 0, item);
   return { msg: 'ok', item, type: 'add' };
 }
@@ -238,11 +237,10 @@ function emailList(queryString: any) {
 
 function emailGet(id: number) {
   const idx = getIdx('email', id || 0);
-  const item = Object.assign({}, DATA.email[idx], {
+  const item = {...DATA.email[idx], 
     mp: genMp(),
     desc: genHtml(),
-    attachements: attachements(),
-  });
+    attachements: attachements()};
   return item;
 }
 // #endregion
@@ -290,7 +288,7 @@ function projectList() {
 
 function projectGet(id: number) {
   const idx = getIdx('project', id || 0);
-  const item = Object.assign({}, DATA.project[idx], {
+  const item = {...DATA.project[idx], 
     user_name: genName(),
     desc: genHtml(),
     attachements: attachements(),
@@ -311,8 +309,7 @@ function projectGet(id: number) {
       commit: Random.natural(10000, 99999),
       assigne_name: Random.name(),
       message: Random.title(),
-    })),
-  });
+    }))};
   return item;
 }
 
@@ -344,13 +341,12 @@ function billingList(queryString: any) {
 
 function billingGet(id: number) {
   const idx = getIdx('billing', id || 0);
-  const item = Object.assign({}, DATA.billing[idx], {
+  const item = {...DATA.billing[idx], 
     messages: new Array(Random.natural(0, 5)).fill({}).map((v, idx) => ({
       id: idx + 1,
       time: `${Random.natural(1, 6)} day ago`,
       message: Random.paragraph(1, 1),
-    })),
-  });
+    }))};
   return item;
 }
 
@@ -474,13 +470,12 @@ function clientList(queryString: any) {
 
 function clientGet(id: number) {
   const idx = getIdx('client', id || 0);
-  const item = Object.assign({}, DATA.client[idx], {
+  const item = {...DATA.client[idx], 
     messages: new Array(Random.natural(0, 5)).fill({}).map((v, idx) => ({
       id: idx + 1,
       time: `${Random.natural(1, 6)} day ago`,
       message: Random.paragraph(1, 1),
-    })),
-  });
+    }))};
   return item;
 }
 
@@ -566,7 +561,7 @@ function articleList(queryString: any) {
 
 function articleGet(id: number) {
   const idx = getIdx('article', id || 0);
-  const item = Object.assign({}, DATA.article[idx], {});
+  const item = {...DATA.article[idx], };
   return item;
 }
 

@@ -12,7 +12,7 @@ import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-tenant-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss'],
+  styleUrls: ['./list.component.less'],
 })
 export class TenantListComponent implements OnInit {
   sources = [

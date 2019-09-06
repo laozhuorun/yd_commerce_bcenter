@@ -86,13 +86,12 @@ export const MENUS = {
     const id = req.body.id || 0;
     if (id > 0) {
       const idx = getIdx(id);
-      DATA[idx] = Object.assign(DATA[idx], req.body);
+      DATA[idx] = {...DATA[idx], ...req.body};
       return { msg: 'ok', item: DATA[idx] };
     }
 
-    const item = Object.assign({}, req.body, {
-      id: DATA.sort((a, b) => b.id - a.id)[0].id + 1,
-    });
+    const item = {...req.body, 
+      id: DATA.sort((a, b) => b.id - a.id)[0].id + 1};
     DATA.push(item);
     return { msg: 'ok', item };
   },

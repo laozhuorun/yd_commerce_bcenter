@@ -1,0 +1,8 @@
+<input placeholder="请选择/输入规格值" [value]="value.name" nz-input (blur)="onBlur($event.target)" [nzAutocomplete]="autoValue">
+<nz-autocomplete nzBackfill #autoValue (selectionChange)="onChange($event)">
+    <nz-auto-option *ngFor="let option of attributeValues" [nzLabel]="option.name" [nzValue]="option.id" [nzDisabled]="isDisabled(option)">
+        {{option.name}}
+    </nz-auto-option>
+</nz-autocomplete>
+<i class="del-attr" (click)="del()" nz-icon type="minus"></i>
+<app-avatar [fileList]="value.pictureUrl ? [{id:value.pictureId,url:value.pictureUrl}] : []" *ngIf="showPicture" (avatarObj)="avatarObj($event)"></app-avatar>

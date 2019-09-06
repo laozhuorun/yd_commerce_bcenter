@@ -1,4 +1,4 @@
-const basicProduct = [
+const basicGoods = [
   {
     id: '1234561',
     name: '矿泉水 550ml',
@@ -143,7 +143,7 @@ const advancedOperation3 = [
 
 export const PROFILES = {
   'GET /profile/progress': basicProgress,
-  'GET /profile/product': basicProduct,
+  'GET /profile/goods': basicGoods,
   'GET /profile/advanced': {
     advancedOperation1,
     advancedOperation2,

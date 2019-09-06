@@ -6,7 +6,7 @@ import {
 @Component({
   selector: 'app-tenant-feature',
   templateUrl: './feature.component.html',
-  styleUrls: ['./feature.component.scss'],
+  styleUrls: ['./feature.component.less'],
 })
 export class TenantFeatureComponent implements OnInit {
 

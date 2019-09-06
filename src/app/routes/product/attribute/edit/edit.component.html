@@ -1,0 +1,18 @@
+<page-header-wrapper [title]="attribute.id ? '编辑属性' : '添加属性'">
+    <form nz-form #f="ngForm" (ngSubmit)="update(f)" class="sf__no-error">
+        <nz-card nzTitle="基本信息">
+            <div se-container>
+                <se label="属性名" required error="必填项">
+                    <nz-input-number nz-input [(ngModel)]="attribute.name" name="name" required style="width: 100%"></nz-input-number>
+                </se>
+                <se label="排序" required error="必填项">
+                    <nz-input-number nz-input [(ngModel)]="attribute.displayOrder" name="displayOrder" required style="width: 100%"></nz-input-number>
+                </se>
+            </div>
+        </nz-card>
+        <footer-toolbar>
+            <button type="submit" nz-button nzType="primary" [disabled]="f.invalid">更新</button>
+            <button type="button" nz-button (click)="cancel()">返回</button>
+        </footer-toolbar>
+    </form>
+</page-header-wrapper>

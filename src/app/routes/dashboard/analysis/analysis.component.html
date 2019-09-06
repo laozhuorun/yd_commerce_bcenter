@@ -1,85 +1,137 @@
 <page-grid>
-    <div nz-row [nzGutter]="24">
-        <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-            <g2-card [title]="'app.analysis.day-sales' | translate" total="{{ today.orderTotal | _currency }}" contentHeight="44px" [action]="action1" [footer]="footer1">
-                <ng-template #action1>
-                    <nz-tooltip [nzTitle]="'app.analysis.introduce' | translate">
-                        <i nz-tooltip nz-icon nzType="info-circle"></i>
-                    </nz-tooltip>
-                </ng-template>
-                <trend flag="{{ getFlag(orderTotalRate) }}">
-                    {{ 'app.analysis.yesteday-sales' | translate }}
-                    <span class="pl-sm">{{ yesterday.orderTotal | _currency }}</span>
-                    <span class="pl-sm">({{ orderTotalRate | percent: '1.1-2' }})</span>
-                </trend>
-                <ng-template #footer1>
-                    <p class="text-truncate mb0">
-                        {{ 'app.analysis.month-sales' | translate }}
-                        <span class="ml-sm">{{ monthStatistics.orderTotal | _currency }}</span>
-                    </p>
-                </ng-template>
-            </g2-card>
-        </div>
-        <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-            <g2-card [title]="'app.analysis.order' | translate" total="{{ today.orderNum | number: '.0' }}" contentHeight="46px" [action]="action2" [footer]="footer2">
-                <ng-template #action2>
-                    <nz-tooltip [nzTitle]="'app.analysis.introduce' | translate">
-                        <i nz-tooltip nz-icon nzType="info-circle"></i>
-                    </nz-tooltip>
-                </ng-template>
-                <g2-mini-area *ngIf="commonStatistics" line borderColor="#1890FF" height="46" [data]="getOrderNumTrend()" yTooltipSuffix="单"></g2-mini-area>
-                <ng-template #footer2>
-                    <trend flag="{{ getFlag(orderNumberlRate) }}" class="text-truncate mb0">
-                        {{ 'app.analysis.yesteday-orders' | translate }}
-                        <span class="pl-sm">{{ yesterday.orderNum | number: '.0' }}</span>
-                        <span class="pl-sm">({{ orderNumberlRate | percent: '1.1-2' }})</span>
-                    </trend>
-                </ng-template>
-            </g2-card>
-        </div>
-        <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-            <g2-card class="progress-ship" [title]="'app.analysis.shipment' | translate" total="{{ today.shipmentNum }}({{ todayShipmentRate/100 | percent: '1.1-2' }})" contentHeight="46px" [action]="action3" [footer]="footer3">
-                <ng-template #action3>
-                    <nz-tooltip [nzTitle]="'app.analysis.introduce' | translate">
-                        <i nz-tooltip nz-icon nzType="info-circle"></i>
-                    </nz-tooltip>
-                </ng-template>
-                <g2-mini-progress height="46" percent="{{ todayShipmentRate }}" strokeWidth="20" target="100" color="#13C2C2" height="46"></g2-mini-progress>
-                <ng-template #footer3>
-                    <trend flag="{{ getFlag(shipmentAddRate) }}">
-                        {{ 'app.analysis.shipment.yesterday' | translate }}
-                        <span class="pl-sm">{{ yesterday.shipmentNum | number: '.0' }}</span>
-                        <span class="pl-sm">({{ shipmentAddRate | percent: '1.1-2' }})</span>
-                    </trend>
-                </ng-template>
-            </g2-card>
-        </div>
+    <div nz-row nzGutter="24">
+        <div nz-col nzMd="24" nzLg="7" *ngIf="user">
+            <nz-card [nzBordered]="false" class="account mb-lg" [nzLoading]="!user">
+                <ng-container>
+                    <div class="avatarHolder">
+                        <img src="{{ user.profilePictureUrl }}">
+                        <div class="name">{{ user.userName }} {{friendlyTime}}</div>
+                        <!-- <div>{{ tenant.tenancyName }}</div> -->
+                    </div>
+                    <nz-divider nzDashed></nz-divider>
+                    <div class="option">
+                        <nz-row nzGutter="24">
+                            <nz-col nzMd="12" nzLg="12" nzSm="12">
+                                <i nz-icon nzType="shop"></i>
+                                <span>店铺数量：</span>
+                                <span>{{tenant.storeNum}}</span>
+                            </nz-col>
+                            <nz-col nzMd="12" nzLg="12" nzSm="12">
+                                <i nz-icon nzType="inbox"></i>
+                                <span>商品数量：</span>
+                                <span>{{tenant.productNum}}</span>
+                            </nz-col>
+                            <nz-col nzMd="12" nzLg="12" nzSm="12">
+                                <i nz-icon nzType="wallet"></i>
+                                <span>广告账户：</span>
+                                <span>{{tenant.advertAccountNum}}</span>
+                            </nz-col>
+                        </nz-row>
+                    </div>
 
-        <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-            <g2-card class="active-chart" [title]="'app.analysis.advert-cost' | translate" total="{{ advertStat.total | _currency }}" contentHeight="46px" [action]="action4" [footer]="footer4">
-                <ng-template #action4>
-                    <nz-tooltip [nzTitle]="'app.analysis.introduce' | translate">
-                        <i nz-tooltip nz-icon nzType="info-circle"></i>
-                    </nz-tooltip>
-                </ng-template>
-                <g2-mini-area *ngIf="advertData" line borderColor="#1890FF" [height]="46" [data]="advertData" yTooltipSuffix="元"></g2-mini-area>
-                <!-- <g2-mini-area *ngIf="commonStatistics" line borderColor="#1890FF" height="46" [data]="getOrderNumTrend()"></g2-mini-area> -->
-                <div *ngIf="advertData" class="active-legend">
-                    <span>00:00</span>
-                    <span>{{ advertStat.t1 }}</span>
-                    <span>{{ advertStat.t2 }}</span>
+                    <nz-divider nzDashed></nz-divider>
+                    <div class="detail">
+                        <nz-row nzGutter="24">
+                            <nz-col nzMd="12" nzLg="12" nzSm="12">
+                                <i nz-icon nzType="laptop"></i>
+                                <span>当前版本：</span>
+                                <span>{{ tenant.edition.displayName }}</span>
+                            </nz-col>
+                            <nz-col nzMd="12" nzLg="12" nzSm="12">
+                                <i nz-icon nzType="hourglass" nzTheme="outline"></i>
+                                <span>到期时间：</span>
+                                <span>{{ tenant.subscriptionDateString }}</span>
+                            </nz-col>
+                        </nz-row>
+                    </div>
+                </ng-container>
+            </nz-card>
+        </div>
+        <div nz-col nzMd="24" nzLg="17">
+            <div nz-row [nzGutter]="24">
+                <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="12">
+                    <g2-card [title]="'app.analysis.day-sales' | translate" total="{{ today.orderTotal | _currency }}" contentHeight="44px" [action]="action1" [footer]="footer1">
+                        <ng-template #action1>
+                            <nz-tooltip [nzTitle]="'app.analysis.introduce' | translate">
+                                <i nz-tooltip nz-icon nzType="info-circle"></i>
+                            </nz-tooltip>
+                        </ng-template>
+                        <trend flag="{{ getFlag(orderTotalRate) }}">
+                            {{ 'app.analysis.yesteday-sales' | translate }}
+                            <span class="pl-sm">{{ yesterday.orderTotal | _currency }}</span>
+                            <span class="pl-sm">({{ orderTotalRate | percent: '1.1-2' }})</span>
+                        </trend>
+                        <ng-template #footer1>
+                            <p class="text-truncate mb0">
+                                {{ 'app.analysis.month-sales' | translate }}
+                                <span class="ml-sm">{{ monthStatistics.orderTotal | _currency }}</span>
+                            </p>
+                        </ng-template>
+                    </g2-card>
                 </div>
-                <ng-template #footer4>
-                    <trend flag="{{ getFlag(advertCopstAddRate) }}">
-                        {{ 'app.analysis.yesterday.advert-cost' | translate }}
-                        <span class="pl-sm">{{ yesterday.advertCost | number: '.0' }}</span>
-                        <span class="pl-sm">({{ advertCopstAddRate | percent: '1.1-2' }})</span>
-                    </trend>
-                </ng-template>
-            </g2-card>
+                <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="12">
+                    <g2-card class="active-chart" [title]="'app.analysis.advert-cost' | translate" total="{{ advertStat.total | _currency }}" contentHeight="46px" [action]="action4" [footer]="footer4">
+                        <ng-template #action4>
+                            <nz-tooltip [nzTitle]="'app.analysis.introduce' | translate">
+                                <i nz-tooltip nz-icon nzType="info-circle"></i>
+                            </nz-tooltip>
+                        </ng-template>
+                        <g2-mini-area *ngIf="advertData" line borderColor="#1890FF" [height]="46" [data]="advertData" yTooltipSuffix="元"></g2-mini-area>
+                        <!-- <g2-mini-area *ngIf="commonStatistics" line borderColor="#1890FF" height="46" [data]="getOrderNumTrend()"></g2-mini-area> -->
+                        <div *ngIf="advertData" class="active-legend">
+                            <span>00:00</span>
+                            <span>{{ advertStat.t1 }}</span>
+                            <span>{{ advertStat.t2 }}</span>
+                        </div>
+                        <ng-template #footer4>
+                            <trend flag="{{ getFlag(advertCopstAddRate) }}">
+                                {{ 'app.analysis.yesterday.advert-cost' | translate }}
+                                <span class="pl-sm">{{ yesterday.advertCost | number: '.0' }}</span>
+                                <span class="pl-sm">({{ advertCopstAddRate | percent: '1.1-2' }})</span>
+                            </trend>
+                        </ng-template>
+                    </g2-card>
+                </div>
+                <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="12">
+                    <g2-card [title]="'app.analysis.order' | translate" total="{{ today.orderNum | number: '.0' }}" contentHeight="46px" [action]="action2" [footer]="footer2">
+                        <ng-template #action2>
+                            <nz-tooltip [nzTitle]="'app.analysis.introduce' | translate">
+                                <i nz-tooltip nz-icon nzType="info-circle"></i>
+                            </nz-tooltip>
+                        </ng-template>
+                        <g2-mini-area *ngIf="commonStatistics" line borderColor="#1890FF" height="46" [data]="getOrderNumTrend()" yTooltipSuffix="单"></g2-mini-area>
+                        <ng-template #footer2>
+                            <trend flag="{{ getFlag(orderNumberlRate) }}" class="text-truncate mb0">
+                                {{ 'app.analysis.yesteday-orders' | translate }}
+                                <span class="pl-sm">{{ yesterday.orderNum | number: '.0' }}</span>
+                                <span class="pl-sm">({{ orderNumberlRate | percent: '1.1-2' }})</span>
+                            </trend>
+                        </ng-template>
+                    </g2-card>
+                </div>
+                <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="12">
+                    <g2-card class="progress-ship" [title]="'app.analysis.shipment' | translate" total="{{ today.shipmentNum }}({{ todayShipmentRate/100 | percent: '1.1-2' }})" contentHeight="46px" [action]="action3" [footer]="footer3">
+                        <ng-template #action3>
+                            <nz-tooltip [nzTitle]="'app.analysis.introduce' | translate">
+                                <i nz-tooltip nz-icon nzType="info-circle"></i>
+                            </nz-tooltip>
+                        </ng-template>
+                        <g2-mini-progress height="46" percent="{{ todayShipmentRate }}" strokeWidth="20" target="100" color="#13C2C2" height="46"></g2-mini-progress>
+                        <ng-template #footer3>
+                            <trend flag="{{ getFlag(shipmentAddRate) }}">
+                                {{ 'app.analysis.shipment.yesterday' | translate }}
+                                <span class="pl-sm">{{ yesterday.shipmentNum | number: '.0' }}</span>
+                                <span class="pl-sm">({{ shipmentAddRate | percent: '1.1-2' }})</span>
+                            </trend>
+                        </ng-template>
+                    </g2-card>
+                </div>
+
+
+            </div>
         </div>
     </div>
-    <nz-card [nzLoading]="chartloading" [nzBordered]="false" [nzBodyStyle]="{ padding: '0 0 32px' }" class="offline-card mt-lg">
+    <nz-card nzTitle="近7天销售概况" [nzLoading]="chartloading" [nzBordered]="false" [nzBodyStyle]="{ padding: '0 0 32px' }" class="offline-card">
         <nz-tabset *ngIf="chartData" [(nzSelectedIndex)]="chartOfflineIdx" (nzSelectedIndexChange)="offlineChange($event)">
             <nz-tab *ngFor="let tab of chartData; let i = index" [nzTitle]="nzTabHeading">
                 <ng-template #nzTabHeading>

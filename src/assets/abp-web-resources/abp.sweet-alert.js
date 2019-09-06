@@ -13,7 +13,11 @@ var abp = abp || {};
     };
 
     abp.message.error = function(message, title, isHtml, opts) {
-        window.NzNotification.error(title, message);
+        if (title) {
+            window.NzNotification.error(title, message);
+        } else {
+            window.NzNotification.error(message);
+        }
     };
 
     abp.message.confirm = function(message, titleOrCallback, callback, isHtml, opts) {

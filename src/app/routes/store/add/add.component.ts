@@ -1,51 +1,44 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocationStrategy } from '@angular/common';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { NzMessageService } from 'ng-zorro-antd';
-import { StoreService } from '../store.service';
+import { StoreServiceProxy, CreateOrUpdateStoreInput } from '@shared/service-proxies/service-proxies';
+import { AppComponentBase } from '@shared/app-component-base';
+import { OrderSource } from '@shared/consts/enum-consts';
 
 @Component({
   selector: 'app-store-add',
   templateUrl: './add.component.html',
   styleUrls: ['./add.component.less'],
 })
-export class StoreAddComponent implements OnInit, OnDestroy {
-
+export class StoreAddComponent extends AppComponentBase implements OnInit, OnDestroy {
   loading = false;
 
-  store = {
-    id: 0,
-    name: '',
-    pictureId: 0,
-    appKey: '',
-    appSecret: '',
-    orderSourceType: 10,
-    orderSync: true,
-    displayOrder: 0,
-  };
+  store = new CreateOrUpdateStoreInput();
 
   constructor(
+    injector: Injector,
     private router: Router,
     private location: LocationStrategy,
     private msgSvc: NzMessageService,
-    private storeSvc: StoreService) {
+    private storeSvc: StoreServiceProxy,
+  ) {
+    super(injector);
+
+    this.store.orderSource = OrderSource.Self;
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   save() {
     if (this.loading) {
       return false;
     }
-    this.storeSvc.add(this.store).subscribe(res => {
-      console.log(res);
+    this.storeSvc.createOrUpdateStore(this.store).subscribe(res => {
+      this.msg.success(this.l('savaSuccess'));
+      this.router.navigate(['/list']);
     });
   }
 
@@ -53,6 +46,5 @@ export class StoreAddComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 
-  ngOnDestroy(): void {
-  }
+  ngOnDestroy(): void {}
 }

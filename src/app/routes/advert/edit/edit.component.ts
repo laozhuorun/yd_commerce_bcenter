@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocationStrategy } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd';
@@ -8,14 +8,20 @@ import {
   AdvertAccountServiceProxy,
   ProductServiceProxy,
   CreateOrUpdateAdvertAccountInput,
+  CommonLookupServiceProxy,
+  SelectListItemDtoOfInt32,
 } from '@shared/service-proxies/service-proxies';
+import { AuthService } from '@shared/service/auth.service';
+import { AdvertChannel, EnumConsts } from '@shared/consts/enum-consts';
+import { CacheService } from '@delon/cache';
+import { SourcePictureHelper } from '@shared/consts/static-source';
 
 @Component({
   selector: 'app-advert-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.less'],
 })
-export class AdvertEditComponent implements OnInit, OnDestroy {
+export class AdvertEditComponent implements OnInit, AfterViewInit, OnDestroy {
   account: CreateOrUpdateAdvertAccountInput = new CreateOrUpdateAdvertAccountInput({
     id: parseInt(this.route.snapshot.params['id'], 10),
     thirdpartyId: undefined,
@@ -24,13 +30,21 @@ export class AdvertEditComponent implements OnInit, OnDestroy {
     productId: undefined,
     displayName: undefined,
     channel: undefined,
+    type: 1,
     dataAutoSync: true,
     balance: 0,
     isAuthed: false,
+    parentAccountId: 0,
+    rebates: 0,
   });
   products;
   stores;
   loading = false;
+
+  enums = {
+    AdvertChannel: [],
+    AdvertAccountType: [],
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -40,6 +54,9 @@ export class AdvertEditComponent implements OnInit, OnDestroy {
     private productSvc: ProductServiceProxy,
     private storeSvc: StoreServiceProxy,
     private accountSvc: AdvertAccountServiceProxy,
+    private authService: AuthService,
+    private enumsSvc: CommonLookupServiceProxy,
+    private cacheSvc: CacheService,
   ) {}
 
   ngOnInit() {
@@ -57,6 +74,28 @@ export class AdvertEditComponent implements OnInit, OnDestroy {
     });
     this.productSvc.getProductSelectList().subscribe(res => {
       this.products = res;
+    });
+  }
+
+  ngAfterViewInit() {
+    this.getEnums([EnumConsts.AdvertChannel, EnumConsts.AdvertAccountType]);
+  }
+
+  getEnums(enumNames) {
+    enumNames.forEach(enumName => {
+      this.cacheSvc
+        .tryGet<SelectListItemDtoOfInt32[]>(enumName, this.enumsSvc.getEnumSelectItem(enumName))
+        .subscribe(res => {
+          res.forEach((item, index) => {
+            this.enums[enumName].push({
+              index: index,
+              text: item.text,
+              value: item.value,
+              type: 'default',
+              checked: false,
+            });
+          });
+        });
     });
   }
 
@@ -86,6 +125,7 @@ export class AdvertEditComponent implements OnInit, OnDestroy {
     }
     this.accountSvc.createOrUpdateAccount(this.account).subscribe(res => {
       this.msgSvc.success('更新成功!');
+      this.router.navigate(['/advert/list']);
     });
   }
 
@@ -94,4 +134,16 @@ export class AdvertEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {}
+
+  getChannelPicture(orderSource: number): string {
+    return SourcePictureHelper.getAdvertChannelPicture(orderSource);
+  }
+
+  redirect2Auth() {
+    if (this.account.channel === Number(AdvertChannel.Toutiao)) {
+      window.location.href = this.authService.GetTouTiaoAuthUrl();
+    } else if (this.account.channel === Number(AdvertChannel.Tenant)) {
+      window.location.href = this.authService.GetTenantAuthUrl();
+    }
+  }
 }

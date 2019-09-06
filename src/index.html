@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>有度电商管理后台</title>
+    <title>有度云</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
@@ -21,6 +21,11 @@
             background: #f5f5f5;
             z-index: 9999;
             transition: opacity 0.65s;
+
+        }
+
+        .preloader .page-loading {
+            padding-top: 400px !important;
         }
 
         .preloader-hidden-add {
@@ -35,6 +40,24 @@
         .preloader-hidden {
             display: none;
         }
+
+        .ant-spin-lg .ant-spin-dot {
+            font-size: 108px !important;
+            width: 108px !important;
+            height: 108px !important;
+        }
+
+        .ant-spin-lg .ant-spin-dot i {
+            width: 36px !important;
+            height: 36px !important;
+        }
+
+        .preloader .content {
+            margin: 48px;
+            font-size: 18px;
+            font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            vertical-align: middle;
+        }
     </style>
 </head>
 
@@ -42,7 +65,13 @@
     <app-root></app-root>
     <div class="preloader">
         <div class="page-loading ant-spin ant-spin-lg ant-spin-spinning">
-            <span class="ant-spin-dot ant-spin-dot-spin"><i></i><i></i><i></i><i></i></span>
+            <span class="ant-spin-dot ant-spin-dot-spin">
+                <i class="ant-spin-dot-item"></i>
+                <i class="ant-spin-dot-item"></i>
+                <i class="ant-spin-dot-item"></i>
+                <i class="ant-spin-dot-item"></i>
+            </span>
+            <!-- <div class="content">系统启动中</div> -->
         </div>
     </div>
 </body>

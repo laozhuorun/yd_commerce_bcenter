@@ -171,17 +171,17 @@ function get(params: any) {
   return ret;
 }
 
-function getIdx(id: number): number {
-  id = +id;
-  const idx = THREAD.findIndex(w => w.id === id);
+function getIdx(itemId: number): number {
+  itemId = +itemId;
+  const idx = THREAD.findIndex(w => w.id === itemId);
   if (idx === -1) throw new MockStatusError(404);
   return idx;
 }
 
-function getCate(id: number) {
+function getCate(itemId: number) {
   let item: any;
   const category = deepCopy(CATEGORY).find(w => {
-    item = w.list.find(l => l.id === id);
+    item = w.list.find(l => l.id === itemId);
     if (item) return true;
     return false;
   });
@@ -204,7 +204,8 @@ export const FORUMS = {
   },
   '/forum/:id': (req: MockRequest) => {
     const idx = getIdx(req.params.id || 0);
-    const item = Object.assign(THREAD[idx], {
+    const item = {
+      ...THREAD[idx],
       time: '3 days ago',
       like: Random.natural(0, 100),
       view: Random.natural(0, 10000),
@@ -220,7 +221,7 @@ export const FORUMS = {
           .map(v => Random.paragraph())
           .join('</p><p>') +
         '</p>',
-    });
+    };
     item.category = getCate(item.category_id);
     return item;
   },
@@ -234,16 +235,14 @@ export const FORUMS = {
   },
 
   'POST /forum': (req: MockRequest) => {
-    const id = req.body.id || 0;
-    if (id > 0) {
-      const idx = getIdx(id);
-      THREAD[idx] = Object.assign(THREAD[idx], req.body);
+    const itemId = req.body.id || 0;
+    if (itemId > 0) {
+      const idx = getIdx(itemId);
+      THREAD[idx] = { ...THREAD[idx], ...req.body };
       return { msg: 'ok', item: THREAD[idx] };
     }
 
-    const item = Object.assign({}, req.body, {
-      id: THREAD.sort((a, b) => b.id - a.id)[0].id + 1,
-    });
+    const item = { ...req.body, id: THREAD.sort((a, b) => b.id - a.id)[0].id + 1 };
     THREAD.push(item);
     return { msg: 'ok', item };
   },

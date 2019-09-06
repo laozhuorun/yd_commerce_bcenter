@@ -3,12 +3,19 @@ import { Router } from '@angular/router';
 
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 
-import { StoreListDto, StoreServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+  StoreListDto,
+  StoreServiceProxy,
+  CommonLookupServiceProxy,
+  SelectListItemDtoOfInt32,
+} from '@shared/service-proxies/service-proxies';
 import { STChange, STColumn, STComponent, STData } from '@delon/abc';
 import { _HttpClient } from '@delon/theme';
-import { OrderSource } from '@shared/consts/enum-consts';
 import { SourcePictureHelper } from '@shared/consts/static-source';
 import { ListComponentBase } from '@shared/app-component-base';
+import { finalize } from 'rxjs/operators';
+import { CacheService } from '@delon/cache';
+import { EnumConsts } from '@shared/consts/enum-consts';
 
 @Component({
   selector: 'app-store-list',
@@ -23,43 +30,8 @@ export class StoreListComponent extends ListComponentBase implements OnInit {
     maxResultCount: 20,
     skipCount: 0,
   };
-  sources = [
-    {
-      index: 0,
-      text: '自营',
-      value: 10,
-      type: 'default',
-      checked: false,
-    },
-    {
-      index: 1,
-      text: '鲁班',
-      value: 20,
-      type: 'default',
-      checked: false,
-    },
-    {
-      index: 2,
-      text: '放心购',
-      value: 30,
-      type: 'default',
-      checked: false,
-    },
-    {
-      index: 3,
-      text: '广点通',
-      value: 40,
-      type: 'default',
-      checked: false,
-    },
-    {
-      index: 4,
-      text: '有赞',
-      value: 50,
-      type: 'default',
-      checked: false,
-    },
-  ];
+  orderSource = [];
+
   data: StoreListDto[] = [];
   loading = false;
   @ViewChild('st')
@@ -95,48 +67,42 @@ export class StoreListComponent extends ListComponentBase implements OnInit {
 
   constructor(
     injector: Injector,
-    private http: _HttpClient,
     private router: Router,
     public msg: NzMessageService,
-    private modalSrv: NzModalService,
     private storeSvc: StoreServiceProxy,
+    private cacheSvc: CacheService,
+    private enumsSvc: CommonLookupServiceProxy,
   ) {
     super(injector);
   }
 
   ngOnInit() {
+    this.getSelectDataSource();
     this.getData();
+  }
+
+  getSelectDataSource() {
+    this.cacheSvc
+      .tryGet<SelectListItemDtoOfInt32[]>(
+        EnumConsts.OrderSource,
+        this.enumsSvc.getEnumSelectItem(EnumConsts.OrderSource),
+      )
+      .subscribe(res => {
+        this.orderSource = res;
+      });
   }
 
   getData() {
     this.loading = true;
-    if (this.q.status !== null && this.q.status > -1) this.q.statusList.push(this.q.status);
     this.storeSvc
       .getStores(this.q.name, this.q.source, this.q.sorting, this.q.maxResultCount, this.q.skipCount)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        }),
+      )
       .subscribe(res => {
-        console.log(res);
-        this.loading = false;
-        const items = [];
-        res.items.forEach(item => {
-          if (item.orderSource === 10) {
-            item['orderSourceTypeName'] = '自营';
-          }
-          if (item.orderSource === 20) {
-            item['orderSourceTypeName'] = '鲁班';
-          }
-          if (item.orderSource === 30) {
-            item['orderSourceTypeName'] = '放心购';
-          }
-          if (item.orderSource === 40) {
-            item['orderSourceTypeName'] = '广点通';
-          }
-          if (item.orderSource === 50) {
-            item['orderSourceTypeName'] = '有赞';
-          }
-          item['orderSyncLabel'] = item.orderSync ? '是' : '否';
-          items.push(item);
-        });
-        this.data = items;
+        this.data = res.items;
       });
   }
 

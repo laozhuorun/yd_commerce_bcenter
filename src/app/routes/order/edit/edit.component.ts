@@ -159,7 +159,7 @@ export class OrderEditComponent implements OnInit {
   getEnums(enumNames) {
     enumNames.forEach(enumName => {
       this.cacheSvc
-        .tryGet<SelectListItemDtoOfInt32[]>(enumNames, this.enumsSvc.getEnumSelectItem(enumName))
+        .tryGet<SelectListItemDtoOfInt32[]>(enumName, this.enumsSvc.getEnumSelectItem(enumName))
         .subscribe(res => {
           res.forEach(item => {
             item.value = item.value;

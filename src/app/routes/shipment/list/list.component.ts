@@ -10,7 +10,7 @@ import { ShipmentListImportComponent } from './import.component';
 @Component({
   selector: 'app-shipment-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss'],
+  styleUrls: ['./list.component.less'],
 })
 export class ShipmentListComponent {
   data: any[] = [];

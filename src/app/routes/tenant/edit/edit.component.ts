@@ -16,7 +16,7 @@ import { getIndex } from '@shared/utils/utils';
 @Component({
   selector: 'app-tenant-edit',
   templateUrl: './edit.component.html',
-  styleUrls: ['./edit.component.scss'],
+  styleUrls: ['./edit.component.less'],
 })
 export class TenantEditComponent implements OnInit {
   id = this.route.snapshot.params['id'] !== '0' ? this.route.snapshot.params['id'] : undefined;

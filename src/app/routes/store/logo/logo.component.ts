@@ -10,23 +10,25 @@ import { PictureServiceProxy } from '@shared/service-proxies/service-proxies';
 @Component({
   selector: 'app-store-logo',
   templateUrl: './logo.component.html',
-  styleUrls: ['./logo.component.scss'],
+  styleUrls: ['./logo.component.less'],
 })
 export class StoreLogoComponent implements OnInit {
   loading = false;
   avatarUrl: string;
   file = null;
 
-  constructor(private http: HttpClient, private pictureService: PictureServiceProxy, private msg: NzMessageService) {}
+  constructor(private http: HttpClient, 
+    private pictureService: PictureServiceProxy, 
+    private msg: NzMessageService) {}
 
   beforeUpload = (file: File) => {
     return new Observable((observer: Observer<boolean>) => {
-      const isJPG = file.type === 'image/jpeg';
-      if (!isJPG) {
-        this.msg.error('You can only upload JPG file!');
-        observer.complete();
-        return;
-      }
+      // const isJPG = file.type === 'image/jpeg';
+      // if (!isJPG) {
+      //   this.msg.error('You can only upload JPG file!');
+      //   observer.complete();
+      //   return;
+      // }
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
         this.msg.error('图片必须小于 2MB!');
@@ -41,7 +43,7 @@ export class StoreLogoComponent implements OnInit {
           return;
         }
 
-        observer.next(isJPG && isLt2M && dimensionRes);
+        // observer.next(isJPG && isLt2M && dimensionRes);
         observer.complete();
       });
     });
@@ -63,7 +65,7 @@ export class StoreLogoComponent implements OnInit {
         const width = img.naturalWidth;
         const height = img.naturalHeight;
         window.URL.revokeObjectURL(img.src);
-        resolve(width === height && width >= 300);
+        resolve(width === height);
       };
     });
   }
@@ -83,7 +85,7 @@ export class StoreLogoComponent implements OnInit {
         );
         formData.append('x:groupid', '1');
         formData.append('token', result.token);
-        const req = new HttpRequest('POST', 'http://up-z0.qiniup.com/', formData, {
+        const req = new HttpRequest('POST', 'https://upload-z2.qiniup.com/', formData, {
           reportProgress: true,
         });
         // 始终返回一个 `Subscription` 对象，nz-upload 会在适当时机自动取消订阅

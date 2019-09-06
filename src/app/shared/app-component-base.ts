@@ -1,14 +1,14 @@
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { LocalizationService } from '@abp/localization/localization.service';
-import { MessageService } from '@abp/message/message.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
-import { NotifyService } from '@abp/notify/notify.service';
 import { SettingService } from '@abp/settings/setting.service';
-import { Injector } from '@angular/core';
+import { Injector, ChangeDetectorRef, Inject } from '@angular/core';
 import { AppConsts } from '@shared/consts/app-consts';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService, NzNotificationService } from 'ng-zorro-antd';
 import { PaginationBaseDto } from './utils/pagination.dto';
+import { ALAIN_I18N_TOKEN } from '@delon/theme';
+import { I18NService } from '@core/i18n/i18n.service';
 
 export abstract class AppComponentBase {
   localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
@@ -16,26 +16,32 @@ export abstract class AppComponentBase {
   localization: LocalizationService;
   permission: PermissionCheckerService;
   feature: FeatureCheckerService;
-  notify: NotifyService;
   setting: SettingService;
-  message: MessageService;
+  // message: MessageService;
   multiTenancy: AbpMultiTenancyService;
+  notify: NzNotificationService;
   msg: NzMessageService;
+  cdr: ChangeDetectorRef;
+  i18n: I18NService;
 
   constructor(injector: Injector) {
     this.localization = injector.get(LocalizationService);
     this.permission = injector.get(PermissionCheckerService);
     this.feature = injector.get(FeatureCheckerService);
-    this.notify = injector.get(NotifyService);
+    this.notify = injector.get(NzNotificationService);
     this.setting = injector.get(SettingService);
-    this.message = injector.get(MessageService);
+    // this.message = injector.get(MessageService);
+    this.msg = injector.get(NzMessageService);
     this.multiTenancy = injector.get(AbpMultiTenancyService);
+    this.cdr = injector.get(ChangeDetectorRef);
+    this.i18n = injector.get<I18NService>(ALAIN_I18N_TOKEN);
   }
 
   l(key: string, ...args: any[]): string {
-    args.unshift(key);
-    args.unshift(this.localizationSourceName);
-    return this.ls.apply(this, args);
+    return this.i18n.fanyi(key);
+    // args.unshift(key);
+    // args.unshift(this.localizationSourceName);
+    // return this.ls.apply(this, args);
   }
 
   ls(sourcename: string, key: string, ...args: any[]): string {
@@ -94,6 +100,15 @@ export abstract class AppComponentBase {
   //   const localDatetimeString = momentTime.local().format(format);
   //   return localDatetimeString;
   // }
+
+  toHTML(input): any {
+    return new DOMParser().parseFromString(input, 'text/html').documentElement.textContent;
+  }
+
+  cdRefresh() {
+    // wait checkbox
+    setTimeout(() => this.cdr.detectChanges());
+  }
 }
 
 export abstract class FormComponentBase extends AppComponentBase {
@@ -107,6 +122,7 @@ export abstract class FormComponentBase extends AppComponentBase {
 export abstract class ListComponentBase extends AppComponentBase {
   constructor(injector: Injector) {
     super(injector);
+    this.page  = new PaginationBaseDto(AppConsts.grid.defaultPageSize);
   }
 
   page: PaginationBaseDto = new PaginationBaseDto(AppConsts.grid.defaultPageSize);

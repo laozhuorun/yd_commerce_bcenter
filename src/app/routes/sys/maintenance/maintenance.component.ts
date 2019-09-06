@@ -41,7 +41,7 @@ export class SysMaintenanceComponent {
     this.loading.download = true;
     this.webLogSvc.downloadWebLogs().subscribe(res => {
       this.loading.download = false;
-      this.fileSvc.downloadTempFile(res.fileName, res.fileType, res.fileToken);
+      this.fileSvc.downloadTempFile(res);
     });
   }
 

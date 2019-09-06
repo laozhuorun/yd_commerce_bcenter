@@ -35,13 +35,12 @@ export const PERMISSION = {
     const id = req.body.id || 0;
     if (id > 0) {
       const idx = getIdx(id);
-      PermissionData[idx] = Object.assign(PermissionData[idx], req.body);
+      PermissionData[idx] = {...PermissionData[idx], ...req.body};
       return { msg: 'ok', item: PermissionData[idx] };
     }
 
-    const item = Object.assign({}, req.body, {
-      id: PermissionData.sort((a, b) => b.id - a.id)[0].id + 1,
-    });
+    const item = {...req.body, 
+      id: PermissionData.sort((a, b) => b.id - a.id)[0].id + 1};
     PermissionData.push(item);
     return { msg: 'ok', item };
   },

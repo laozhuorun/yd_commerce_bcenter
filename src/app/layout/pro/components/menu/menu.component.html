@@ -36,10 +36,10 @@
             </span>
             <ul>
                 <ng-container *ngFor="let l2 of l1.children">
-                    <li *ngIf="!l2._hidden && l2.children.length === 0" nz-menu-item [class.alain-pro__menu-item--disabled]="l2.disabled" [nzSelected]="l2._selected" [nzDisabled]="l2.disabled" (click)="closeCollapsed()">
+                    <li *ngIf="!l2._hidden && (l2.children.length === 0 || !l2.showChildren)" nz-menu-item [class.alain-pro__menu-item--disabled]="l2.disabled" [nzSelected]="l2._selected" [nzDisabled]="l2.disabled" (click)="closeCollapsed()">
                         <ng-template [ngTemplateOutlet]="subLink" [ngTemplateOutletContext]="{ $implicit: l2 }"></ng-template>
                     </li>
-                    <li *ngIf="!l2._hidden && l2.children.length > 0" nz-submenu [nzOpen]="l2._open" [nzDisabled]="l2.disabled" (nzOpenChange)="openChange(l2, $event)">
+                    <li *ngIf="!l2._hidden && l2.children.length > 0 && l2.showChildren" nz-submenu [nzOpen]="l2._open" [nzDisabled]="l2.disabled" (nzOpenChange)="openChange(l2, $event)">
                         <span title><span>{{ l2.text }}</span></span>
                         <ul>
                             <ng-container *ngFor="let l3 of l2.children">

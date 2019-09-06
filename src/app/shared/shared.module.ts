@@ -47,8 +47,9 @@ import { AppSessionService } from './service/app-session.service';
 import { LoginService } from './service/login.service';
 import { CookiesService } from './service/cookies.service';
 import { ScriptLoaderService } from './service/script-loader.service';
-import { LocaleMappingService } from './service/locale-mapping.service';
 import { NzNotification } from './components/notification/nzNotification';
+import { AddressService } from './components/address/address.service';
+import { AuthService } from './service/auth.service';
 
 const COMPONENTS_ENTRY = [
   LangsComponent,
@@ -110,9 +111,9 @@ const PIPES = [UploadFilePipe];
   providers: [
     LoginService,
     AppSessionService,
+    AuthService,
     CookiesService,
     ScriptLoaderService,
-    LocaleMappingService,
     UploadFilePipe,
     CNCurrencyPipe,
   ],

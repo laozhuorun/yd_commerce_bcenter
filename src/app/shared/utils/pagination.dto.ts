@@ -10,9 +10,8 @@ export class PaginationBaseDto {
   sorting: string;
   pageSize: number;
   pageSizeOptions: number[];
-  skipCount: number;
 
-  getSkipCount(): number {
+  get skipCount(): number {
     return (this.index - 1) * this.pageSize;
   }
 }

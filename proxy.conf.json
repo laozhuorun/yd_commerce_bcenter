@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://60.205.216.113/api",
+    "target": "https://api.udosass.com/api",
     "secure": false,
     "pathRewrite": {
       "^/api/": ""
@@ -9,7 +9,7 @@
     "logLevel": "debug"
   },
   "//api": {
-    "target": "http://60.205.216.113/api",
+    "target": "https://api.udosass.com/api",
     "secure": false,
     "pathRewrite": {
       "^//api/": ""

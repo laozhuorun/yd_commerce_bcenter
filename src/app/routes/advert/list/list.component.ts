@@ -1,19 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, Injector, OnInit, TemplateRef, AfterViewInit } from '@angular/core';
 
 import {
   OrderServiceProxy,
   ProductServiceProxy,
   AdvertAccountServiceProxy,
+  AuthCallBackInput,
+  AuthCallBackInputChannel,
+  CommonLookupServiceProxy,
+  SelectListItemDtoOfInt32,
 } from '@shared/service-proxies/service-proxies';
-import { _HttpClient, DrawerHelper } from '@delon/theme';
+import { _HttpClient, DrawerHelper, ModalHelper } from '@delon/theme';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
+import { ListComponentBase } from '@shared/app-component-base';
+import { AdvertChannel, EnumConsts } from '@shared/consts/enum-consts';
+import { SourcePictureHelper } from '@shared/consts/static-source';
+import { AuthService } from '@shared/service/auth.service';
+import { AppConsts } from '@shared/consts/app-consts';
+import { ActivatedRoute } from '@angular/router';
+import { concatMap, finalize } from 'rxjs/operators';
+import { AdvertEditComponent } from '../edit/edit.component';
+import { CacheService } from '@delon/cache';
 
 @Component({
   selector: 'app-advert-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss'],
+  styleUrls: ['./list.component.less'],
 })
-export class AdvertListComponent {
+export class AdvertListComponent extends ListComponentBase implements OnInit, AfterViewInit {
   data;
   loading = false;
 
@@ -22,18 +35,73 @@ export class AdvertListComponent {
   mapOfCheckedId = {};
   numberOfChecked = 0;
 
+  authCallBack: AuthCallBackInput = new AuthCallBackInput();
+  advertChannels;
+
+  q = {
+    advertChannels: undefined,
+    thirdpartyId: undefined,
+    userName: undefined,
+    displayName: undefined,
+    productId: undefined,
+    sorting: undefined,
+    maxResultCount: 10,
+    skipCount: 0,
+  };
+
   constructor(
-    private http: _HttpClient,
+    injector: Injector,
+    private route: ActivatedRoute,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
-    private drawer: DrawerHelper,
-    private orderSvc: OrderServiceProxy,
     private productSvc: ProductServiceProxy,
     private accountSvc: AdvertAccountServiceProxy,
-  ) {}
+    private authService: AuthService,
+    private modalHelper: ModalHelper,
+    private cacheSvc: CacheService,
+    private enumsSvc: CommonLookupServiceProxy,
+  ) {
+    super(injector);
+  }
 
   ngOnInit() {
+    this.authCallBack.code = this.route.snapshot.queryParams.auth_code;
+
+    if (this.route.snapshot.queryParams.state !== undefined && this.route.snapshot.queryParams.state)
+      this.authCallBack.channel = parseInt(this.route.snapshot.queryParams.state, 10);
+
     this.getData();
+    this.getSelectDataSource();
+  }
+
+  ngAfterViewInit() {
+    if (this.authCallBack.code !== undefined) {
+      // this.msg
+      //   .loading('授权中，请稍后', { nzDuration: 2500 })
+      //   .onClose!.pipe(concatMap(() => this.msg.success('授权成功，请补充信息', { nzDuration: 2500 }).onClose!))
+      //   .subscribe(() => {});
+
+      const id = this.msg.loading('授权中，请稍后..', { nzDuration: 0 }).messageId;
+      this.accountSvc
+        .authCallBack(this.authCallBack)
+        .pipe(finalize(() => {}))
+        .subscribe(result => {
+          this.msg.remove(id);
+
+          this.modalHelper.create(AdvertEditComponent, { account: result }).subscribe(res => {});
+        });
+    }
+  }
+
+  getSelectDataSource() {
+    this.cacheSvc
+      .tryGet<SelectListItemDtoOfInt32[]>(
+        EnumConsts.AdvertChannel,
+        this.enumsSvc.getEnumSelectItem(EnumConsts.AdvertChannel),
+      )
+      .subscribe(res => {
+        this.advertChannels = res;
+      });
   }
 
   filterChange(target, e) {
@@ -57,17 +125,6 @@ export class AdvertListComponent {
       !this.isAllDisplayDataChecked;
     this.numberOfChecked = this.data.items.filter(item => this.mapOfCheckedId[item.id]).length;
   }
-
-  q = {
-    advertChannels: undefined,
-    thirdpartyId: undefined,
-    userName: undefined,
-    displayName: undefined,
-    productId: undefined,
-    sorting: undefined,
-    maxResultCount: 10,
-    skipCount: 0,
-  };
 
   getData() {
     this.loading = true;
@@ -130,6 +187,33 @@ export class AdvertListComponent {
   }
 
   reset() {
+    this.q.advertChannels = undefined;
+    this.q.thirdpartyId = undefined;
+    this.q.userName = undefined;
     this.q.displayName = undefined;
+    this.q.productId = undefined;
   }
+
+  openAdverChannelModal(tpl: TemplateRef<{}>) {
+    this.modalSrv.create({
+      nzTitle: '广告账户授权',
+      nzContent: tpl,
+      nzCancelText: null,
+      nzOkText: null,
+    });
+  }
+
+  redirect2Auth(channel) {
+    if (channel === Number(AdvertChannel.Toutiao)) {
+      window.location.href = this.authService.GetTouTiaoAuthUrl();
+    } else if (channel === Number(AdvertChannel.Tenant)) {
+    }
+  }
+
+  getChannelImg(channel) {
+    if (channel === Number(AdvertChannel.Toutiao)) return SourcePictureHelper.Oceanengine_WithName;
+    else return SourcePictureHelper.Tenant_WithName;
+  }
+
+  syncSubAccount() {}
 }

@@ -61,6 +61,9 @@ export class AppSessionService {
         .then(
           (result: GetCurrentLoginInformationsOutput) => {
             if (result) {
+              if (result.user && result.user !== undefined)
+                result.user.profilePictureUrl = result.user.profilePictureUrl || Source.DefaultProfile;
+
               this._application = result.application;
               this._user = result.user;
               this._tenant = result.tenant;
@@ -69,7 +72,7 @@ export class AppSessionService {
                 const user = {
                   token: abp.auth.getToken(),
                   name: result.user.nickName,
-                  avatar: result.user.profilePictureUrl || Source.DefaultProfile,
+                  avatar: result.user.profilePictureUrl,
                   email: result.user.emailAddress,
                   application: result.application,
                   user: result.user,

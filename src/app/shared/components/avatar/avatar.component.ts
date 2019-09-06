@@ -10,7 +10,7 @@ import { PictureServiceProxy } from '@shared/service-proxies/service-proxies';
 @Component({
   selector: 'app-avatar',
   templateUrl: './avatar.component.html',
-  styleUrls: ['./avatar.component.scss'],
+  styleUrls: ['./avatar.component.less'],
 })
 export class AvatarComponent implements OnInit {
   loading = false;
@@ -87,7 +87,7 @@ export class AvatarComponent implements OnInit {
         );
         formData.append('x:groupid', '1');
         formData.append('token', res.token);
-        const req = new HttpRequest('POST', 'http://up-z0.qiniup.com/', formData, {
+        const req = new HttpRequest('POST', 'https://upload-z2.qiniup.com/', formData, {
           reportProgress: true,
         });
         // 始终返回一个 `Subscription` 对象，nz-upload 会在适当时机自动取消订阅

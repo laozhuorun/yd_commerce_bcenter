@@ -3,10 +3,8 @@
     <nz-form-item>
         <nz-form-label [nzXs]="24" [nzSm]="4" nzRequired>快递</nz-form-label>
         <nz-form-control [nzXs]="24" [nzSm]="20">
-            <nz-select [(ngModel)]="tenantLogisticsId" name="tenantLogisticsId" nzAllowClear nzPlaceHolder="请选择快递"
-                       style="width: 80%; margin-right:8px;" required>
-                <nz-option *ngFor="let item of logistics" [nzLabel]="item.text"
-                           [nzValue]="item.value"></nz-option>
+            <nz-select [(ngModel)]="tenantLogisticsId" name="tenantLogisticsId" nzAllowClear nzPlaceHolder="请选择快递" style="width: 80%; margin-right:8px;" required>
+                <nz-option *ngFor="let item of logistics" [nzLabel]="item.text" [nzValue]="item.value"></nz-option>
             </nz-select>
             <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->
         </nz-form-control>
@@ -17,7 +15,7 @@
             <!--<nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
                 <button nz-button><i nz-icon type="upload"></i><span>请选择文件</span></button>
             </nz-upload>-->
-            <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
+            <nz-upload [nzFileList]="fileList" [nzLimit]="1" [nzMultiple]="false" (nzChange)="changeUploadFile($event)" [nzBeforeUpload]="beforeUpload">
                 <button nz-button><i nz-icon type="upload"></i><span>请选择文件</span></button>
             </nz-upload>
             <!--<nz-form-explain *ngIf="validateForm.get('note').dirty && validateForm.get('note').errors">Please input your username!</nz-form-explain>-->

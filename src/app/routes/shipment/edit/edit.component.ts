@@ -20,7 +20,7 @@ let that;
 @Component({
   selector: 'app-shipment-edit',
   templateUrl: './edit.component.html',
-  styleUrls: ['./edit.component.scss'],
+  styleUrls: ['./edit.component.less'],
 })
 export class ShipmentEditComponent implements OnInit {
   id = this.route.snapshot.params['id'];

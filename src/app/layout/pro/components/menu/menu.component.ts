@@ -33,13 +33,7 @@ export class LayoutProMenuComponent extends AppComponentBase implements OnInit, 
   @Input() @InputBoolean() disabledAcl = false;
   @Input() mode = 'inline';
 
-  constructor(
-    injector: Injector,
-    private menuSrv: MenuService,
-    private router: Router,
-    public pro: BrandService,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor(injector: Injector, private menuSrv: MenuService, private router: Router, public pro: BrandService) {
     super(injector);
   }
 
@@ -65,6 +59,13 @@ export class LayoutProMenuComponent extends AppComponentBase implements OnInit, 
       if (item._hidden === true) {
         return;
       }
+
+      if (item.children.length > 0) {
+        item.children.forEach(i => {
+          if (i.hide === false) item.showChildren = true;
+        });
+      }
+
       if (parent === null) {
         res.push(item);
       }

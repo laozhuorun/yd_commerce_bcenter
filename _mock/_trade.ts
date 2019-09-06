@@ -34,12 +34,12 @@ interface TradeWare {
 
 const DATA: Trade[] = [];
 const STATUS = {
-  'CANCELED': '取消',
-  'WAIT_BUYER_PAY': '等待买家付款',
-  'WAIT_PAY_CONFIRM': '支付确认中',
-  'WAIT_SELLER_STOCK_OUT': '等待出库',
-  'WAIT_GOODS_RECEIVE_CONFIRM': '等待确认收货',
-  'FINISHED': '交易成功',
+  CANCELED: '取消',
+  WAIT_BUYER_PAY: '等待买家付款',
+  WAIT_PAY_CONFIRM: '支付确认中',
+  WAIT_SELLER_STOCK_OUT: '等待出库',
+  WAIT_GOODS_RECEIVE_CONFIRM: '等待确认收货',
+  FINISHED: '交易成功',
 };
 
 for (let i = 1; i <= 30; i += 1) {
@@ -102,12 +102,14 @@ function get(params: any) {
     });
   }
   if (params.id) {
+    // tslint:disable-next-line: triple-equals
     ret = ret.filter(data => data.id == params.id);
   }
   if (params.statusList && params.statusList.length > 0) {
     ret = ret.filter(data => params.statusList.indexOf(data.status) > -1);
   }
   if (params.ware_id) {
+    // tslint:disable-next-line: triple-equals
     ret = ret.filter(data => data.wares.find(w => w.ware_id == params.ware_id));
   }
   if (params.buyer_nick) {
@@ -137,20 +139,17 @@ export const TRADES = {
     const id = req.body.id || 0;
     if (id > 0) {
       const idx = getIdx(id);
-      DATA[idx] = Object.assign(DATA[idx], req.body);
+      DATA[idx] = { ...DATA[idx], ...req.body };
       return { msg: 'ok', item: DATA[idx] };
     }
 
-    const item = Object.assign({}, req.body, {
-      id: DATA.sort((a, b) => b.id - a.id)[0].id + 1,
-    });
+    const item = { ...req.body, id: DATA.sort((a, b) => b.id - a.id)[0].id + 1 };
     DATA.push(item);
     return { msg: 'ok', item };
   },
   '/trade/:id': (req: MockRequest) => {
     const idx = getIdx(req.params.id || 0);
-    const item = Object.assign({}, DATA[idx], {
-    });
+    const item = { ...DATA[idx] };
     return item;
   },
   'DELETE /trade/:id': (req: MockRequest) => {

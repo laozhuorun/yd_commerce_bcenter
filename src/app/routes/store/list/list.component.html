@@ -12,10 +12,10 @@
                 </div>
                 <div nz-col nzMd="8" nzSm="24">
                     <nz-form-item>
-                        <nz-form-label nzFor="status">订单来源</nz-form-label>
+                        <nz-form-label nzFor="status">渠道</nz-form-label>
                         <nz-form-control>
                             <nz-select [(ngModel)]="q.source" name="source" id="source" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
-                                <nz-option nzCustomContent *ngFor="let source of sources" [nzLabel]="source.text" [nzValue]="source.value">
+                                <nz-option nzCustomContent *ngFor="let source of orderSource" [nzLabel]="source.text" [nzValue]="source.value">
                                     <img width="18" alt="item.name" src="{{getSourcePicture(source.value)}}" />
                                     <span class="pl-sm">{{source.text}}</span>
                                 </nz-option>

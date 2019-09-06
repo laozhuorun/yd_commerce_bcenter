@@ -26,9 +26,9 @@ const routes: Routes = [
       { path: 'store', loadChildren: './store/store.module#StoreModule' },
       { path: 'product', loadChildren: './product/product.module#ProductModule' },
       { path: 'order', loadChildren: './order/order.module#OrderModule' },
-      { path: 'shipping', loadChildren: './shipping/shipping.module#ShippingModule' },
       { path: 'shipment', loadChildren: './shipment/shipment.module#ShipmentModule' },
       { path: 'advert', loadChildren: './advert/advert.module#AdvertModule' },
+      { path: 'statistics', loadChildren: './statistics/statistics.module#StatisticsModule' },
       { path: 'sys', loadChildren: './sys/sys.module#SysModule' },
       // Exception
       { path: 'exception', loadChildren: './exception/exception.module#ExceptionModule' },

@@ -13,7 +13,7 @@ import { STColumn } from '@delon/abc';
 import { getTimeDistance } from '@delon/util';
 import { _HttpClient } from '@delon/theme';
 import { I18NService } from '@core';
-import { yuan } from '@shared';
+import { yuan, AppSessionService } from '@shared';
 import { AppComponentBase } from '@shared/app-component-base';
 import {
   CommonStatisticsDto,
@@ -24,6 +24,8 @@ import {
   CatelogSaleStatisticDto,
   CatelogDateSaleStatisticDto,
   Period,
+  UserLoginInfoDto,
+  TenantLoginInfoDto,
 } from '@shared/service-proxies/service-proxies';
 import { CommonHelper } from '@shared/helpers/CommonHelper';
 import { format } from 'date-fns';
@@ -54,8 +56,8 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
   };
 
   titleMap = {
-    y1: this.i18n.fanyi('app.analysis.day-sales'),
-    y2: this.i18n.fanyi('app.analysis.advert-cost'),
+    y1: this.l('app.analysis.day-sales'),
+    y2: this.l('app.analysis.advert-cost'),
   };
 
   chart;
@@ -66,29 +68,36 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
 
   loading = true;
   date_range: Date[] = [];
+  user: UserLoginInfoDto;
+  tenant: TenantLoginInfoDto;
+
+  friendlyTime;
 
   constructor(
     injector: Injector,
     public msg: NzMessageService,
-    private i18n: I18NService,
-    private cdr: ChangeDetectorRef,
     private commonStatisticSvc: CommonStatisticServiceProxy,
     private advertStatisticSvc: AdvertStatisticServiceProxy,
     private saleStatisticSvc: SaleStatisticServiceProxy,
+    public appSessionSvc: AppSessionService,
   ) {
     super(injector);
   }
 
   ngOnInit() {
+    this.user = this.appSessionSvc.user;
+    this.tenant = this.appSessionSvc.tenant;
+
     this.date_range = getTimeDistance(-6);
     this.getCommonStatistic();
     this.getMonthCommonStatistic();
     this.getAdvertStatistic();
+    this.friendlyTime = this.getFriendlyTime();
   }
 
   ngAfterViewInit() {
     this.initLineChart();
-    this.getSaleStatistic();
+    this.getSaleStatisticLineChartData();
   }
 
   getCommonStatistic() {
@@ -115,7 +124,8 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
           this.yesterday.advertCost === 0
             ? this.today.advertCost
             : this.today.advertCost / this.yesterday.advertCost - 1;
-        this.cdr.detectChanges();
+
+        this.cd();
       });
   }
 
@@ -139,14 +149,14 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
       });
 
       // stat
-      this.advertStat.total = advertData.length === 0 ? 0 : [...advertData].sort(this.sortby)[advertData.length - 1].y;
+      this.advertStat.total = advertData.length === 0 ? 0 : this.advertData.reduce((pre, now) => now.y + pre, 0);
       this.advertStat.t1 = advertData.length === 0 ? 0 : advertData[Math.floor(advertData.length / 2)].x;
       this.advertStat.t2 = advertData.length === 0 ? 0 : advertData[advertData.length - 1].x;
-      this.cdr.detectChanges();
+      this.cd();
     });
   }
 
-  getSaleStatistic() {
+  getSaleStatisticLineChartData() {
     const self = this;
     this.chartloading = true;
     this.saleStatisticSvc
@@ -182,11 +192,11 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
       crosshairs: 'y',
       htmlContent: function htmlContent(title, items) {
         const alias = {
-          orderNum: self.i18n.fanyi('app.analysis.order'),
-          shipmentNum: self.i18n.fanyi('app.analysis.shipment'),
-          orderTotal: self.i18n.fanyi('app.analysis.day-sales'),
-          shipmentTotal: self.i18n.fanyi('app.analysis.shipment-total'),
-          advertCost: self.i18n.fanyi('app.analysis.advert-cost'),
+          orderNum: self.l('app.analysis.order'),
+          shipmentNum: self.l('app.analysis.shipment'),
+          orderTotal: self.l('app.analysis.day-sales'),
+          shipmentTotal: self.l('app.analysis.shipment-total'),
+          advertCost: self.l('app.analysis.advert-cost'),
         };
         let html = '<div class="custom-tooltip">';
         for (let i = 0; i < items.length; i++) {
@@ -234,7 +244,7 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
       y: 100,
     });
 
-    // this.cdr.detectChanges();
+    this.cd();
   }
 
   getSalePercent(orderTotal: number) {
@@ -268,7 +278,7 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
 
   setDate(type: any) {
     this.date_range = getTimeDistance(type);
-    setTimeout(() => this.cdr.detectChanges());
+    this.cd();
   }
 
   handlePieValueFormat(value: any) {
@@ -279,7 +289,7 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
   salesChange(idx: number) {
     if (this.saleTabs[idx].show !== true) {
       this.saleTabs[idx].show = true;
-      this.cdr.detectChanges();
+      this.cd();
     }
   }
 
@@ -297,7 +307,7 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
     this.chart.source(dataSource);
     this.chart.render();
 
-    this.cdr.detectChanges();
+    this.cd();
 
     this.chart.showTooltip({
       x: this.catelogLineChart.nativeElement.offsetWidth - 20,
@@ -311,7 +321,7 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
       chartDateItemArray.push({
         x: new Date(Date.parse(item.dateOn.replace(/-/g, '/'))),
         y1: item.orderTotal,
-        y2: item.advertCost,
+        y2: item.shipmentNum,
         y3: item.orderTotal,
         y4: item.shipmentTotal,
         y5: item.advertCost,
@@ -354,5 +364,32 @@ export class DashboardAnalysisComponent extends AppComponentBase implements OnIn
       });
     });
     return chartDateItemArray;
+  }
+
+  getFriendlyTime() {
+    const now = new Date();
+    const hour = now.getHours();
+    if (hour < 6) {
+      return '凌晨好!';
+    } else if (hour < 9) {
+      return '早上好!';
+    } else if (hour < 12) {
+      return '上午好!';
+    } else if (hour < 14) {
+      return '中午好!';
+    } else if (hour < 17) {
+      return '下午好!';
+    } else if (hour < 19) {
+      return '傍晚好!';
+    } else if (hour < 22) {
+      return '晚上好!';
+    } else {
+      return '夜里好!';
+    }
+  }
+
+  private cd() {
+    // wait checkbox
+    setTimeout(() => this.cdr.detectChanges());
   }
 }

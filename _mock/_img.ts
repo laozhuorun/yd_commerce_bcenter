@@ -80,7 +80,7 @@ export const IMGS = {
     const id = req.body.id || 0;
     if (id > 0) {
       const idx = getIdx(id);
-      DATA[idx] = Object.assign(DATA[idx], req.body);
+      DATA[idx] = {...DATA[idx], ...req.body};
       return { msg: 'ok', item: DATA[idx] };
     }
 
@@ -93,7 +93,7 @@ export const IMGS = {
   },
   '/img/:id': (req: MockRequest) => {
     const idx = getIdx(req.params.id || 0);
-    const item = Object.assign(DATA[idx], req.body);
+    const item = {...DATA[idx], ...req.body};
     return item;
   },
   'DELETE /img/:id': (req: MockRequest) => {
